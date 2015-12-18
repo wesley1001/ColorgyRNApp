@@ -5,12 +5,15 @@ import React, {
   ScrollView,
   TouchableOpacity
 } from 'react-native';
+import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
+import { FBLoginManager } from 'NativeModules';
 
 import courseDatabase, { sqlValue } from '../databases/courseDatabase';
 import { counterPlus, asyncCounterPlus } from '../actions/counterActions';
 
 var AppContainer = React.createClass({
+
   getInitialState: function() {
     return {};
   },
@@ -72,6 +75,16 @@ var AppContainer = React.createClass({
     });
   },
 
+  _handleFBLogin: function() {
+    FBLoginManager.loginWithPermissions(["email","user_friends"], (error, data) => {
+      if (!error) {
+        this.setState({ fbResults: JSON.stringify(data) });
+      } else {
+        this.setState({ fbResults: JSON.stringify(data) });
+      }
+    });
+  },
+
   render: function() {
     return (
       <View style={styles.container}>
@@ -122,6 +135,20 @@ var AppContainer = React.createClass({
           <TouchableOpacity onPress={this._handleDatabaseReset}>
             <Text style={styles.action}>
               Reset DB!
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.instructions}>
+            - - -
+          </Text>
+          <Text style={styles.instructions}>
+            And below is a FB login demo.
+          </Text>
+          <Text>
+            {this.state.fbResults}
+          </Text>
+          <TouchableOpacity onPress={this._handleFBLogin}>
+            <Text style={styles.action}>
+              Login with Facebook!
             </Text>
           </TouchableOpacity>
         </ScrollView>

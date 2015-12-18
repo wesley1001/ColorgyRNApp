@@ -5,6 +5,8 @@ import reducers from './reducers';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 
+import alertMiddleware from './middlewares/alertMiddleware';
+
 const loggerMiddleware = createLogger({
   level: 'info',
   collapsed: true,
@@ -13,6 +15,7 @@ const loggerMiddleware = createLogger({
 
 const createStoreWithMiddleware = applyMiddleware(
   thunkMiddleware,
+  alertMiddleware,
   loggerMiddleware
 )(createStore);
 

@@ -26,4 +26,6 @@ persistStore(store, {
   whitelist: ['colorgyAPI', 'counter']
 });
 
+if (window) window.store = store;
+
 export default store;

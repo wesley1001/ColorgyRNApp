@@ -60,6 +60,13 @@ function getAccessToken(forceRefresh = false) {
 }
 
 /**
+ * Clears the access token, i.e.: logout.
+ */
+function clearAccessToken() {
+  store.dispatch(doClearAccessToken());
+}
+
+/**
  * A fetch warper to deal with access tokens automatically
  */
  function colorgyFetch(url, payload = {}) {
@@ -115,10 +122,69 @@ function getAccessToken(forceRefresh = false) {
 }
 
 /**
- * Clears the access token, i.e.: logout.
+ * Camelize a string.
+ *
+ * @param {string} an snake_case, kebab-case or any other string to be camelized.
+ * @return {string} The camelized string.
  */
-function clearAccessToken() {
-  store.dispatch(doClearAccessToken());
+function camelize(str) {
+  return str.replace(/^([A-Z])|[\s-_](\w)/g, function(match, p1, p2, offset) {
+    if (p2) return p2.toUpperCase();
+    return p1.toLowerCase();
+  });
+}
+
+/**
+ * Camelize a object.
+ *
+ * @param {object} an object using snake_case or kebab-case keys to be camelized.
+ * @return {object} The camelized object.
+ */
+function camelizeObject(obj) {
+  var camelizedObj = Object.assign({}, obj);
+
+  for (var prop in camelizedObj) {
+    var camelizedProp = camelize(prop);
+    if (camelizedProp != prop) {
+      camelizedObj[camelizedProp] = camelizedObj[prop];
+      delete camelizedObj[prop];
+    }
+  }
+
+  return camelizedObj;
+}
+
+/**
+ * Snakelize a string.
+ *
+ * @param {string} an camelCase string to be snakelize.
+ * @return {string} The snakelize string.
+ */
+function snakelize(str) {
+  return str.replace(/([A-Z])/g, function(match, w, offset) {
+    if (offset == 0) return w.toLowerCase();
+    else return '_' + w.toLowerCase();
+  });
+}
+
+/**
+ * Snakelize a object.
+ *
+ * @param {object} an object using camelCase keys to be snakelize.
+ * @return {object} The snakelized object.
+ */
+function snakelizeObject(obj) {
+  var snakelizedObj = Object.assign({}, obj);
+
+  for (var prop in snakelizedObj) {
+    var snakelizedProp = snakelize(prop);
+    if (snakelizedProp != prop) {
+      snakelizedObj[snakelizedProp] = snakelizedObj[prop];
+      delete snakelizedObj[prop];
+    }
+  }
+
+  return camelizedObj;
 }
 
 /**
@@ -163,6 +229,10 @@ colorgyAPI = {
   requestAccessToken: requestAccessToken,
   clearAccessToken: clearAccessToken,
   fetch: colorgyFetch,
+  camelize: camelize,
+  camelizeObject: camelizeObject,
+  snakelize: snakelize,
+  snakelizeObject: snakelizeObject,
   generateUUID: generateUUID,
   getCurrentYear: getCurrentYear,
   getCurrentTerm: getCurrentTerm

@@ -21,5 +21,5 @@ var App = React.createClass({
 });
 
 export default connect((state) => ({
-  isLogin: state.colorgyAPI.hasAccessToken
+  isLogin: (state.colorgyAPI.hasAccessToken && state.colorgyAPI.meUpdatedAt)
 }))(App);

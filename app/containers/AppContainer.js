@@ -1,7 +1,8 @@
 import React, {
   StyleSheet,
   Text,
-  View
+  View,
+  Image
 } from 'react-native';
 import { connect } from 'react-redux/native';
 
@@ -16,8 +17,11 @@ var AppContainer = React.createClass({
           Welcome!
         </Text>
         <Text style={styles.instructions}>
-          This is the main app page. Welcome in!
+          This is the main app page. Welcome in, {this.props.userName}!
         </Text>
+        <Image
+          source={{ uri: this.props.avatarUrl }}
+          style={{ width: 200, height: 200, margin: 10 }} />
         <Text style={styles.instructions} onPress={colorgyAPI.clearAccessToken}>
           Go Out.
         </Text>
@@ -46,4 +50,6 @@ var styles = StyleSheet.create({
 });
 
 export default connect((state) => ({
+  userName: state.colorgyAPI.me.name,
+  avatarUrl: state.colorgyAPI.me.avatarUrl
 }))(AppContainer);

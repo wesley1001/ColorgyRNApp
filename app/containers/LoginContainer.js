@@ -23,11 +23,13 @@ var LoginContainer = React.createClass({
 
   render: function() {
     if (this.props.loggingIn) {
+      var statusText = '登入中，請稍候⋯⋯';
+      if (this.props.meUpdating) statusText = '正在同步個人資料⋯⋯';
       return (
         <View style={styles.container}>
           <ProgressBarAndroid />
           <Text></Text>
-          <Text>登入中，請稍候⋯⋯</Text>
+          <Text>{statusText}</Text>
         </View>
       );
 
@@ -76,6 +78,7 @@ var LoginContainer = React.createClass({
       } else {
         alert('發生錯誤！請檢查您的網路連線，以及確認您有正確登入、授權本 App 存取您的帳號');
         this.setState({ fbLoading: false });
+        console.error(error);
       }
     });
   }
@@ -120,5 +123,7 @@ var styles = StyleSheet.create({
 });
 
 export default connect((state) => ({
-  loggingIn: state.colorgyAPI.refreshingAccessToken
+  loggingIn: (state.colorgyAPI.refreshingAccessToken || state.colorgyAPI.meUpdating),
+  meUpdating: state.colorgyAPI.meUpdating,
+  refreshingAccessToken: state.colorgyAPI.refreshingAccessToken
 }))(LoginContainer);

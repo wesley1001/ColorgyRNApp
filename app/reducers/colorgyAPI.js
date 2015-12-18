@@ -71,7 +71,32 @@ export default handleActions({
       accessToken: null,
       refreshToken: null,
       accessTokenExpiresAt: null,
-      lastResponse: {}
+      lastResponse: {},
+      me: {},
+      meUpdatedAt: null,
+    };
+  },
+
+  UPDATE_ME: (state, action) => {
+    return {
+      ...state,
+      meUpdating: true
+    };
+  },
+
+  UPDATE_ME_SUCCESS: (state, action) => {
+    return {
+      ...state,
+      me: action.payload,
+      meUpdatedAt: action.payload.updatedAt,
+      meUpdating: false
+    };
+  },
+
+  UPDATE_ME_FAILD: (state, action) => {
+    return {
+      ...state,
+      meUpdating: false
     };
   }
 }, {
@@ -80,5 +105,7 @@ export default handleActions({
   accessToken: null,
   refreshToken: null,
   accessTokenExpiresAt: null,
-  lastResponse: {}
+  lastResponse: {},
+  me: {},
+  meUpdatedAt: null
 });

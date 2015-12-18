@@ -9,6 +9,10 @@ export const refreshAccessToken = createAction('REFRESH_ACCESS_TOKEN');
 export const refreshAccessTokenSuccess = createAction('REFRESH_ACCESS_TOKEN_SUCCESS');
 export const refreshAccessTokenFailed = createAction('REFRESH_ACCESS_TOKEN_FAILED');
 
+export const updateMe = createAction('UPDATE_ME');
+export const updateMeSuccess = createAction('UPDATE_ME_SUCCESS');
+export const updateMeFaild = createAction('UPDATE_ME_FAILD');
+
 export const doRequestAccessToken = userCredentials => dispatch => {
   dispatch(requestAccessToken());
 
@@ -29,6 +33,7 @@ export const doRequestAccessToken = userCredentials => dispatch => {
     .then(json => {
       if (json.access_token) {
         dispatch(requestAccessTokenSuccess(json));
+        dispatch(doUpdateMe());
       } else {
         dispatch(requestAccessTokenFailed(json));
       }
@@ -67,4 +72,23 @@ export const doRefreshAccessToken = () => (dispatch, getState) => {
 
 export const doClearAccessToken = userCredentials => dispatch => {
   dispatch(clearAccessToken());
+};
+
+export const doUpdateMe = () => (dispatch) => {
+  dispatch(updateMe());
+
+  colorgyAPI.fetch('/v1/me').then((r) => {
+    if (r.status != 200) {
+      dispatch(updateMeFaild(e));
+      throw r;
+    } else {
+      return r.json();
+    }
+  }).then((json) => {
+    var data = colorgyAPI.camelizeObject(json);
+    dispatch(updateMeSuccess(data));
+  }).catch((e) => {
+    dispatch(updateMeFaild(e));
+    console.error(e);
+  });
 };

@@ -6,12 +6,16 @@ import React, {
 } from 'react-native';
 import { connect } from 'react-redux/native';
 
-import { counterPlus } from '../actions/counterActions';
+import { counterPlus, asyncCounterPlus } from '../actions/counterActions';
 
 var AppContainer = React.createClass({
 
   _handleCount: function() {
     this.props.dispatch(counterPlus());
+  },
+
+  _handleAsyncCount: function() {
+    this.props.dispatch(asyncCounterPlus());
   },
 
   render: function() {
@@ -29,6 +33,11 @@ var AppContainer = React.createClass({
         <TouchableOpacity onPress={this._handleCount}>
           <Text style={styles.action}>
             Count!
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this._handleAsyncCount}>
+          <Text style={styles.action}>
+            Async Count!
           </Text>
         </TouchableOpacity>
       </View>

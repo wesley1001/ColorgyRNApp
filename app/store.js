@@ -20,7 +20,7 @@ let store = autoRehydrate()(createStoreWithMiddleware)(reducers);
 
 persistStore(store, {
   storage: AsyncStorage,
-  whitelist: ['counter']
+  whitelist: ['colorgyAPI', 'counter']
 });
 
 export default store;

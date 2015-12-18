@@ -10,6 +10,7 @@ import { connect } from 'react-redux/native';
 import { FBLoginManager } from 'NativeModules';
 
 import courseDatabase, { sqlValue } from '../databases/courseDatabase';
+import colorgyAPI from '../utils/colorgyAPI';
 import { counterPlus, asyncCounterPlus } from '../actions/counterActions';
 
 var AppContainer = React.createClass({
@@ -85,6 +86,38 @@ var AppContainer = React.createClass({
     });
   },
 
+  _handleRequestAccessToken: function() {
+    colorgyAPI.requestAccessToken({ username: 'pkc', password: 'qazwsxedc' });
+  },
+
+  _handleRequestAccessTokenWithFailure: function() {
+    colorgyAPI.requestAccessToken({ username: 'pkc@pokaichang.com', password: 'qazwsxedc' });
+  },
+
+  _handleGetAccessToken: function() {
+    colorgyAPI.getAccessToken().then((accessToken) => {
+      this.setState({ apiResults: accessToken });
+    });
+  },
+
+  _handleForceRefreshAccessToken: function() {
+    colorgyAPI.getAccessToken(true).then((accessToken) => {
+      this.setState({ apiResults: accessToken });
+    });
+  },
+
+  _handleClearAccessToken: function() {
+    colorgyAPI.clearAccessToken();
+  },
+
+  _handleGetAPIMe: function() {
+    colorgyAPI.fetch('/v1/me').then((req) => req.json()).then((json) => {
+      this.setState({ apiResults: JSON.stringify(json) });
+    }).catch((e) => {
+      this.setState({ apiResults: JSON.stringify(e) });
+    });
+  },
+
   render: function() {
     return (
       <View style={styles.container}>
@@ -151,6 +184,48 @@ var AppContainer = React.createClass({
               Login with Facebook!
             </Text>
           </TouchableOpacity>
+          <Text style={styles.instructions}>
+            - - -
+          </Text>
+          <Text style={styles.instructions}>
+            And below is Colorgy API demo.
+          </Text>
+          <Text>
+            {JSON.stringify(this.props.colorgyAPI)}
+          </Text>
+          <Text>
+            {this.state.apiResults}
+          </Text>
+          <TouchableOpacity onPress={this._handleRequestAccessToken}>
+            <Text style={styles.action}>
+              Request Access Token!
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this._handleRequestAccessTokenWithFailure}>
+            <Text style={styles.action}>
+              Request Access Token With Failure!
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this._handleGetAccessToken}>
+            <Text style={styles.action}>
+              Get Access Token!
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this._handleForceRefreshAccessToken}>
+            <Text style={styles.action}>
+              Force Refresh Access Token!
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this._handleClearAccessToken}>
+            <Text style={styles.action}>
+              Clear Access Token!
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this._handleGetAPIMe}>
+            <Text style={styles.action}>
+              Get API /me!
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
     );
@@ -188,5 +263,6 @@ var styles = StyleSheet.create({
 });
 
 export default connect((state) => ({
-  count: state.counter.count
+  count: state.counter.count,
+  colorgyAPI: state.colorgyAPI
 }))(AppContainer);

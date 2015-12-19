@@ -2,7 +2,8 @@ import React, {
   StyleSheet,
   Text,
   View,
-  Image
+  Image,
+  TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux/native';
 
@@ -18,7 +19,7 @@ var AppContainer = React.createClass({
       <ScrollableTabView
         tabBarPosition="bottom"
         currentTab={this.props.currentTab}
-        onTabChanged={(t) => this.props.dispatch(selectTab(t))}
+        onTabChanged={(t) => this.props.dispatch(selectTab({ tab: t }))}
       >
         <View style={styles.container} tabLabel="課表1">
           <Text style={styles.welcome}>
@@ -30,9 +31,16 @@ var AppContainer = React.createClass({
           <Image
             source={{ uri: this.props.avatarUrl }}
             style={{ width: 200, height: 200, margin: 10 }} />
-          <Text style={styles.instructions} onPress={colorgyAPI.clearAccessToken}>
-            Go Out.
-          </Text>
+          <TouchableOpacity onPress={() => this.props.dispatch(selectTab({ tab: 1 }))}>
+            <Text>
+              Go To Tab 2.
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={colorgyAPI.clearAccessToken}>
+            <Text>
+              Go Out.
+            </Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.container} tabLabel="課表2">
           <Text style={styles.welcome}>
@@ -44,9 +52,16 @@ var AppContainer = React.createClass({
           <Image
             source={{ uri: this.props.avatarUrl }}
             style={{ width: 200, height: 200, margin: 10 }} />
-          <Text style={styles.instructions} onPress={colorgyAPI.clearAccessToken}>
-            Go Out.
-          </Text>
+          <TouchableOpacity onPress={() => this.props.dispatch(selectTab({ tab: 2 }))}>
+            <Text>
+              Go To Tab 3.
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={colorgyAPI.clearAccessToken}>
+            <Text>
+              Go Out.
+            </Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.container} tabLabel="課表3">
           <Text style={styles.welcome}>
@@ -58,9 +73,16 @@ var AppContainer = React.createClass({
           <Image
             source={{ uri: this.props.avatarUrl }}
             style={{ width: 200, height: 200, margin: 10 }} />
-          <Text style={styles.instructions} onPress={colorgyAPI.clearAccessToken}>
-            Go Out.
-          </Text>
+          <TouchableOpacity onPress={() => this.props.dispatch(selectTab({ tab: 0 }))}>
+            <Text>
+              Go To Tab 1.
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={colorgyAPI.clearAccessToken}>
+            <Text>
+              Go Out.
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollableTabView>
     );

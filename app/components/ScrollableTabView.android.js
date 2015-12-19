@@ -40,13 +40,28 @@ var ScrollableTabView = React.createClass({
   },
 
   getInitialState() {
-    var currentTab = this.props.initialTab || 0;
+    var currentTab = this.props.currentTab || this.props.initialTab || 0;
 
     return {
       currentTab: currentTab,
       currentActiveTab: currentTab,
-      scrollValue: new Animated.Value(currentTab)
+      scrollValue: new Animated.Value(currentTab),
+      viewPosition: currentTab * deviceWidth
     };
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (typeof this.props.currentTab === 'number' &&
+        typeof nextProps.currentTab === 'number' &&
+        this.props.currentTab != nextProps.currentTab) {
+
+      this.setState({
+        currentTab: nextProps.currentTab,
+        currentActiveTab: nextProps.currentTab
+      });
+
+      this.animateToTab(nextProps.currentTab);
+    }
   },
 
   getCurrentTab() {
@@ -56,6 +71,7 @@ var ScrollableTabView = React.createClass({
 
   componentWillMount() {
     let onTouchRelease = (e, gestureState) => {
+      this.setState({ animating: false });
       var relativeGestureDistance = gestureState.dx / deviceWidth,
           lastTabIndex = this.props.children.length - 1,
           vx = gestureState.vx,
@@ -69,7 +85,18 @@ var ScrollableTabView = React.createClass({
 
       this.props.hasTouch && this.props.hasTouch(false);
       this.goToTab(Math.max(0, Math.min(newTab, this.props.children.length - 1)));
-    }
+    };
+
+    let onTouchMove = (e, gestureState) => {
+      this.setState({ animating: true });
+      var { dx, vx } = gestureState;
+      var lastTabIndex = this.props.children.length - 1;
+      var relativeGestureDistance = dx / deviceWidth;
+      var newTab = this.getCurrentTab();
+
+      var offsetX = dx - (this.getCurrentTab() * deviceWidth);
+      this.state.scrollValue.setValue(-1 * offsetX / deviceWidth);
+    };
 
     this._panResponder = PanResponder.create({
       onMoveShouldSetPanResponder: (e, gestureState) => {
@@ -86,15 +113,7 @@ var ScrollableTabView = React.createClass({
         }
       },
 
-      onPanResponderMove: (e, gestureState) => {
-        var { dx, vx } = gestureState;
-        var lastTabIndex = this.props.children.length - 1;
-        var relativeGestureDistance = dx / deviceWidth;
-        var newTab = this.getCurrentTab();
-
-        var offsetX = dx - (this.getCurrentTab() * deviceWidth);
-        this.state.scrollValue.setValue(-1 * offsetX / deviceWidth);
-      },
+      onPanResponderMove: onTouchMove,
 
       onPanResponderRelease: onTouchRelease,
       onPanResponderTerminate: onTouchRelease
@@ -104,12 +123,33 @@ var ScrollableTabView = React.createClass({
   goToTab(tabNumber) {
     this.props.onTabChanged && this.props.onTabChanged(tabNumber);
 
+    if (typeof this.props.currentTab !== 'number') {
+      this.animateToTab(tabNumber);
+    } else {
+      this.animateToTab(this.getCurrentTab());
+    }
+  },
+
+  animateToTab(tabNumber) {
     this.setState({
       currentTab: tabNumber,
-      currentActiveTab: tabNumber
+      currentActiveTab: tabNumber,
+      animating: true
+    }, () => {
+      Animated.spring(this.state.scrollValue, { toValue: tabNumber, friction: this.props.springFriction, tension: this.props.springTension }).start();
     });
 
-    Animated.spring(this.state.scrollValue, { toValue: this.getCurrentTab(), friction: this.props.springFriction, tension: this.props.springTension }).start();
+    var stopAnimate = () => {
+      var viewPosition = -this.state.scrollValue._value * deviceWidth;
+      this.setState({
+        animating: false,
+        viewPosition: viewPosition
+      });
+    };
+
+    // TODO: listen to the animate stop event instead of just counting down
+    if (this.animateTimer) clearTimeout(this.animateTimer);
+    this.animateTimer = setTimeout(stopAnimate, 1000);
   },
 
   renderTabBar(props) {
@@ -142,13 +182,18 @@ var ScrollableTabView = React.createClass({
       scrollValue: this.state.scrollValue
     };
 
+    var viewStyle = [sceneContainerStyle, { marginLeft: this.state.viewPosition }];
+
+    if (this.state.animating) viewStyle = [sceneContainerStyle, { transform: [{ translateX }] }];
+
     return (
       <View style={{ flex: 1 }}>
         {this.props.tabBarPosition === 'top' ? this.renderTabBar(tabBarProps) : null}
-        <Animated.View style={[sceneContainerStyle, { transform: [{ translateX }] }]}
+        <Animated.View style={viewStyle}
           {...this._panResponder.panHandlers}>
           {this.props.children}
         </Animated.View>
+
         {this.props.tabBarPosition === 'bottom' ? this.renderTabBar(tabBarProps) : null}
       </View>
     );

@@ -86,4 +86,5 @@ dependencies {
     compile "com.facebook.react:react-native:0.15.+"
     compile project(':react-native-sqlite-storage')
     compile project(':react-native-facebook-login')
+    compile project(':react-native-android-statusbar')
 }

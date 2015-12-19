@@ -68,18 +68,20 @@ var LoginContainer = React.createClass({
   },
 
   _handleFBLogin: function () {
-    this.setState({ fbLoading: true });
-
-    FBLoginManager.loginWithPermissions(['email', 'public_profile', 'user_birthday', 'user_friends', 'user_events'], (error, data) => {
-      if (!error) {
-        var fbToken = data.token;
-        colorgyAPI.requestAccessToken({ username: 'facebook:access_token', password: fbToken });
-        this.setState({ fbLoading: false });
-      } else {
-        alert('發生錯誤！請檢查您的網路連線，以及確認您有正確登入、授權本 App 存取您的帳號');
-        this.setState({ fbLoading: false });
-        console.error(error);
-      }
+    this.setState({ fbLoading: true }, () => {
+      setTimeout(() => {
+        FBLoginManager.loginWithPermissions(['email', 'public_profile', 'user_birthday', 'user_friends', 'user_events'], (error, data) => {
+          if (!error) {
+            var fbToken = data.token;
+            colorgyAPI.requestAccessToken({ username: 'facebook:access_token', password: fbToken });
+            this.setState({ fbLoading: false });
+          } else {
+            alert('發生錯誤！請檢查您的網路連線，以及確認您有正確登入、授權本 App 存取您的帳號');
+            this.setState({ fbLoading: false });
+            console.error(error);
+          }
+        });
+      }, 100);
     });
   }
 });

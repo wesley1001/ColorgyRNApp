@@ -1,8 +1,10 @@
 import { createStore, applyMiddleware } from 'redux';
 import { persistStore, autoRehydrate } from 'redux-persist';
+import { createAction } from 'redux-actions';
 import { AsyncStorage } from 'react-native';
 import reducers from './reducers';
 import thunkMiddleware from 'redux-thunk';
+import reduxPersistExpectIngs from 'redux-persist-except-ings';
 import createLogger from 'redux-logger';
 
 import alertMiddleware from './middlewares/alertMiddleware';
@@ -23,7 +25,8 @@ let store = autoRehydrate()(createStoreWithMiddleware)(reducers);
 
 persistStore(store, {
   storage: AsyncStorage,
-  whitelist: ['colorgyAPI', 'counter']
+  whitelist: ['colorgyAPI', 'counter'],
+  transforms: [reduxPersistExpectIngs]
 });
 
 if (window) window.store = store;

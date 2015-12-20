@@ -22,13 +22,13 @@ function requestAccessToken(credentials) {
  * success, or an error object if faild.
  */
 function getAccessToken(forceRefresh = false) {
-  var colorgyAPIState = store.getState().colorgyAPI;
-  var nowTime = (new Date()).getTime() / 1000;
-
   return new Promise((resolve, reject) => {
-    if (colorgyAPIState.hasAccessToken) {
 
-      var getAccessTokenFunction = () => {
+    var getAccessTokenFunction = () => {
+      var colorgyAPIState = store.getState().colorgyAPI;
+      var nowTime = (new Date()).getTime() / 1000;
+
+      if (colorgyAPIState.hasAccessToken) {
         // If the access token is refreshing, wait until it is finished
         if (colorgyAPIState.refreshingAccessToken) {
           console.log('colorgyAPI.getAccessToken: Waiting for refresh to done...');
@@ -49,13 +49,13 @@ function getAccessToken(forceRefresh = false) {
             resolve(colorgyAPIState.accessToken);
           }
         }
-      };
 
-      getAccessTokenFunction();
+      } else {
+        reject('NO_ACCESS_TOKEN');
+      }
+    };
 
-    } else {
-      reject('NO_ACCESS_TOKEN');
-    }
+    getAccessTokenFunction();
   });
 }
 

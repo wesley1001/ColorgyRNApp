@@ -6,6 +6,7 @@
     "start": "react-native start"
   },
   "dependencies": {
+    "color": "^0.10.1",
     "react-native": "^0.15.0",
     "react-native-android-statusbar": "^0.1.2",
     "react-native-facebook-login": "^1.0.2",
@@ -15,6 +16,7 @@
     "redux-actions": "^0.9.0",
     "redux-logger": "^2.2.1",
     "redux-persist": "^1.4.10",
+    "redux-persist-except-ings": "0.0.1",
     "redux-thunk": "^1.0.2"
   }
 }

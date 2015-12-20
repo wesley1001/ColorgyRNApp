@@ -64,9 +64,11 @@ export const doRefreshAccessToken = () => (dispatch, getState) => {
         dispatch(refreshAccessTokenSuccess(json));
       } else {
         dispatch(refreshAccessTokenFailed(json));
+        dispatch(doClearAccessToken());
       }
   }).catch(reason => {
     dispatch(refreshAccessTokenFailed({ error: 'request_error' }));
+    dispatch(doClearAccessToken());
   });
 };
 

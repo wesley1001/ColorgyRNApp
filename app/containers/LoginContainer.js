@@ -4,7 +4,8 @@ import React, {
   View,
   Image,
   TouchableOpacity,
-  ProgressBarAndroid
+  ProgressBarAndroid,
+  TouchableWithoutFeedback
 } from 'react-native';
 import { connect } from 'react-redux/native';
 
@@ -12,6 +13,8 @@ import { FBLoginManager } from 'NativeModules';
 
 import colorgyAPI from '../utils/colorgyAPI';
 import alert from '../utils/alert';
+
+import { doEnterDevModePress } from '../actions/devModeActions';
 
 var LoginContainer = React.createClass({
 
@@ -45,16 +48,21 @@ var LoginContainer = React.createClass({
     } else {
       return (
         <View style={styles.container}>
-          <View style={styles.logo}>
-            <Image
-              style={styles.logoImage}
-              source={require('../assets/images/colorgy.png')} />
+          <View style={styles.logo} onPress={() => alert('hi')}>
+            <TouchableWithoutFeedback
+              onPress={() => this.props.dispatch(doEnterDevModePress())}
+            >
+              <Image
+                style={styles.logoImage}
+                source={require('../assets/images/colorgy.png')}
+              />
+            </TouchableWithoutFeedback>
           </View>
           <TouchableOpacity style={styles.fbLoginButton}>
             <View>
               <Image
                 style={styles.fbLoginButtonIcon}
-                source={require('../assets/images/fb_white.png')} />
+                source={require('../assets/images/icon_fb_white.png')} />
             </View>
             <Text
               style={styles.fbLoginButtonText}

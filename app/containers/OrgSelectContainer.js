@@ -14,7 +14,7 @@ import organizationDatabase, { sqlValue } from '../databases/organizationDatabas
 import colorgyAPI from '../utils/colorgyAPI';
 import alert from '../utils/alert';
 
-import { doClearAccessToken } from '../actions/colorgyAPIActions';
+import { doClearAccessToken, doUpdateMe } from '../actions/colorgyAPIActions';
 
 import TitleBarView from '../components/TitleBarView';
 import ScrollableTabView from '../components/ScrollableTabView';
@@ -137,8 +137,26 @@ var OrgSelectContainer = React.createClass({
     this.setState({ year });
   },
 
+  _handleDone() {
+    this.props.dispatch(doUpdateMe({
+      unconfirmedOrganizationCode: this.state.orgCode,
+      unconfirmedDepartmentCode: this.state.depCode,
+      unconfirmedStartedYear: this.state.year
+    }));
+  },
+
   render: function() {
     let styles = this.getStyles();
+
+    if (this.props.updating) {
+      return (
+        <View style={styles.container}>
+          <ProgressBarAndroid />
+          <Text></Text>
+          <Text>資料上傳中⋯⋯</Text>
+        </View>
+      );
+    }
 
     return (
       <TitleBarView
@@ -309,6 +327,7 @@ var OrgSelectContainer = React.createClass({
 export default connect((state) => ({
   count: state.counter.count,
   colorgyAPI: state.colorgyAPI,
+  updating: state.colorgyAPI.meUpdating,
   translucentStatusBar: state.uiEnvironment.translucentStatusBar,
   statusBarHeight: state.uiEnvironment.statusBarHeight
 }))(OrgSelectContainer);

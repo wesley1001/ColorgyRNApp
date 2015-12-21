@@ -76,21 +76,47 @@ export const doClearAccessToken = userCredentials => dispatch => {
   dispatch(clearAccessToken());
 };
 
-export const doUpdateMe = () => (dispatch) => {
+export const doUpdateMe = (updatedData) => (dispatch) => {
   dispatch(updateMe());
 
-  colorgyAPI.fetch('/v1/me').then((r) => {
-    if (r.status != 200) {
+  if (!updatedData) {
+    colorgyAPI.fetch('/v1/me').then((r) => {
+      if (r.status != 200) {
+        dispatch(updateMeFaild(e));
+        throw r;
+      } else {
+        return r.json();
+      }
+    }).then((json) => {
+      var data = colorgyAPI.camelizeObject(json);
+      dispatch(updateMeSuccess(data));
+    }).catch((e) => {
       dispatch(updateMeFaild(e));
-      throw r;
-    } else {
-      return r.json();
-    }
-  }).then((json) => {
-    var data = colorgyAPI.camelizeObject(json);
-    dispatch(updateMeSuccess(data));
-  }).catch((e) => {
-    dispatch(updateMeFaild(e));
-    console.error(e);
-  });
+      console.error(e);
+    });
+
+  } else {
+    console.log({ user: colorgyAPI.snakelizeObject(updatedData) });
+    colorgyAPI.fetch('/v1/me', {
+      method: 'PATCH',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ user: colorgyAPI.snakelizeObject(updatedData) })
+    }).then((r) => {
+      if (r.status != 200) {
+        dispatch(updateMeFaild(e));
+        throw r;
+      } else {
+        return r.json();
+      }
+    }).then((json) => {
+      var data = colorgyAPI.camelizeObject(json);
+      dispatch(updateMeSuccess(data));
+    }).catch((e) => {
+      dispatch(updateMeFaild(e));
+      console.error(e);
+    });
+  }
 };

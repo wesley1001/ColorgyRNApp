@@ -184,7 +184,7 @@ function snakelizeObject(obj) {
     }
   }
 
-  return camelizedObj;
+  return snakelizedObj;
 }
 
 /**

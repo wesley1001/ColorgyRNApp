@@ -110,11 +110,11 @@ class WebSQL {
       var execute = () => {
         if (ensureMigrated) {
           if (this.version != this.migrationsLastVerison) {
-            console.log(`WebSQL: ${this.dbName}: executeSql: Watitig for migration done...`)
+            console.log(`WebSQL: ${this.dbName}: executeSql: Watitig for migration done...`);
             if ((new Date()) - startedAt > 12000) {
-              reject({ error: 'Migration Timeout' })
+              reject({ error: 'Migration Timeout' });
             } else {
-              setTimeout(execute, 100)
+              setTimeout(execute, 100);
             }
             return;
           }

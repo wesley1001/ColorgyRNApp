@@ -10,7 +10,7 @@ import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
 import { FBLoginManager } from 'NativeModules';
 
-import courseDatabase, { sqlValue } from '../databases/courseDatabase';
+import organizationDatabase, { sqlValue } from '../databases/organizationDatabase';
 import colorgyAPI from '../utils/colorgyAPI';
 import alert from '../utils/alert';
 
@@ -71,11 +71,7 @@ var OrgSelectContainer = React.createClass({
   _fetchOrgs() {
     this.setState({ fetchOrgFaild: false });
 
-    colorgyAPI.fetch('/v1/organizations.json?fields=code,name,short_name').then((req) => {
-      if (req.status !== 200) throw req.status;
-      return req.json();
-    }).then((json) => {
-      var data = json;
+    organizationDatabase.getOrganizations().then((data) => {
       var orgOptions = data.map((org) => ({ name: `${org.code} - ${org.name}`, value: org.code }));
       var dataObj = data.reduce(function(object, data, i) {
         object[data['code']] = data;
@@ -96,11 +92,7 @@ var OrgSelectContainer = React.createClass({
   _fetchDeps(orgCode) {
     this.setState({ fetchDepFaild: false });
 
-    colorgyAPI.fetch(`/v1/organizations/${orgCode}.json?fields[organization]=departments&fields[department]=code,name,short_name`).then((req) => {
-      if (req.status !== 200) throw req.status;
-      return req.json();
-    }).then((json) => {
-      var data = json.departments;
+    organizationDatabase.getDepartments(orgCode).then((data) => {
       var depOptions = data.map((dep) => ({ name: `${dep.name} (${dep.code})`, value: dep.code }));
       var dataObj = data.reduce(function(object, data, i) {
         object[data['code']] = data;
@@ -314,7 +306,7 @@ var OrgSelectContainer = React.createClass({
               />
             </View>
             <Text style={[styles.hintText, { marginTop: 12, marginBottom: 0 }]}>
-              {this.state.depCode ? `請選擇入學年度後繼續` : '這些資料往後還可以在「個人資料」頁面中修改喔。'}
+              {this.state.year ? `這些資料往後還可以在「個人資料」頁面中修改喔。` : '請選擇入學年度後繼續。'}
             </Text>
           </View>
         </ScrollableTabView>

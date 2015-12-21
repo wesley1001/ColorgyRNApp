@@ -140,7 +140,7 @@ var ScrollableTabView = React.createClass({
     });
 
     var stopAnimate = () => {
-      var viewPosition = -this.state.scrollValue._value * deviceWidth;
+      var viewPosition = -this.getCurrentTab() * deviceWidth;
       this.setState({
         animating: false,
         viewPosition: viewPosition
@@ -182,7 +182,10 @@ var ScrollableTabView = React.createClass({
       scrollValue: this.state.scrollValue
     };
 
-    var viewStyle = [sceneContainerStyle, { marginLeft: this.state.viewPosition }];
+    var viewStyle = [sceneContainerStyle, {
+      marginLeft: this.state.viewPosition,
+      pointerEvents: (this.state.animating ? 'box-only' : 'auto')
+    }];
 
     if (this.state.animating) viewStyle = [sceneContainerStyle, { transform: [{ translateX }] }];
 

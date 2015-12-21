@@ -85,18 +85,22 @@ organizationDatabase.updateDepartment = (orgCode) => {
   });
 };
 
-organizationDatabase.getOrganizations = () => {
+organizationDatabase.getOrganizations = (options = {}) => {
+  var selectSql = "SELECT * FROM organizations";
+
+  // if (options.onlyWithDepartments) selectSql = "SELECT * FROM organizations o WHERE EXISTS (SELECT 1 FROM departments d WHERE d.organization_code = o.code);";
+
   return organizationDatabase.executeSql("SELECT * FROM info WHERE key = 'organizations_updated_at'").then( (r) => {
     var hasData = (r.results.rows.length > 0);
 
     if (hasData && (new Date()).getTime() - parseInt(r.results.rows.item(0).value) < 60*60*1000) {
-      return organizationDatabase.executeSql("SELECT * FROM organizations");
+      return organizationDatabase.executeSql(selectSql);
     } else {
       return organizationDatabase.updateOrganization().then((r) => {
-        return organizationDatabase.executeSql("SELECT * FROM organizations");
+        return organizationDatabase.executeSql(selectSql);
       }).catch((e) => {
         if (hasData) {
-          return organizationDatabase.executeSql("SELECT * FROM organizations");
+          return organizationDatabase.executeSql(selectSql);
         } else {
           throw e;
         }

@@ -71,7 +71,7 @@ var OrgSelectContainer = React.createClass({
   _fetchOrgs() {
     this.setState({ fetchOrgFaild: false });
 
-    organizationDatabase.getOrganizations().then((data) => {
+    organizationDatabase.getOrganizations({ onlyWithDepartments: true }).then((data) => {
       var orgOptions = data.map((org) => ({ name: `${org.code} - ${org.name}`, value: org.code }));
       var dataObj = data.reduce(function(object, data, i) {
         object[data['code']] = data;
@@ -144,13 +144,10 @@ var OrgSelectContainer = React.createClass({
       <TitleBarView
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={35}
-        title="選擇學校"
+        title="歡迎來到 Colorgy"
       >
         <ScrollableTabView currentTab={this.state.step} activeColor="#F89680" edgeHitWidth={-1}>
           <View tabLabel="選擇學校" style={styles.container}>
-            <Text style={[styles.instructionsText, { marginTop: 8 }]}>
-              歡迎使用 Colorgy！
-            </Text>
             <Text style={styles.instructionsText}>
               在開始之前，我們需要知道一些關於您的資訊，來為您準備最適切的服務與功能。
             </Text>
@@ -206,9 +203,6 @@ var OrgSelectContainer = React.createClass({
 
           <View tabLabel="選擇科系" style={styles.container}>
             <Text style={styles.instructionsText}>
-              太好了，來自 {this.state.orgCode && this.state.orgData && this.state.orgData[this.state.orgCode].short_name} 的 {this.props.colorgyAPI.me && this.props.colorgyAPI.me.name} 同學，歡迎登入！
-            </Text>
-            <Text style={styles.instructionsText}>
               現在我們需要一些您在學校的資訊，來幫您找到您感興趣的資訊及朋友圈。
             </Text>
             <View style={[styles.card, { marginTop: 14 }]}>
@@ -263,10 +257,7 @@ var OrgSelectContainer = React.createClass({
 
           <View tabLabel="選擇入學年度" style={styles.container}>
             <Text style={styles.instructionsText}>
-              好極了！現在只剩下最後一步：
-            </Text>
-            <Text style={styles.instructionsText}>
-              為了幫您找到學長學姊、學弟學妹，請告訴我們......
+              好極了！現在只剩下最後一步：為了幫您找到學長學姊、學弟學妹，請告訴我們......
             </Text>
             <View style={[styles.card, { marginTop: 14 }]}>
               <Text style={[styles.instructionsText, { marginBottom: 14 }]}>

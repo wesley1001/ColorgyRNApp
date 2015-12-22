@@ -30,7 +30,12 @@ let TitleBarView = React.createClass({
             paddingTop: offsetTop
           }]}
         >
-          <TitleBar title={this.props.title}></TitleBar>
+          <TitleBar
+            title={this.props.title}
+            leftAction={this.props.leftAction}
+            rightAction={this.props.rightAction}
+          >
+          </TitleBar>
         </View>
         <View style={[styles.body]}>
           {this.props.children}

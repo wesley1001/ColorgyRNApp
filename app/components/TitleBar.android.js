@@ -18,6 +18,7 @@ let TitleBarView = React.createClass({
     return (
       <View style={styles.container}>
         <View style={styles.actions}>
+          {this.props.leftAction}
         </View>
         <View style={styles.title}>
           <Text style={styles.titleText}>
@@ -25,6 +26,7 @@ let TitleBarView = React.createClass({
           </Text>
         </View>
         <View style={styles.actions}>
+          {this.props.rightAction}
         </View>
       </View>
     );

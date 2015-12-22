@@ -37,7 +37,7 @@ let TitleBarView = React.createClass({
           >
           </TitleBar>
         </View>
-        <View style={[styles.body]}>
+        <View style={[styles.body, this.props.contentContainerStyle]}>
           {this.props.children}
         </View>
       </View>

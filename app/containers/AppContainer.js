@@ -1,11 +1,13 @@
 import React, {
   StyleSheet,
   View,
+  Text
 } from 'react-native';
 import { connect } from 'react-redux/native';
 
 import colorgyAPI from '../utils/colorgyAPI';
 import { selectTab } from '../actions/appTabActions';
+import { doClearAccessToken } from '../actions/colorgyAPIActions';
 
 import ScrollableTabView from '../components/ScrollableTabView';
 import AppTabBar from '../components/AppTabBar';
@@ -30,7 +32,7 @@ var AppContainer = React.createClass({
 
         </View>
         <View style={styles.container} tabLabel="我的資料">
-
+          <Text onPress={() => this.props.dispatch(doClearAccessToken()) }>Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out</Text>
         </View>
       </ScrollableTabView>
     );

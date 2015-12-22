@@ -1,6 +1,5 @@
 import React, {
   StyleSheet,
-  Navigator,
   View,
   Text,
   Image,
@@ -13,6 +12,7 @@ import { selectTab } from '../../actions/appTabActions';
 
 import TitleBarView from '../../components/TitleBarView';
 import TitleBarIconButton from '../../components/TitleBarIconButton';
+import CourseCard from '../../components/CourseCard';
 
 var TableContainer = React.createClass({
 
@@ -33,6 +33,7 @@ var TableContainer = React.createClass({
           />
         }
       >
+        <CourseCard />
 
       </TitleBarView>
     );

@@ -42,7 +42,6 @@ var TableContainer = React.createClass({
           />
         }
       >
-
       </TitleBarView>
     );
   }

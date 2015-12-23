@@ -2,6 +2,7 @@ import React, { View, Text } from 'react-native';
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
 
+import AppInitializeContainer from './AppInitializeContainer';
 import LoginContainer from './LoginContainer';
 import OrgSelectContainer from './OrgSelectContainer';
 import DevModeContainer from './DevModeContainer';
@@ -25,6 +26,9 @@ var App = React.createClass({
   render: function() {
     if (this.props.isDevMode) {
       return (<DevModeContainer />);
+
+    } else if (!this.props.stateReady) {
+      return (<AppInitializeContainer />);
 
     } else if (!this.props.isLogin) {
       return(<LoginContainer />);
@@ -58,6 +62,7 @@ var App = React.createClass({
 });
 
 export default connect((state) => ({
+  stateReady: state.app.stateReady,
   isLogin: (state.colorgyAPI.hasAccessToken && state.colorgyAPI.meUpdatedAt),
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
   uiEnvironment: state.uiEnvironment,

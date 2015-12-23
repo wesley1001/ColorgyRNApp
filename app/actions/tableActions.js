@@ -96,7 +96,7 @@ export const doAddCourse = (
   tableDatabase.addUserCourse(
     course.code, userID, orgCode, year, term
   ).then(() => {
-    dispatch(doLoadTableCourses());
+    dispatch(doLoadTableCourses(userID, orgCode));
   }).catch((e) => {
     console.error(e);
   });
@@ -112,7 +112,7 @@ export const doRemoveCourse = (
   tableDatabase.removeUserCourse(
     course.code, userID, orgCode, year, term
   ).then(() => {
-    dispatch(doLoadTableCourses());
+    dispatch(doLoadTableCourses(userID, orgCode));
   }).catch((e) => {
     console.error(e);
   });

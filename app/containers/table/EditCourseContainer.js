@@ -11,7 +11,8 @@ import _ from 'underscore';
 
 import {
   doSyncUserCourses,
-  doLoadTableCourses
+  doLoadTableCourses,
+  doRemoveCourse
 } from '../../actions/tableActions';
 
 import TitleBarView from '../../components/TitleBarView';
@@ -57,7 +58,19 @@ var TableContainer = React.createClass({
         <ScrollView>
           {_.values(courses).map((course) => {
             return (
-              <CourseCard course={course} />
+              <CourseCard
+                course={course}
+                actionName="刪除"
+                onActionPress={() => {
+                  this.props.dispatch(
+                    doRemoveCourse(
+                      course,
+                      this.props.userId,
+                      this.props.organizationCode
+                    )
+                  );
+                }}
+              />
             );
           })}
         </ScrollView>

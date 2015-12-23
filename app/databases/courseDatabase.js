@@ -384,7 +384,7 @@ courseDatabase.findCourses = (orgCode, courseCodes) => {
   });
 };
 
-courseDatabase.searchCourse = (query, courseYear = colorgyAPI.getCurrentYear(), courseTerm = colorgyAPI.getCurrentTerm()) => {
+courseDatabase.searchCourse = (orgCode, query, courseYear = colorgyAPI.getCurrentYear(), courseTerm = colorgyAPI.getCurrentTerm()) => {
   query = query.replace(/[ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦˊˇˋ˙]/mg, '');
 
   return new Promise((resolve, reject) => {
@@ -396,8 +396,9 @@ courseDatabase.searchCourse = (query, courseYear = colorgyAPI.getCurrentYear(), 
     courseDatabase.getPeriodData(orgCode, { returnObject: true }).then( (periodData) => {
       courseDatabase.executeSql(`
         SELECT * FROM courses
-          WHERE year = ${courseYear}
-            AND term = ${courseTerm}
+          WHERE year = ${sqlValue(courseYear)}
+            AND term = ${sqlValue(courseTerm)}
+            AND organization_code = ${sqlValue(orgCode)}
             AND search_keywords LIKE '%${query}%'
           LIMIT 25
       `).then( (r) => {

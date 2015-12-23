@@ -8,7 +8,10 @@ import React, {
 
 let CourseCard = React.createClass({
   propTypes: {
-    course: React.PropTypes.object
+    course: React.PropTypes.object,
+    onPress: React.PropTypes.func,
+    actionName: React.PropTypes.string,
+    onActionPress: React.PropTypes.func
   },
 
   getDefaultProps() {
@@ -23,13 +26,26 @@ let CourseCard = React.createClass({
   render() {
     var course = this.props.course;
 
+    var action = null;
+
+    if (this.props.actionName && this.props.onActionPress) {
+      action = (
+        <TouchableOpacity
+          style={{ borderWidth: 1, borderColor: '#F89680', borderRadius: 2, paddingTop: 2, paddingBottom: 2, paddingLeft: 8, paddingRight: 8 }}
+          onPress={this.props.onActionPress}
+        >
+          <Text style={{ textAlign:'center', color:'#F89680' }}>
+            {this.props.actionName}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.title}>
           <Text style={styles.titleText}>{course.name}</Text>
-          <TouchableOpacity style={{ borderWidth: 1, borderColor: '#F89680', borderRadius: 2, paddingTop: 2, paddingBottom: 2, paddingLeft: 8, paddingRight: 8 }}>
-            <Text style={{ textAlign:'center', color:'#F89680' }}>刪除</Text>
-          </TouchableOpacity>
+          {action}
         </View>
         <View style={styles.detailsRow}>
           <View style={styles.detailsItem}>

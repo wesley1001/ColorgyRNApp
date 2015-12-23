@@ -106,5 +106,6 @@ export default handleActions({
   }
 }, {
   courseDatabaseUpdatedTime: {},
-  courseDatabaseStatus: null
+  courseDatabaseStatus: null,
+  tableStatus: 'new'
 });

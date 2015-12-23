@@ -28,21 +28,44 @@ var TableContainer = React.createClass({
   },
 
   render() {
-    return (
-      <TitleBarView
-        enableOffsetTop={this.props.translucentStatusBar}
-        offsetTop={35}
-        title="Table"
-        rightAction={
-          <TitleBarIconButton
-            onPress={this._handleEdit}
-            icon={require('../../assets/images/icon_mode_edit_white.png')}
-          />
-        }
-      >
+    switch (this.props.tableStatus) {
+      case 'new':
+        return (
+          <TitleBarView
+            enableOffsetTop={this.props.translucentStatusBar}
+            offsetTop={35}
+            title="Table"
+            rightAction={
+              <TitleBarIconButton
+                onPress={this._handleEdit}
+                icon={require('../../assets/images/icon_mode_edit_white.png')}
+              />
+            }
+          >
+            <Text>Loading</Text>
 
-      </TitleBarView>
-    );
+          </TitleBarView>
+        );
+        break;
+
+      default:
+        return (
+          <TitleBarView
+            enableOffsetTop={this.props.translucentStatusBar}
+            offsetTop={35}
+            title="Table"
+            rightAction={
+              <TitleBarIconButton
+                onPress={this._handleEdit}
+                icon={require('../../assets/images/icon_mode_edit_white.png')}
+              />
+            }
+          >
+
+          </TitleBarView>
+        );
+        break;
+    }
   }
 });
 

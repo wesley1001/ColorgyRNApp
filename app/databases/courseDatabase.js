@@ -14,6 +14,8 @@ var courseDatabase = new WebSQL('course', 'course', 3*1024*1024, migartions, SQL
 
 courseDatabase.migrate();
 
+var sqlValue = courseDatabase.sqlValue;
+
 courseDatabase.getDataUpdatedTime = (orgCode, courseYear = colorgyAPI.getCurrentYear(), courseTerm = colorgyAPI.getCurrentTerm()) => {
 
   return courseDatabase.executeSql(`SELECT * FROM info WHERE key = '${orgCode}_${courseYear}_${courseTerm}_courses_updated_at';`).then((r) => {
@@ -24,7 +26,6 @@ courseDatabase.getDataUpdatedTime = (orgCode, courseYear = colorgyAPI.getCurrent
 };
 
 courseDatabase.updateData = (orgCode, courseYear = colorgyAPI.getCurrentYear(), courseTerm = colorgyAPI.getCurrentTerm(), progressCallback) => {
-  var sqlValue = courseDatabase.sqlValue;
 
   console.log(`courseDatabase: updateData(): updating data...`);
 
@@ -269,6 +270,152 @@ courseDatabase.updateData = (orgCode, courseYear = colorgyAPI.getCurrentYear(), 
     }).catch((e) => {
       console.error(`courseDatabase: updateData(): Error`, e);
       updateReject(e);
+    });
+  });
+};
+
+courseDatabase.getPeriodData = (orgCode, options = {}) => {
+  var { returnObject } = options;
+
+  return new Promise( (resolve, reject) => {
+    courseDatabase.executeSql(`
+      SELECT * FROM period_data
+        WHERE organization_code = ${sqlValue(orgCode)}
+    `).then((r) => {
+      if (returnObject) {
+        var periodData = {};
+
+        if (r.results.rows.length) {
+          for (let i=0; i<r.results.rows.length; i++) {
+            let row = r.results.rows.item(i);
+            periodData[row.order] = row;
+          }
+        }
+
+      } else {
+        var periodData = [];
+
+        if (r.results.rows.length) {
+          for (let i=0; i<r.results.rows.length; i++) {
+            let row = r.results.rows.item(i);
+            periodData.push(row);
+          }
+        }
+      }
+
+      resolve(periodData);
+    }).catch((e) => {
+      console.error(e);
+      reject(e);
+    });
+  });
+};
+
+function parseCourseRows (rows, periodData) {
+  var courses = {};
+
+  for (let i=0; i<rows.length; i++) {
+    let row = rows.item(i);
+    row.fullSemester = row.full_semester;
+    row.studentsEnrolled = row.students_enrolled;
+    let times = [];
+    for (let i=1; i<10; i++) {
+      if (row[`day_${i}`] && row[`period_${i}`]) {
+        let day = '';
+        let periodCode = '';
+        switch (row[`day_${i}`]) {
+          case 1:
+            day = 'Mon';
+            break;
+          case 2:
+            day = 'Tue';
+            break;
+          case 3:
+            day = 'Wed';
+            break;
+          case 4:
+            day = 'Thu';
+            break;
+          case 5:
+            day = 'Fri';
+            break;
+          case 6:
+            day = 'Sat';
+            break;
+          case 7:
+            day = 'Mon';
+            break;
+        }
+        if (periodData[row[`period_${i}`]]) periodCode = periodData[row[`period_${i}`]].code;
+        times.push(day + periodCode);
+      }
+    }
+    row.times = times.join(' ');
+    courses[row.code] = row;
+  }
+
+  return courses;
+}
+
+courseDatabase.findCourses = (orgCode, courseCodes) => {
+  if (typeof courseCodes === 'string') {
+    courseCodes = [courseCodes];
+  }
+
+  return new Promise((resolve, reject) => {
+    courseDatabase.getPeriodData(orgCode, { returnObject: true }).then( (periodData) => {
+      courseDatabase.executeSql(`
+        SELECT * FROM courses
+        WHERE code IN ('${courseCodes.join("', '")}')
+      `).then( (r) => {
+        var courses = {};
+        if (r.results.rows.length) {
+          courses = parseCourseRows(r.results.rows, periodData);
+        }
+        resolve(courses);
+      }).catch((e) => {
+        console.error(e);
+        reject(e);
+      });
+    }).catch((e) => {
+      console.error(e);
+      reject(e);
+    });
+  });
+};
+
+courseDatabase.searchCourse = (query, courseYear = colorgyAPI.getCurrentYear(), courseTerm = colorgyAPI.getCurrentTerm()) => {
+  query = query.replace(/[ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦˊˇˋ˙]/mg, '');
+
+  return new Promise((resolve, reject) => {
+    if (query.length < 2) {
+      resolve({});
+      return;
+    }
+
+    courseDatabase.getPeriodData(orgCode, { returnObject: true }).then( (periodData) => {
+      courseDatabase.executeSql(`
+        SELECT * FROM courses
+          WHERE year = ${courseYear}
+            AND term = ${courseTerm}
+            AND search_keywords LIKE '%${query}%'
+          LIMIT 25
+      `).then( (r) => {
+        var courses = {};
+        if (r.results.rows.length) {
+          for (let i=0; i<r.results.rows.length; i++) {
+            courses = parseCourseRows(r.results.rows, periodData);
+          }
+        }
+        resolve(courses);
+      }).catch((e) => {
+        console.error(e);
+        reject(e);
+      });
+
+    }).catch((e) => {
+      console.error(e);
+      reject(e);
     });
   });
 };

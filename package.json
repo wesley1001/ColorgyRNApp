@@ -17,6 +17,7 @@
     "redux-logger": "^2.2.1",
     "redux-persist": "^1.4.10",
     "redux-persist-except-ings": "0.0.1",
-    "redux-thunk": "^1.0.2"
+    "redux-thunk": "^1.0.2",
+    "underscore": "^1.8.3"
   }
 }

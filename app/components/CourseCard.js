@@ -8,24 +8,25 @@ import React, {
 
 let CourseCard = React.createClass({
   propTypes: {
-    code: React.PropTypes.string,
-    name: React.PropTypes.string,
-    lecturer: React.PropTypes.string,
-    credits: React.PropTypes.string,
-    time: React.PropTypes.string
+    course: React.PropTypes.object
   },
 
   getDefaultProps() {
+    return {
+      course: {}
+    };
   },
 
   _handlePress() {
   },
 
   render() {
+    var course = this.props.course;
+
     return (
       <View style={styles.container}>
         <View style={styles.title}>
-          <Text style={styles.titleText}>設計史</Text>
+          <Text style={styles.titleText}>{course.name}</Text>
           <TouchableOpacity style={{ borderWidth: 1, borderColor: '#F89680', borderRadius: 2, paddingTop: 2, paddingBottom: 2, paddingLeft: 8, paddingRight: 8 }}>
             <Text style={{ textAlign:'center', color:'#F89680' }}>刪除</Text>
           </TouchableOpacity>
@@ -38,7 +39,7 @@ let CourseCard = React.createClass({
                 source={require('../assets/images/icon_lecturer_grey.png')}
               />
             </View>
-            <Text style={styles.detailsItemText}>王大明</Text>
+            <Text style={styles.detailsItemText}>{course.lecturer}</Text>
           </View>
           <View style={styles.detailsItem}>
             <View style={styles.detailsItemIcon}>
@@ -47,7 +48,7 @@ let CourseCard = React.createClass({
                 source={require('../assets/images/icon_code_grey.png')}
               />
             </View>
-            <Text style={styles.detailsItemText}>C222211111</Text>
+            <Text style={styles.detailsItemText}>{course.code}</Text>
           </View>
           <View style={styles.detailsItem}>
             <View style={styles.detailsItemIcon}>
@@ -56,7 +57,7 @@ let CourseCard = React.createClass({
                 source={require('../assets/images/icon_time_grey.png')}
               />
             </View>
-            <Text style={styles.detailsItemText}>Wed345</Text>
+            <Text style={styles.detailsItemText}>{course.times}</Text>
           </View>
         </View>
       </View>

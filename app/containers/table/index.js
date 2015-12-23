@@ -77,6 +77,7 @@ var Table = React.createClass({
 });
 
 export default connect((state) => ({
+  userId: state.colorgyAPI.me && state.colorgyAPI.me.id,
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
   courseDatabaseUpdatedTime: state.table.courseDatabaseUpdatedTime,
   courseDatabaseLoadingProgress: state.table.courseDatabaseLoadingProgress,

@@ -8,7 +8,7 @@ import React, {
 
 let TitleBarIconButton = React.createClass({
   propTypes: {
-    icon: React.PropTypes.object,
+    icon: React.PropTypes.string,
     onPress: React.PropTypes.func
   },
 

@@ -63,7 +63,7 @@ var Table = React.createClass({
         <TitleBarView
           title="Table"
           enableOffsetTop={this.props.translucentStatusBar}
-          offsetTop={35}
+          offsetTop={this.props.statusBarHeight}
           contentContainerStyle={{
             justifyContent: 'center',
             alignItems: 'center'

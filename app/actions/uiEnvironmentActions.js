@@ -1,4 +1,4 @@
-import React, { NativeModules } from 'react-native';
+import React, { NativeModules, PixelRatio } from 'react-native';
 import { createAction } from 'redux-actions';
 
 export const gotUIEnvironment = createAction('GOT_UI_ENVIRONMENT');
@@ -20,13 +20,13 @@ export const doGetUIEnvironment = () => dispatch => {
     NativeModules.SystemWindowAndroid.getStatusBarHeight((e) => {
       console.error('doGetUIEnvironment error', e);
     }, (statusBarHeight) => {
-      dispatch(gotUIEnvironment({ statusBarHeight: statusBarHeight }));
+      dispatch(gotUIEnvironment({ statusBarHeight: statusBarHeight / PixelRatio.get() + 5 }));
     });
 
     NativeModules.SystemWindowAndroid.getActionBarHeight((e) => {
       console.error('doGetUIEnvironment error', e);
     }, (actionBarHeight) => {
-      dispatch(gotUIEnvironment({ actionBarHeight: actionBarHeight }));
+      dispatch(gotUIEnvironment({ actionBarHeight: actionBarHeight / PixelRatio.get() }));
     });
   }
 };

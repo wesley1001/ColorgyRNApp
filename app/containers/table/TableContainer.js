@@ -33,7 +33,7 @@ var TableContainer = React.createClass({
         return (
           <TitleBarView
             enableOffsetTop={this.props.translucentStatusBar}
-            offsetTop={35}
+            offsetTop={this.props.statusBarHeight}
             title="Table"
             rightAction={
               <TitleBarIconButton
@@ -52,7 +52,7 @@ var TableContainer = React.createClass({
         return (
           <TitleBarView
             enableOffsetTop={this.props.translucentStatusBar}
-            offsetTop={35}
+            offsetTop={this.props.statusBarHeight}
             title="Table"
             rightAction={
               <TitleBarIconButton

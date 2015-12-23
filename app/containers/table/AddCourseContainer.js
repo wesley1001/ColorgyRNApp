@@ -54,7 +54,7 @@ var TableContainer = React.createClass({
     return (
       <TitleBarView
         enableOffsetTop={this.props.translucentStatusBar}
-        offsetTop={35}
+        offsetTop={this.props.statusBarHeight}
         title="加選課程"
         leftAction={
           <TitleBarIconButton
@@ -66,7 +66,8 @@ var TableContainer = React.createClass({
         <View style={styles.searchBar}>
           <TextInput
             placeholder="搜尋課名、老師姓名或課程代碼"
-            underlineColorAndroid="#CCCCCC"
+            underlineColorAndroid="transparent"
+            underlineColor="transparent"
             onChangeText={this._handleSearch}
             value={this.state.searchQuery}
           />

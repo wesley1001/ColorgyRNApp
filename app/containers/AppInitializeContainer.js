@@ -10,7 +10,7 @@ var AppInitializeContainer = React.createClass({
     return (
       <TitleBarView
         enableOffsetTop={this.props.translucentStatusBar}
-        offsetTop={35}
+        offsetTop={this.props.statusBarHeight}
         title=""
       >
       </TitleBarView>

@@ -40,7 +40,7 @@ var TableContainer = React.createClass({
     return (
       <TitleBarView
         enableOffsetTop={this.props.translucentStatusBar}
-        offsetTop={35}
+        offsetTop={this.props.statusBarHeight}
         title="已選課程"
         leftAction={
           <TitleBarIconButton

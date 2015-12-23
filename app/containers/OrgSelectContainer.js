@@ -161,7 +161,7 @@ var OrgSelectContainer = React.createClass({
     return (
       <TitleBarView
         enableOffsetTop={this.props.translucentStatusBar}
-        offsetTop={35}
+        offsetTop={this.props.statusBarHeight}
         title="歡迎來到 Colorgy"
       >
         <ScrollableTabView currentTab={this.state.step} activeColor="#F89680" edgeHitWidth={-1}>

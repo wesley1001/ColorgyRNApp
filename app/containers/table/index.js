@@ -69,7 +69,7 @@ var Table = React.createClass({
             alignItems: 'center'
           }}
         >
-          <Text>資料載入中⋯⋯ {this.props.courseDatabaseLoadingProgress * 100}%</Text>
+          <Text>資料準備中⋯⋯ {parseInt((this.props.courseDatabaseLoadingProgress || 0) * 100)}%</Text>
         </TitleBarView>
       );
     }

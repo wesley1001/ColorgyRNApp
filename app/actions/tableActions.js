@@ -69,9 +69,10 @@ export const loadTableCourseFailed = createAction('LOAD_TABLE_COURSES_FAILED');
 export const doLoadTableCourses = (userID, orgCode) => (dispatch) => {
   dispatch(loadTableCourse());
 
-  courseDatabase.getPeriodData(userID, orgCode).then((periodData) => {
+  courseDatabase.getPeriodData(orgCode, { returnObject: true }).then((periodData) => {
     tableDatabase.findCourses(userID, orgCode).then((courses) => {
       dispatch(tableCourseLoaded({ courses: courses, periodData: periodData }));
+      dispatch(doIndexTableCoursesTime(courses));
     }).catch((e) => {
       console.error(e);
       dispatch(loadTableCourseFailed(e));
@@ -81,6 +82,26 @@ export const doLoadTableCourses = (userID, orgCode) => (dispatch) => {
     console.error(e);
     dispatch(loadTableCourseFailed(e));
   });
+};
+
+export const tableCoursesTimeIndexed = createAction('TABLE_COURSES_TIME_INDEXED');
+
+export const doIndexTableCoursesTime = (courses = {}) => (dispatch) => {
+  var index = {};
+
+  for (let courseCode in courses) {
+    let course = courses[courseCode];
+    for (let i=1; i<=10; i++) {
+      if (course[`day_${i}`] && course[`period_${i}`]) {
+        let day = course[`day_${i}`];
+        let period = course[`period_${i}`];
+        if (!index[`${day}-${period}`]) index[`${day}-${period}`] = [];
+        index[`${day}-${period}`].push({ code: course.code, number: i });
+      }
+    }
+  }
+
+  dispatch(tableCoursesTimeIndexed({ index }));
 };
 
 export const courseAdded = createAction('COURSE_ADDED');

@@ -14,7 +14,7 @@ import {
 
 import TitleBarView from '../../components/TitleBarView';
 import TitleBarIconButton from '../../components/TitleBarIconButton';
-import CourseCard from '../../components/CourseCard';
+import CourseTable from '../../components/CourseTable';
 
 var TableContainer = React.createClass({
 
@@ -61,6 +61,11 @@ var TableContainer = React.createClass({
               />
             }
           >
+            <CourseTable
+              courses={this.props.courses}
+              coursesTimeIndex={this.props.coursesTimeIndex}
+              periodData={this.props.periodData}
+            />
 
           </TitleBarView>
         );
@@ -79,6 +84,9 @@ export default connect((state) => ({
   tableStatus: state.table.tableStatus,
   userId: state.colorgyAPI.me && state.colorgyAPI.me.id,
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
+  courses: state.table.tableCourses,
+  coursesTimeIndex: state.table.tableCoursesTimeIndex,
+  periodData: state.table.tablePeriodData,
   translucentStatusBar: state.uiEnvironment.translucentStatusBar,
   statusBarHeight: state.uiEnvironment.statusBarHeight
 }))(TableContainer);

@@ -69,6 +69,12 @@ export default handleActions({
       tableStatus: 'failed'
     };
   },
+  TABLE_COURSES_TIME_INDEXED: (state, action) => {
+    return {
+      ...state,
+      tableCoursesTimeIndex: action.payload.index
+    };
+  },
 
   COURSE_ADDED: (state, action) => {
     var tableCourses = state.tableCourses;

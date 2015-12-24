@@ -46,6 +46,7 @@ var Table = React.createClass({
           }}
           configureScene={(route) => {
             switch(route.name) {
+              case 'index':
               case 'editCourse':
               case 'addCourse':
                 return Navigator.SceneConfigs.FloatFromBottomAndroid;

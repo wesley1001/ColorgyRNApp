@@ -12,7 +12,7 @@ let TitleBarScrollView = React.createClass({
   propTypes: {
     title: React.PropTypes.string,
     color: React.PropTypes.string,
-    enableOffsetTop: React.PropTypes.boolean,
+    enableOffsetTop: React.PropTypes.bool,
     offsetTop: React.PropTypes.number,
     background: React.PropTypes.element
   },

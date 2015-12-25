@@ -11,7 +11,7 @@ let Button = React.createClass({
   propTypes: {
     color: React.PropTypes.string,
     onPress: React.PropTypes.func,
-    disabled: React.PropTypes.boolean
+    disabled: React.PropTypes.bool
   },
 
   getDefaultProps: function() {

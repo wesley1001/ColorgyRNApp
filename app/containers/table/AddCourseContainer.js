@@ -81,6 +81,7 @@ var TableContainer = React.createClass({
             var selected = selectedCourseCodes.indexOf(course.code) > 0;
             return (
               <CourseCard
+                key={course.code}
                 course={course}
                 onPress={this._handleCoursePress}
                 actionName={selected ? '刪除' : '選擇'}

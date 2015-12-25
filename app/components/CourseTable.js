@@ -93,7 +93,7 @@ let CourseTable = React.createClass({
               {periodDataOrders.map((periodDataOrder) => {
                 var period = periodData[periodDataOrder];
                 return (
-                  <View style={styles.headColumnMark}>
+                  <View key={periodDataOrder} style={styles.headColumnMark}>
                     <Text style={styles.headColumnText}>
                       {period.code}
                     </Text>
@@ -116,17 +116,17 @@ let CourseTable = React.createClass({
             >
             <View style={styles.backgroundGrid}>
               {periodDataOrders.map((periodDataOrder) => {
-                return (<View style={styles.backgroundGridRow} />);
+                return (<View key={periodDataOrder} style={styles.backgroundGridRow} />);
               })}
             </View>
 
               {[1, 2, 3, 4, 5, 6, 7].map((day) => {
 
                 return (
-                  <View style={styles.column}>
+                  <View key={day} style={styles.column}>
                     {periodDataOrders.map((period) => {
                       return (
-                        <View style={styles.cell}>
+                        <View key={period} style={styles.cell}>
                           {(() => {
                             if (coursesTimeIndex[`${day}-${period}`]) {
                               let courseCode = coursesTimeIndex[`${day}-${period}`][0].code;

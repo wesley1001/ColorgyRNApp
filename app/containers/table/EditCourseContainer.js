@@ -63,6 +63,7 @@ var TableContainer = React.createClass({
           {_.values(courses).map((course) => {
             return (
               <CourseCard
+                key={course.code}
                 course={course}
                 actionName="刪除"
                 onPress={this._handleCoursePress}

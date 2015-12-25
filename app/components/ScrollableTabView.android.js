@@ -1,29 +1,28 @@
-import React from 'react-native';
-import TabBar from './TabBar';
-
-var {
+import React, {
+  PropTypes,
   Dimensions,
   View,
   PanResponder,
   Animated,
   Text
-} = React;
+} from 'react-native';
+import TabBar from './TabBar';
 
 var deviceWidth = Dimensions.get('window').width;
 
 var ScrollableTabView = React.createClass({
   propTypes: {
-    initialTab: React.PropTypes.number,
-    currentTab: React.PropTypes.number,
-    onTabChanged: React.PropTypes.function,
-    tabBarPosition: React.PropTypes.string,
-    edgeHitWidth: React.PropTypes.number,
-    springTension: React.PropTypes.number,
-    springFriction: React.PropTypes.number,
-    color: React.PropTypes.string,
-    backgroundColor: React.PropTypes.string,
-    activeColor: React.PropTypes.string,
-    tabBar: React.PropTypes.element
+    initialTab: PropTypes.number,
+    currentTab: PropTypes.number,
+    onTabChanged: PropTypes.func,
+    tabBarPosition: PropTypes.string,
+    edgeHitWidth: PropTypes.number,
+    springTension: PropTypes.number,
+    springFriction: PropTypes.number,
+    color: PropTypes.string,
+    backgroundColor: PropTypes.string,
+    activeColor: PropTypes.string,
+    tabBar: PropTypes.any
   },
 
   getDefaultProps() {
@@ -183,8 +182,7 @@ var ScrollableTabView = React.createClass({
     };
 
     var viewStyle = [sceneContainerStyle, {
-      marginLeft: this.state.viewPosition,
-      pointerEvents: (this.state.animating ? 'box-only' : 'auto')
+      marginLeft: this.state.viewPosition
     }];
 
     if (this.state.animating) viewStyle = [sceneContainerStyle, { transform: [{ translateX }] }];
@@ -192,8 +190,11 @@ var ScrollableTabView = React.createClass({
     return (
       <View style={{ flex: 1 }}>
         {this.props.tabBarPosition === 'top' ? this.renderTabBar(tabBarProps) : null}
-        <Animated.View style={viewStyle}
-          {...this._panResponder.panHandlers}>
+        <Animated.View
+          style={viewStyle}
+          pointerEvents={(this.state.animating ? 'box-only' : 'auto')}
+          {...this._panResponder.panHandlers}
+          >
           {this.props.children}
         </Animated.View>
 

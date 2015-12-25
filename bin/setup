@@ -27,6 +27,9 @@ rm -f node_modules/reduce-reducers/.babelrc
 rm -f node_modules/redux-actions/.babelrc
 rm -f node_modules/react-redux/.babelrc
 rm -f node_modules/flux-standard-action/.babelrc
+# increase the file watcher timeout for React Native packager
+mv node_modules/react-native/packager/react-packager/src/FileWatcher/index.js node_modules/react-native/packager/react-packager/src/FileWatcher/index.js.bak
+sed "s/const MAX_WAIT_TIME = 25000;/const MAX_WAIT_TIME = 250000;/g" node_modules/react-native/packager/react-packager/src/FileWatcher/index.js.bak > node_modules/react-native/packager/react-packager/src/FileWatcher/index.js
 
 # Set up configurable variables
 # if [ ! -f config.js ]; then

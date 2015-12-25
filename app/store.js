@@ -9,17 +9,24 @@ import createLogger from 'redux-logger';
 
 import alertMiddleware from './middlewares/alertMiddleware';
 
-const loggerMiddleware = createLogger({
-  level: 'info',
-  collapsed: true,
-  predicate: (getState, action) => true
-});
-
-const createStoreWithMiddleware = applyMiddleware(
+var createStoreWithMiddleware = applyMiddleware(
   thunkMiddleware,
-  alertMiddleware,
-  loggerMiddleware
+  alertMiddleware
 )(createStore);
+
+if (__DEV__) {
+  const loggerMiddleware = createLogger({
+    level: 'info',
+    collapsed: true,
+    predicate: (getState, action) => true
+  });
+
+  createStoreWithMiddleware = applyMiddleware(
+    thunkMiddleware,
+    alertMiddleware,
+    loggerMiddleware
+  )(createStore);
+}
 
 let store = autoRehydrate()(createStoreWithMiddleware)(reducers);
 

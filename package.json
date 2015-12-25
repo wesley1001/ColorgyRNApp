@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "color": "^0.10.1",
-    "react-native": "^0.15.0",
+    "react-native": "^0.17.0",
     "react-native-android-statusbar": "^0.1.2",
     "react-native-facebook-login": "^1.0.2",
     "react-native-sqlite-storage": "^2.1.1",

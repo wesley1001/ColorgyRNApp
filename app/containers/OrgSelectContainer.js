@@ -173,7 +173,7 @@ var OrgSelectContainer = React.createClass({
               <Text style={[styles.instructionsText, { marginBottom: 14 }]}>
                 您就讀的是哪一所學校呢？
               </Text>
-              {() => {
+              {(() => {
                 if (this.state.fetchOrgFaild) {
                   return (
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -199,7 +199,7 @@ var OrgSelectContainer = React.createClass({
                     </View>
                   );
                 }
-              }()}
+              })()}
             </View>
             <View style={{ flexDirection: 'row' }}>
               <GhostButton
@@ -227,7 +227,7 @@ var OrgSelectContainer = React.createClass({
               <Text style={[styles.instructionsText, { marginBottom: 14 }]}>
                 您是哪一個系所的同學呢？
               </Text>
-              {() => {
+              {(() => {
                 if (this.state.fetchDepFaild) {
                   return (
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -253,7 +253,7 @@ var OrgSelectContainer = React.createClass({
                     </View>
                   );
                 }
-              }()}
+              })()}
             </View>
             <View style={{ flexDirection: 'row' }}>
               <GhostButton
@@ -281,7 +281,7 @@ var OrgSelectContainer = React.createClass({
               <Text style={[styles.instructionsText, { marginBottom: 14 }]}>
                 您的入學年度是？
               </Text>
-              {() => {
+              {(() => {
                 if (this.state.yearOptions) {
                   return (
                     <ListSelect
@@ -299,7 +299,7 @@ var OrgSelectContainer = React.createClass({
                     </View>
                   );
                 }
-              }()}
+              })()}
             </View>
             <View style={{ flexDirection: 'row' }}>
               <GhostButton

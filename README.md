@@ -6,7 +6,7 @@ Colorgy mobile app on Android, using [React Native](https://facebook.github.io/r
 ## Development Setup
 
 ```bash
-npm install
+./bin/setup
 ```
 
 ## Build

@@ -24,7 +24,7 @@ let TitleBarIconButton = React.createClass({
   render() {
     return (
       <View style={{ margin: -16 }}>
-        {() => {
+        {(() => {
           // TODO: Ensure this is ok
           if (parseFloat(Platform.Version) >= 21) {
             return (
@@ -55,7 +55,7 @@ let TitleBarIconButton = React.createClass({
               </TouchableHighlight>
             );
           }
-        }()}
+        })()}
       </View>
     );
   }

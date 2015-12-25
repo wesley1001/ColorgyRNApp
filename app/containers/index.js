@@ -12,7 +12,7 @@ import TableContainer from './table';
 import ScrollableTabView from '../components/ScrollableTabView';
 import AppTabBar from '../components/AppTabBar';
 
-import { doGetUIEnvironment } from '../actions/uiEnvironmentActions';
+import { doDeviceInfo } from '../actions/deviceInfoActions';
 import { selectTab } from '../actions/appTabActions';
 
 import { enterDevMode } from '../actions/devModeActions';
@@ -20,7 +20,7 @@ import { doClearAccessToken } from '../actions/colorgyAPIActions';
 
 var App = React.createClass({
   componentWillMount: function() {
-    this.props.dispatch(doGetUIEnvironment());
+    this.props.dispatch(doDeviceInfo());
   },
 
   render: function() {
@@ -65,7 +65,7 @@ export default connect((state) => ({
   stateReady: state.app.stateReady,
   isLogin: (state.colorgyAPI.hasAccessToken && state.colorgyAPI.meUpdatedAt),
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
-  uiEnvironment: state.uiEnvironment,
+  deviceInfo: state.deviceInfo,
   isDevMode: state.devMode.devMode,
   currentTab: state.appTab.currentTab
 }))(App);

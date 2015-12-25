@@ -88,6 +88,6 @@ export default connect((state) => ({
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
   courseDatabaseUpdatedTime: state.table.courseDatabaseUpdatedTime,
   courseDatabaseLoadingProgress: state.table.courseDatabaseLoadingProgress,
-  translucentStatusBar: state.uiEnvironment.translucentStatusBar,
-  statusBarHeight: state.uiEnvironment.statusBarHeight
+  translucentStatusBar: state.deviceInfo.translucentStatusBar,
+  statusBarHeight: state.deviceInfo.statusBarHeight
 }))(Table);

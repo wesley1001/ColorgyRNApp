@@ -19,6 +19,6 @@ var AppInitializeContainer = React.createClass({
 });
 
 export default connect((state) => ({
-  translucentStatusBar: state.uiEnvironment.translucentStatusBar,
-  statusBarHeight: state.uiEnvironment.statusBarHeight
+  translucentStatusBar: state.deviceInfo.translucentStatusBar,
+  statusBarHeight: state.deviceInfo.statusBarHeight
 }))(AppInitializeContainer);

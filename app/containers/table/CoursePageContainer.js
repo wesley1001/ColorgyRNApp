@@ -141,6 +141,6 @@ export default connect((state) => ({
   userId: state.colorgyAPI.me && state.colorgyAPI.me.id,
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
   courses: state.table.tableCourses,
-  translucentStatusBar: state.uiEnvironment.translucentStatusBar,
-  statusBarHeight: state.uiEnvironment.statusBarHeight
+  translucentStatusBar: state.deviceInfo.translucentStatusBar,
+  statusBarHeight: state.deviceInfo.statusBarHeight
 }))(CoursePageContainer);

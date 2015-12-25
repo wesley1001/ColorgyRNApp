@@ -1,11 +1,11 @@
 import { handleActions } from 'redux-actions';
 
 export default handleActions({
-  GOT_UI_ENVIRONMENT: (state, action) => {
-    var env = action.payload;
+  GOT_DEVICE_INFO: (state, action) => {
+    var info = action.payload;
     return {
       ...state,
-      ...env
+      ...info
     };
   }
 }, {});

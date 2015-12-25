@@ -21,7 +21,7 @@ let TitleBarView = React.createClass({
   },
 
   render() {
-    var offsetTop = this.props.enableOffsetTop ? this.props.offsetTop - 8 : 0;
+    var offsetTop = this.props.enableOffsetTop ? this.props.offsetTop : 0;
     return (
       <View style={styles.container}>
         <View

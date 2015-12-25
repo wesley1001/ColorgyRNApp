@@ -328,6 +328,6 @@ export default connect((state) => ({
   count: state.counter.count,
   colorgyAPI: state.colorgyAPI,
   updating: state.colorgyAPI.meUpdating,
-  translucentStatusBar: state.uiEnvironment.translucentStatusBar,
-  statusBarHeight: state.uiEnvironment.statusBarHeight
+  translucentStatusBar: state.deviceInfo.translucentStatusBar,
+  statusBarHeight: state.deviceInfo.statusBarHeight
 }))(OrgSelectContainer);

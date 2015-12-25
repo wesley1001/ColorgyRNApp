@@ -92,6 +92,6 @@ export default connect((state) => ({
   courses: state.table.tableCourses,
   coursesTimeIndex: state.table.tableCoursesTimeIndex,
   periodData: state.table.tablePeriodData,
-  translucentStatusBar: state.uiEnvironment.translucentStatusBar,
-  statusBarHeight: state.uiEnvironment.statusBarHeight
+  translucentStatusBar: state.deviceInfo.translucentStatusBar,
+  statusBarHeight: state.deviceInfo.statusBarHeight
 }))(TableContainer);

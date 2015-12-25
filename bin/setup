@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+
+# Set up React Native app. Run this script immediately after cloning the codebase.
+
+# Exit if any subcommand fails
+set -e
+
+# Switch to the project directory
+BASEDIR=$(dirname "$0")
+cd "$BASEDIR"
+cd ..
+
+# Detect Node.js version
+NODE_VERISON=$(node -v)
+NODE_VERISON_INT=$(node -v | awk 'match($0, /[0-9]+/) {print substr($0,RSTART,RLENGTH)}')
+if [ ! "$NODE_VERISON_INT" -ge 5 ]; then
+  echo "You're using an obsolete version of Node.js: $NODE_VERISON. The minimum requirement is v5.0.0. Please upgrade."
+  exit -1
+fi
+
+# Set up Node.js dependencies via npm
+npm install
+
+# Patch node packages
+# remove Babel 5 .babelrc files that cause error in Babel 6
+rm -f node_modules/reduce-reducers/.babelrc
+rm -f node_modules/redux-actions/.babelrc
+rm -f node_modules/react-redux/.babelrc
+rm -f node_modules/flux-standard-action/.babelrc
+# increase the file watcher timeout for React Native packager
+mv node_modules/react-native/packager/react-packager/src/FileWatcher/index.js node_modules/react-native/packager/react-packager/src/FileWatcher/index.js.bak
+sed "s/const MAX_WAIT_TIME = 25000;/const MAX_WAIT_TIME = 250000;/g" node_modules/react-native/packager/react-packager/src/FileWatcher/index.js.bak > node_modules/react-native/packager/react-packager/src/FileWatcher/index.js
+
+# Set up configurable variables
+# if [ ! -f config.js ]; then
+#   cp sample.config.js config.js
+# fi
+
+# Only if this isn't CI
+# if [ -z "$CI" ]; then
+# fi

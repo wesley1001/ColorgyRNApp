@@ -127,7 +127,7 @@ let CourseTable = React.createClass({
                     {periodDataOrders.map((period) => {
                       return (
                         <View style={styles.cell}>
-                          {() => {
+                          {(() => {
                             if (coursesTimeIndex[`${day}-${period}`]) {
                               let courseCode = coursesTimeIndex[`${day}-${period}`][0].code;
                               let courseNumber = coursesTimeIndex[`${day}-${period}`][0].number;
@@ -141,20 +141,20 @@ let CourseTable = React.createClass({
                                   <Text style={styles.courseText}>
                                     {course.name}
                                   </Text>
-                                  {() => {
+                                  {(() => {
                                     if (course[`location_${courseNumber}`]) return (
                                       <Text style={styles.courseText}>
                                         {course[`location_${courseNumber}`]}
                                       </Text>
                                     );
-                                  }()}
+                                  })()}
                                   <Text style={styles.courseText}>
                                     {course.lecturer}
                                   </Text>
                                 </TouchableOpacity>
                               );
                             }
-                          }()}
+                          })()}
                         </View>
                       );
                     })}

@@ -4,6 +4,8 @@ import React, {
   TouchableHighlight
 } from 'react-native';
 
+import theme from '../constants/theme';
+
 let GhostButton = React.createClass({
   propTypes: {
     color: React.PropTypes.string,
@@ -12,7 +14,7 @@ let GhostButton = React.createClass({
 
   getDefaultProps: function() {
     return {
-      color: '#F89680'
+      color: theme.color
     };
   },
 

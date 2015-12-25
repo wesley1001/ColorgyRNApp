@@ -11,6 +11,8 @@ var {
   Image
 } = React;
 
+import theme from '../constants/theme';
+
 var deviceWidth = Dimensions.get('window').width;
 
 var styles = StyleSheet.create({
@@ -48,7 +50,7 @@ var AppTabBar = React.createClass({
     return {
       color: 'black',
       backgroundColor: 'white',
-      activeColor: '#F89680'
+      activeColor: theme.color
     };
   },
 
@@ -58,7 +60,7 @@ var AppTabBar = React.createClass({
     var textStyle = {
       fontSize: 12,
       marginTop: 2,
-      color: isTabActive ? '#F89680' : '#898989',
+      color: isTabActive ? theme.color : '#898989',
       opacity: isTabActive ? 0.87 : 0.54,
     };
 

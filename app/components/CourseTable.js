@@ -135,7 +135,7 @@ let CourseTable = React.createClass({
 
                               return (
                                 <TouchableOpacity
-                                  style={styles.course}
+                                  style={[styles.course, { backgroundColor: course.color }]}
                                   onPress={() => this._handleCoursePress({ courseCode: course.code })}
                                 >
                                   <Text style={styles.courseText}>
@@ -231,7 +231,6 @@ let styles = StyleSheet.create({
   },
   course: {
     flex: 1,
-    backgroundColor: 'red',
     borderRadius: 3,
     paddingLeft: 5,
     paddingRight: 5,

@@ -6,6 +6,7 @@ import React, {
   TouchableWithoutFeedback
 } from 'react-native';
 import Color from 'color';
+import theme from '../constants/theme';
 
 let Button = React.createClass({
   propTypes: {
@@ -16,7 +17,7 @@ let Button = React.createClass({
 
   getDefaultProps: function() {
     return {
-      color: '#F89680'
+      color: theme.color
     };
   },
 

@@ -6,6 +6,8 @@ import React, {
   Image
 } from 'react-native';
 
+import theme from '../constants/theme';
+
 let CourseCard = React.createClass({
   propTypes: {
     course: React.PropTypes.object,
@@ -28,10 +30,10 @@ let CourseCard = React.createClass({
     if (this.props.actionName && this.props.onActionPress) {
       action = (
         <TouchableOpacity
-          style={{ borderWidth: 1, borderColor: '#F89680', borderRadius: 2, paddingTop: 2, paddingBottom: 2, paddingLeft: 8, paddingRight: 8 }}
+          style={{ borderWidth: 1, borderColor: theme.color, borderRadius: 2, paddingTop: 2, paddingBottom: 2, paddingLeft: 8, paddingRight: 8 }}
           onPress={this.props.onActionPress}
         >
-          <Text style={{ textAlign:'center', color:'#F89680' }}>
+          <Text style={{ textAlign:'center', color: theme.color }}>
             {this.props.actionName}
           </Text>
         </TouchableOpacity>
@@ -42,7 +44,7 @@ let CourseCard = React.createClass({
     if (this.props.onPress) Container = TouchableOpacity;
 
     return (
-      <Container style={styles.container} onPress={() => { this.props.onPress({ course: this.props.course, courseCode: this.props.course.code }) }}>
+      <Container style={[styles.container, { borderLeftColor: course.color }]} onPress={() => { this.props.onPress({ course: this.props.course, courseCode: this.props.course.code }) }}>
         <View style={styles.title}>
           <Text style={styles.titleText}>{course.name}</Text>
           {action}
@@ -92,8 +94,7 @@ let styles = StyleSheet.create({
     paddingBottom: 15,
     paddingLeft: 15,
     paddingRight: 15,
-    borderLeftWidth: 2,
-    borderLeftColor: '#50E3C2'
+    borderLeftWidth: 2
   },
   title: {
     paddingTop: 15,

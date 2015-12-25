@@ -1,6 +1,8 @@
 import WebSQL from '../utils/WebSQL';
 import SQLite from 'react-native-sqlite-storage';
+import stringHash from 'string-hash';
 import colorgyAPI from '../utils/colorgyAPI';
+import theme from '../constants/theme';
 
 var migartions = {
   '1.0': 'CREATE TABLE info(ID INTEGER PRIMARY KEY, key TEXT, value TEXT);',
@@ -358,6 +360,12 @@ function parseCourseRows (rows, periodData) {
         return time;
       }
     });
+
+    let colorCount = theme.colorPalette.length;
+    let colorIndex = parseInt((stringHash(row.code) % colorCount));
+
+    row.color = theme.colorPalette[colorIndex];
+
     courses[row.code] = row;
   }
 

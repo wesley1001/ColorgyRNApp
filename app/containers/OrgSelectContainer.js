@@ -164,7 +164,7 @@ var OrgSelectContainer = React.createClass({
         offsetTop={this.props.statusBarHeight}
         title="歡迎來到 Colorgy"
       >
-        <ScrollableTabView currentTab={this.state.step} activeColor="#F89680" edgeHitWidth={-1}>
+        <ScrollableTabView currentTab={this.state.step} edgeHitWidth={-1}>
           <View tabLabel="選擇學校" style={styles.container}>
             <Text style={styles.instructionsText}>
               在開始之前，我們需要知道一些關於您的資訊，來為您準備最適切的服務與功能。

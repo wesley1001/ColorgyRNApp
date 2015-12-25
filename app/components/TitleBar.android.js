@@ -6,7 +6,8 @@ import React, {
 
 let TitleBarView = React.createClass({
   propTypes: {
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    elevation: React.PropTypes.number
   },
 
   getDefaultProps: function() {
@@ -16,7 +17,7 @@ let TitleBarView = React.createClass({
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={styles.container} elevation={this.props.elevation}>
         <View style={styles.actions}>
           {this.props.leftAction}
         </View>

@@ -115,7 +115,7 @@ var AppTabBar = React.createClass({
     var backgroundColor = this.props.backgroundColor;
 
     return (
-      <View style={[styles.tabs, { backgroundColor }]}>
+      <View elevation={7} style={[styles.tabs, { backgroundColor }]}>
         {this.props.tabs.map((tab, i) => this.renderTabOption(tab, i))}
       </View>
     );

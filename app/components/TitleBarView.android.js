@@ -25,6 +25,7 @@ let TitleBarView = React.createClass({
     return (
       <View style={styles.container}>
         <View
+          elevation={4}
           style={[styles.head, {
             backgroundColor: this.props.color,
             paddingTop: offsetTop

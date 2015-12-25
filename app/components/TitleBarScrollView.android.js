@@ -58,6 +58,7 @@ let TitleBarScrollView = React.createClass({
           }]}
         >
           <Animated.View
+            elevation={4}
             style={{
               position: 'absolute',
               flex: 1,
@@ -74,6 +75,7 @@ let TitleBarScrollView = React.createClass({
             }}
           />
           <TitleBar
+            elevation={5}
             title={this.props.title}
             leftAction={this.props.leftAction}
             rightAction={this.props.rightAction}

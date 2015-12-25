@@ -46,6 +46,10 @@ var TableContainer = React.createClass({
     });
   },
 
+  _handleCoursePress(payload) {
+    this.props.navigator.push({ name: 'course', code: payload.courseCode });
+  },
+
   render() {
     var { courses } = this.state;
     var { selectedCourses } = this.props;
@@ -78,6 +82,7 @@ var TableContainer = React.createClass({
             return (
               <CourseCard
                 course={course}
+                onPress={this._handleCoursePress}
                 actionName={selected ? '刪除' : '選擇'}
                 onActionPress={() => {
                   if (selected) {

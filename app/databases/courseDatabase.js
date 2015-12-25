@@ -351,6 +351,13 @@ function parseCourseRows (rows, periodData) {
       }
     }
     row.times = times.join(' ');
+    row.timeLocations = times.map((time, i) => {
+      if (row[`location_${i}`]) {
+        return `${time} (${row[`location_${i}`]})`;
+      } else {
+        return time;
+      }
+    });
     courses[row.code] = row;
   }
 

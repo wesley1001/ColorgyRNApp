@@ -8,6 +8,7 @@ import { connect } from 'react-redux/native';
 import { doLoadCourseDatabase } from '../../actions/tableActions';
 
 import TableContainer from './TableContainer';
+import CoursePageContainer from './CoursePageContainer';
 import EditCourseContainer from './EditCourseContainer';
 import AddCourseContainer from './AddCourseContainer';
 
@@ -30,6 +31,11 @@ var Table = React.createClass({
               case 'index':
                 return (
                   <TableContainer navigator={navigator} />
+                );
+                break;
+              case 'course':
+                return (
+                  <CoursePageContainer courseCode={route.code} navigator={navigator} />
                 );
                 break;
               case 'editCourse':

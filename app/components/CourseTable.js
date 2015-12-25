@@ -20,7 +20,10 @@ let rowHeight = rowMinHeight;
 
 let CourseTable = React.createClass({
   propTypes: {
-    courses: React.PropTypes.object
+    courses: React.PropTypes.object,
+    coursesTimeIndex: React.PropTypes.object,
+    periodData: React.PropTypes.object,
+    onCoursePress: React.PropTypes.func
   },
 
   getDefaultProps() {
@@ -35,6 +38,12 @@ let CourseTable = React.createClass({
     return {
       scrollX: (new Animated.Value(0))
     };
+  },
+
+  _handleCoursePress(payload) {
+    if (this.props.onCoursePress) {
+      this.props.onCoursePress(payload);
+    }
   },
 
   render() {
@@ -125,7 +134,10 @@ let CourseTable = React.createClass({
                               let course = courses[courseCode];
 
                               return (
-                                <View style={styles.course}>
+                                <TouchableOpacity
+                                  style={styles.course}
+                                  onPress={() => this._handleCoursePress({ courseCode: course.code })}
+                                >
                                   <Text style={styles.courseText}>
                                     {course.name}
                                   </Text>
@@ -139,7 +151,7 @@ let CourseTable = React.createClass({
                                   <Text style={styles.courseText}>
                                     {course.lecturer}
                                   </Text>
-                                </View>
+                                </TouchableOpacity>
                               );
                             }
                           }()}

@@ -34,6 +34,10 @@ var TableContainer = React.createClass({
     this.props.navigator.push({ name: 'addCourse' });
   },
 
+  _handleCoursePress(payload) {
+    this.props.navigator.push({ name: 'course', code: payload.courseCode });
+  },
+
   render() {
     var courses = this.props.courses;
 
@@ -61,6 +65,7 @@ var TableContainer = React.createClass({
               <CourseCard
                 course={course}
                 actionName="刪除"
+                onPress={this._handleCoursePress}
                 onActionPress={() => {
                   this.props.dispatch(
                     doRemoveCourse(

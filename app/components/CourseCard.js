@@ -20,9 +20,6 @@ let CourseCard = React.createClass({
     };
   },
 
-  _handlePress() {
-  },
-
   render() {
     var course = this.props.course;
 
@@ -41,8 +38,11 @@ let CourseCard = React.createClass({
       );
     }
 
+    var Container = View;
+    if (this.props.onPress) Container = TouchableOpacity;
+
     return (
-      <View style={styles.container}>
+      <Container style={styles.container} onPress={() => { this.props.onPress({ course: this.props.course, courseCode: this.props.course.code }) }}>
         <View style={styles.title}>
           <Text style={styles.titleText}>{course.name}</Text>
           {action}
@@ -76,7 +76,7 @@ let CourseCard = React.createClass({
             <Text style={styles.detailsItemText}>{course.times}</Text>
           </View>
         </View>
-      </View>
+      </Container>
     );
   }
 });

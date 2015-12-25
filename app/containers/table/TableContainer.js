@@ -27,6 +27,10 @@ var TableContainer = React.createClass({
     this.props.navigator.push({ name: 'editCourse' });
   },
 
+  _handleCoursePress(payload) {
+    this.props.navigator.push({ name: 'course', code: payload.courseCode });
+  },
+
   render() {
     switch (this.props.tableStatus) {
       case 'new':
@@ -65,6 +69,7 @@ var TableContainer = React.createClass({
               courses={this.props.courses}
               coursesTimeIndex={this.props.coursesTimeIndex}
               periodData={this.props.periodData}
+              onCoursePress={this._handleCoursePress}
             />
 
           </TitleBarView>

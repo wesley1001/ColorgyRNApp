@@ -11,6 +11,7 @@ import TableContainer from './TableContainer';
 import CoursePageContainer from './CoursePageContainer';
 import EditCourseContainer from './EditCourseContainer';
 import AddCourseContainer from './AddCourseContainer';
+import UserPageContainer from '../UserPageContainer';
 
 import TitleBarView from '../../components/TitleBarView';
 
@@ -46,6 +47,11 @@ var Table = React.createClass({
               case 'addCourse':
                 return (
                   <AddCourseContainer navigator={navigator} />
+                );
+                break;
+              case 'user':
+                return (
+                  <UserPageContainer userId={route.id} navigator={navigator} />
                 );
                 break;
             }

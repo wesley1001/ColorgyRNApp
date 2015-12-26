@@ -12,6 +12,7 @@ let TitleBarScrollView = React.createClass({
   propTypes: {
     title: React.PropTypes.string,
     color: React.PropTypes.string,
+    headerHeight: React.PropTypes.number,
     enableOffsetTop: React.PropTypes.bool,
     offsetTop: React.PropTypes.number,
     background: React.PropTypes.element
@@ -20,6 +21,7 @@ let TitleBarScrollView = React.createClass({
   getDefaultProps: function() {
     return {
       color: '#F89680',
+      headerHeight: 300,
       offsetTop: 0
     };
   },
@@ -32,6 +34,8 @@ let TitleBarScrollView = React.createClass({
 
   render() {
     var offsetTop = this.props.enableOffsetTop ? this.props.offsetTop : 0;
+    var { headerHeight } = this.props;
+
     return (
       <View style={styles.container}>
         <Animated.View
@@ -39,8 +43,8 @@ let TitleBarScrollView = React.createClass({
             position: 'absolute',
             left: 0,
             right: 0,
-            top: 0,
-            bottom: 0,
+            top: -10,
+            height: headerHeight + 20,
             alignSelf: 'stretch',
             transform: [{
               translateY: this.state.scroll.interpolate({

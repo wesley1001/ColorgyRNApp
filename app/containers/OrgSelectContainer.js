@@ -1,6 +1,5 @@
 import React, {
   StyleSheet,
-  Text,
   View,
   ScrollView,
   TouchableOpacity,
@@ -9,6 +8,8 @@ import React, {
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
 import { FBLoginManager } from 'NativeModules';
+
+import Text from '../components/Text';
 
 import organizationDatabase, { sqlValue } from '../databases/organizationDatabase';
 import colorgyAPI from '../utils/colorgyAPI';

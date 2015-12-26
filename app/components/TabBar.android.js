@@ -3,12 +3,13 @@ import React from 'react-native';
 var {
   Dimensions,
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
   PanResponder,
   Animated,
 } = React;
+
+import Text from './Text';
 
 var deviceWidth = Dimensions.get('window').width;
 

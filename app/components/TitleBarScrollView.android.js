@@ -37,7 +37,7 @@ let TitleBarScrollView = React.createClass({
     var { headerHeight } = this.props;
 
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, this.props.style]}>
         <Animated.View
           style={{
             position: 'absolute',
@@ -62,7 +62,6 @@ let TitleBarScrollView = React.createClass({
           }]}
         >
           <Animated.View
-            elevation={4}
             style={{
               position: 'absolute',
               flex: 1,
@@ -72,6 +71,7 @@ let TitleBarScrollView = React.createClass({
               bottom: 0,
               alignSelf: 'stretch',
               backgroundColor: this.props.color,
+              elevation: 4,
               opacity: this.state.scroll.interpolate({
                 inputRange: [0, 30, 120],
                 outputRange: [0, 0, 1]
@@ -79,10 +79,10 @@ let TitleBarScrollView = React.createClass({
             }}
           />
           <TitleBar
-            elevation={5}
             title={this.props.title}
             leftAction={this.props.leftAction}
             rightAction={this.props.rightAction}
+            style={{ elevation: 5 }}
           >
           </TitleBar>
         </View>

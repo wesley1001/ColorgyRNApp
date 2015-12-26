@@ -1,11 +1,11 @@
 import React, {
   Navigator,
-  Text,
   ProgressBarAndroid
 } from 'react-native';
 import { connect } from 'react-redux/native';
 
-import { doLoadCourseDatabase } from '../../actions/tableActions';
+import Text from '../../components/Text';
+import TitleBarView from '../../components/TitleBarView';
 
 import TableContainer from './TableContainer';
 import CoursePageContainer from './CoursePageContainer';
@@ -13,12 +13,16 @@ import EditCourseContainer from './EditCourseContainer';
 import AddCourseContainer from './AddCourseContainer';
 import UserPageContainer from '../UserPageContainer';
 
-import TitleBarView from '../../components/TitleBarView';
+import { doLoadCourseDatabase, doSyncUserCourses } from '../../actions/tableActions';
 
 var Table = React.createClass({
 
   componentWillMount() {
     this.props.dispatch(doLoadCourseDatabase(this.props.organizationCode));
+
+    if (this.props.networkConnectivity) {
+      this.props.dispatch(doSyncUserCourses(this.props.userId, this.props.organizationCode));
+    }
   },
 
   render() {
@@ -61,10 +65,10 @@ var Table = React.createClass({
               case 'index':
               case 'editCourse':
               case 'addCourse':
-                return Navigator.SceneConfigs.FloatFromBottomAndroid;
+                return Navigator.SceneConfigs.FloatFromBottom;
                 break;
               default:
-                return Navigator.SceneConfigs.HorizontalSwipeJump;
+                return Navigator.SceneConfigs.FloatFromRight;
                 break;
             }
           }}
@@ -79,10 +83,16 @@ var Table = React.createClass({
           offsetTop={this.props.statusBarHeight}
           contentContainerStyle={{
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'stretch',
+            padding: 64
           }}
         >
-          <Text>資料準備中⋯⋯ {parseInt((this.props.courseDatabaseLoadingProgress || 0) * 100)}%</Text>
+          <ProgressBarAndroid
+            styleAttr="Horizontal"
+            indeterminate={!this.props.courseDatabaseLoadingProgress}
+            progress={this.props.courseDatabaseLoadingProgress}
+          />
+          <Text style={{ textAlign: 'center' }}>正在為您下載課程資料，請稍候⋯⋯</Text>
         </TitleBarView>
       );
     }
@@ -94,6 +104,7 @@ export default connect((state) => ({
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
   courseDatabaseUpdatedTime: state.table.courseDatabaseUpdatedTime,
   courseDatabaseLoadingProgress: state.table.courseDatabaseLoadingProgress,
+  networkConnectivity: state.deviceInfo.networkConnectivity,
   translucentStatusBar: state.deviceInfo.translucentStatusBar,
   statusBarHeight: state.deviceInfo.statusBarHeight
 }))(Table);

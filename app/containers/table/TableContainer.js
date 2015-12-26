@@ -1,26 +1,31 @@
 import React, {
   StyleSheet,
   View,
-  Text,
   Image,
   TouchableNativeFeedback
 } from 'react-native';
 import { connect } from 'react-redux/native';
+
+import THEME from '../../constants/THEME';
+
+import Text from '../../components/Text';
+import TitleBarView from '../../components/TitleBarView';
+import TitleBarActionIcon from '../../components/TitleBarActionIcon';
+import CourseTable from '../../components/CourseTable';
 
 import {
   doSyncUserCourses,
   doLoadTableCourses
 } from '../../actions/tableActions';
 
-import TitleBarView from '../../components/TitleBarView';
-import TitleBarIconButton from '../../components/TitleBarIconButton';
-import CourseTable from '../../components/CourseTable';
-
 var TableContainer = React.createClass({
 
   componentWillMount() {
-    this.props.dispatch(doSyncUserCourses(this.props.userId, this.props.organizationCode));
     this.props.dispatch(doLoadTableCourses(this.props.userId, this.props.organizationCode));
+
+    if (this.props.networkConnectivity) {
+      this.props.dispatch(doSyncUserCourses(this.props.userId, this.props.organizationCode));
+    }
   },
 
   _handleEdit() {
@@ -40,7 +45,7 @@ var TableContainer = React.createClass({
             offsetTop={this.props.statusBarHeight}
             title="Table"
             rightAction={
-              <TitleBarIconButton
+              <TitleBarActionIcon
                 onPress={this._handleEdit}
                 icon={require('../../assets/images/icon_mode_edit_white.png')}
               />
@@ -53,21 +58,28 @@ var TableContainer = React.createClass({
         break;
 
       default:
+        var courseTableWidth = this.props.windowWidth;
+        var courseTableHeight = this.props.windowHeight - THEME.ANDROID_TITLE_BAR_HEIGHT - THEME.ANDROID_APP_TAB_BAR_HEIGHT;
+
+        if (this.props.translucentStatusBar) courseTableHeight -= this.props.statusBarHeight;
+
         return (
           <TitleBarView
             enableOffsetTop={this.props.translucentStatusBar}
             offsetTop={this.props.statusBarHeight}
+            style={this.props.style}
             title="Table"
             rightAction={
-              <TitleBarIconButton
+              <TitleBarActionIcon
                 onPress={this._handleEdit}
                 icon={require('../../assets/images/icon_mode_edit_white.png')}
               />
             }
           >
             <CourseTable
+              width={courseTableWidth}
+              height={courseTableHeight}
               courses={this.props.courses}
-              coursesTimeIndex={this.props.coursesTimeIndex}
               periodData={this.props.periodData}
               onCoursePress={this._handleCoursePress}
             />
@@ -86,12 +98,14 @@ var styles = StyleSheet.create({
 });
 
 export default connect((state) => ({
-  tableStatus: state.table.tableStatus,
+  tableLoading: state.table.tableLoading,
   userId: state.colorgyAPI.me && state.colorgyAPI.me.id,
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
   courses: state.table.tableCourses,
-  coursesTimeIndex: state.table.tableCoursesTimeIndex,
   periodData: state.table.tablePeriodData,
+  windowWidth: state.deviceInfo.windowWidth,
+  windowHeight: state.deviceInfo.windowHeight,
+  networkConnectivity: state.deviceInfo.networkConnectivity,
   translucentStatusBar: state.deviceInfo.translucentStatusBar,
   statusBarHeight: state.deviceInfo.statusBarHeight
 }))(TableContainer);

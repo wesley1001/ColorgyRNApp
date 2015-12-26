@@ -32,7 +32,7 @@ let store = autoRehydrate()(createStoreWithMiddleware)(reducers);
 
 persistStore(store, {
   storage: AsyncStorage,
-  whitelist: ['deviceInfo', 'colorgyAPI', 'counter'],
+  whitelist: ['deviceInfo', 'colorgyAPI', 'table', 'counter'],
   transforms: [reduxPersistExpectIngs]
 });
 

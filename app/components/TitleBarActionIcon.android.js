@@ -6,7 +6,7 @@ import React, {
   Platform
 } from 'react-native';
 
-let TitleBarIconButton = React.createClass({
+let TitleBarActionIcon = React.createClass({
   propTypes: {
     icon: React.PropTypes.any.isRequired,
     onPress: React.PropTypes.func
@@ -25,7 +25,6 @@ let TitleBarIconButton = React.createClass({
     return (
       <View style={{ margin: -16 }}>
         {(() => {
-          // TODO: Ensure this is ok
           if (parseFloat(Platform.Version) >= 21) {
             return (
               <TouchableNativeFeedback
@@ -41,10 +40,10 @@ let TitleBarIconButton = React.createClass({
               </TouchableNativeFeedback>
             );
           } else {
-            // TODO: Modify this
             return (
               <TouchableHighlight
                 onPress={this._handlePress}
+                underlayColor="#33333344"
               >
                 <View style={{ padding: 16 }}>
                   <Image
@@ -61,4 +60,4 @@ let TitleBarIconButton = React.createClass({
   }
 });
 
-export default TitleBarIconButton;
+export default TitleBarActionIcon;

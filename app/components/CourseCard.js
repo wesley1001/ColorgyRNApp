@@ -1,12 +1,14 @@
 import React, {
   StyleSheet,
   View,
-  Text,
   TouchableOpacity,
   Image
 } from 'react-native';
 
 import THEME from '../constants/THEME';
+
+import Text from './Text';
+import TouchableNativeFeedback from './TouchableNativeFeedback';
 
 let CourseCard = React.createClass({
   propTypes: {
@@ -41,41 +43,45 @@ let CourseCard = React.createClass({
     }
 
     var Container = View;
-    if (this.props.onPress) Container = TouchableOpacity;
+    if (this.props.onPress) Container = TouchableNativeFeedback;
 
     return (
-      <Container style={[styles.container, { borderLeftColor: course.color }]} onPress={() => { this.props.onPress({ course: this.props.course, courseCode: this.props.course.code }) }}>
-        <View style={styles.title}>
-          <Text style={styles.titleText}>{course.name}</Text>
-          {action}
-        </View>
-        <View style={styles.detailsRow}>
-          <View style={styles.detailsItem}>
-            <View style={styles.detailsItemIcon}>
-              <Image
-                style={{ width: 18, height: 18 }}
-                source={require('../assets/images/icon_lecturer_grey.png')}
-              />
-            </View>
-            <Text style={styles.detailsItemText}>{course.lecturer}</Text>
+      <Container
+        onPress={() => { this.props.onPress({ course: this.props.course, courseCode: this.props.course.code }) }}
+      >
+        <View style={[styles.container, { borderLeftColor: course.color }]}>
+          <View style={styles.title}>
+            <Text style={styles.titleText}>{course.name}</Text>
+            {action}
           </View>
-          <View style={styles.detailsItem}>
-            <View style={styles.detailsItemIcon}>
-              <Image
-                style={{ width: 18, height: 18 }}
-                source={require('../assets/images/icon_code_grey.png')}
-              />
+          <View style={styles.detailsRow}>
+            <View style={styles.detailsItem}>
+              <View style={styles.detailsItemIcon}>
+                <Image
+                  style={{ width: 18, height: 18 }}
+                  source={require('../assets/images/icon_lecturer_grey.png')}
+                />
+              </View>
+              <Text style={styles.detailsItemText}>{course.lecturer}</Text>
             </View>
-            <Text style={styles.detailsItemText}>{course.code}</Text>
-          </View>
-          <View style={styles.detailsItem}>
-            <View style={styles.detailsItemIcon}>
-              <Image
-                style={{ width: 18, height: 18 }}
-                source={require('../assets/images/icon_time_grey.png')}
-              />
+            <View style={styles.detailsItem}>
+              <View style={styles.detailsItemIcon}>
+                <Image
+                  style={{ width: 18, height: 18 }}
+                  source={require('../assets/images/icon_code_grey.png')}
+                />
+              </View>
+              <Text style={styles.detailsItemText}>{course.code}</Text>
             </View>
-            <Text style={styles.detailsItemText}>{course.times}</Text>
+            <View style={styles.detailsItem}>
+              <View style={styles.detailsItemIcon}>
+                <Image
+                  style={{ width: 18, height: 18 }}
+                  source={require('../assets/images/icon_time_grey.png')}
+                />
+              </View>
+              <Text style={styles.detailsItemText}>{course.times}</Text>
+            </View>
           </View>
         </View>
       </Container>
@@ -86,15 +92,13 @@ let CourseCard = React.createClass({
 let styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    marginTop: 15,
-    marginBottom: 15,
-    marginLeft: 15,
-    marginRight: 15,
+    margin: 5,
     paddingTop: 4,
     paddingBottom: 15,
     paddingLeft: 15,
     paddingRight: 15,
-    borderLeftWidth: 2
+    borderLeftWidth: 2,
+    elevation: 2
   },
   title: {
     paddingTop: 15,

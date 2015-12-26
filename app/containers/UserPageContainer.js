@@ -1,7 +1,6 @@
 import React, {
   StyleSheet,
   View,
-  Text,
   Image,
   ScrollView,
   TouchableNativeFeedback
@@ -9,8 +8,9 @@ import React, {
 import { connect } from 'react-redux/native';
 import _ from 'underscore';
 
+import Text from '../components/Text';
 import TitleBarScrollView from '../components/TitleBarScrollView';
-import TitleBarIconButton from '../components/TitleBarIconButton';
+import TitleBarActionIcon from '../components/TitleBarActionIcon';
 
 var UserPageContainer = React.createClass({
 
@@ -60,9 +60,10 @@ var UserPageContainer = React.createClass({
         <TitleBarScrollView
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
+          style={this.props.style}
           title={user.name}
           leftAction={
-            <TitleBarIconButton
+            <TitleBarActionIcon
               onPress={this._handleBack}
               icon={require('../assets/images/icon_arrow_back_white.png')}
             />

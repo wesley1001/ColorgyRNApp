@@ -1,8 +1,7 @@
 import React, {
+  InteractionManager,
   StyleSheet,
   View,
-  Text,
-  TextInput,
   Image,
   ScrollView,
   TouchableNativeFeedback
@@ -10,22 +9,39 @@ import React, {
 import { connect } from 'react-redux/native';
 import _ from 'underscore';
 
+import courseDatabase from '../../databases/courseDatabase';
+
+import Text from '../../components/Text';
+import TextInput from '../../components/TextInput';
+import TitleBarView from '../../components/TitleBarView';
+import TitleBarActionIcon from '../../components/TitleBarActionIcon';
+import CourseCard from '../../components/CourseCard';
+
 import {
   doLoadTableCourses,
   doAddCourse,
-  doRemoveCourse
+  doRemoveCourse,
+  doSyncUserCourses
 } from '../../actions/tableActions';
-
-import courseDatabase from '../../databases/courseDatabase';
-
-import TitleBarView from '../../components/TitleBarView';
-import TitleBarIconButton from '../../components/TitleBarIconButton';
-import CourseCard from '../../components/CourseCard';
 
 var TableContainer = React.createClass({
 
   componentWillMount() {
     this.props.dispatch(doLoadTableCourses(this.props.userId, this.props.organizationCode));
+  },
+
+  componentWillUnmount() {
+    InteractionManager.runAfterInteractions(() => {
+      this.props.dispatch(doSyncUserCourses(this.props.userId, this.props.organizationCode));
+    });
+  },
+
+  componentWillUnmount() {
+    InteractionManager.runAfterInteractions(() => {
+      if (this.props.networkConnectivity) {
+        this.props.dispatch(doSyncUserCourses(this.props.userId, this.props.organizationCode));
+      }
+    });
   },
 
   getInitialState() {
@@ -59,9 +75,10 @@ var TableContainer = React.createClass({
       <TitleBarView
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={this.props.statusBarHeight}
+        style={this.props.style}
         title="加選課程"
         leftAction={
-          <TitleBarIconButton
+          <TitleBarActionIcon
             onPress={this._handleBack}
             icon={require('../../assets/images/icon_arrow_back_white.png')}
           />
@@ -130,6 +147,7 @@ export default connect((state) => ({
   userId: state.colorgyAPI.me && state.colorgyAPI.me.id,
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
   selectedCourses: state.table.tableCourses,
+  networkConnectivity: state.deviceInfo.networkConnectivity,
   translucentStatusBar: state.deviceInfo.translucentStatusBar,
   statusBarHeight: state.deviceInfo.statusBarHeight
 }))(TableContainer);

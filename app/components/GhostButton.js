@@ -1,10 +1,11 @@
 import React, {
   StyleSheet,
-  Text,
   TouchableHighlight
 } from 'react-native';
 
 import THEME from '../constants/THEME';
+
+import Text from './Text';
 
 let GhostButton = React.createClass({
   propTypes: {

@@ -1,13 +1,16 @@
 import React, {
+  InteractionManager,
   StyleSheet,
   View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableNativeFeedback
+  ScrollView
 } from 'react-native';
 import { connect } from 'react-redux/native';
 import _ from 'underscore';
+
+import Text from '../../components/Text';
+import TitleBarView from '../../components/TitleBarView';
+import TitleBarActionIcon from '../../components/TitleBarActionIcon';
+import CourseCard from '../../components/CourseCard';
 
 import {
   doSyncUserCourses,
@@ -15,15 +18,30 @@ import {
   doRemoveCourse
 } from '../../actions/tableActions';
 
-import TitleBarView from '../../components/TitleBarView';
-import TitleBarIconButton from '../../components/TitleBarIconButton';
-import CourseCard from '../../components/CourseCard';
-
 var TableContainer = React.createClass({
 
+  getInitialState() {
+    return {
+      renderPlaceholderOnly: true
+    };
+  },
+
   componentWillMount() {
-    this.props.dispatch(doSyncUserCourses(this.props.userId, this.props.organizationCode));
-    this.props.dispatch(doLoadTableCourses(this.props.userId, this.props.organizationCode));
+  },
+
+  componentDidMount() {
+    InteractionManager.runAfterInteractions(() => {
+      this.setState({ renderPlaceholderOnly: false });
+      this.props.dispatch(doLoadTableCourses(this.props.userId, this.props.organizationCode));
+    });
+  },
+
+  componentWillUnmount() {
+    InteractionManager.runAfterInteractions(() => {
+      if (this.props.networkConnectivity) {
+        this.props.dispatch(doSyncUserCourses(this.props.userId, this.props.organizationCode));
+      }
+    });
   },
 
   _handleBack() {
@@ -40,27 +58,36 @@ var TableContainer = React.createClass({
 
   render() {
     var courses = this.props.courses;
+    var coursesArray = _.values(courses);
+
+    if (this.state.renderPlaceholderOnly) {
+      var renderCount = parseInt(this.props.windowHeight / 100);
+      var coursesArray = _.first(coursesArray, renderCount);
+    }
 
     return (
       <TitleBarView
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={this.props.statusBarHeight}
+        style={this.props.style}
         title="已選課程"
         leftAction={
-          <TitleBarIconButton
+          <TitleBarActionIcon
             onPress={this._handleBack}
             icon={require('../../assets/images/icon_arrow_back_white.png')}
           />
         }
         rightAction={
-          <TitleBarIconButton
+          <TitleBarActionIcon
             onPress={this._handleAdd}
             icon={require('../../assets/images/icon_add_white.png')}
           />
         }
       >
-        <ScrollView>
-          {_.values(courses).map((course) => {
+        <ScrollView
+          contentContainerStyle={styles.container}
+        >
+          {coursesArray.map((course) => {
             return (
               <CourseCard
                 key={course.code}
@@ -87,7 +114,8 @@ var TableContainer = React.createClass({
 
 var styles = StyleSheet.create({
   container: {
-    flex: 1
+    paddingVertical: 7,
+    paddingHorizontal: 5
   }
 });
 
@@ -96,6 +124,8 @@ export default connect((state) => ({
   userId: state.colorgyAPI.me && state.colorgyAPI.me.id,
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
   courses: state.table.tableCourses,
+  windowHeight: state.deviceInfo.windowHeight,
+  networkConnectivity: state.deviceInfo.networkConnectivity,
   translucentStatusBar: state.deviceInfo.translucentStatusBar,
   statusBarHeight: state.deviceInfo.statusBarHeight
 }))(TableContainer);

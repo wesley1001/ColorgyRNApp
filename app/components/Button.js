@@ -1,12 +1,13 @@
 import React, {
   StyleSheet,
   View,
-  Text,
   TouchableNativeFeedback,
   TouchableWithoutFeedback
 } from 'react-native';
 import Color from 'color';
 import THEME from '../constants/THEME';
+
+import Text from './Text';
 
 let Button = React.createClass({
   propTypes: {

@@ -1,7 +1,6 @@
 import React, {
   StyleSheet,
   View,
-  Text,
   Image,
   ScrollView,
   TouchableNativeFeedback,
@@ -9,6 +8,8 @@ import React, {
 } from 'react-native';
 import { connect } from 'react-redux/native';
 import _ from 'underscore';
+
+import Text from '../../components/Text';
 
 import LOADING_STATE from '../../constants/LOADING_STATE';
 
@@ -21,7 +22,7 @@ import {
 } from '../../actions/tableActions';
 
 import TitleBarScrollView from '../../components/TitleBarScrollView';
-import TitleBarIconButton from '../../components/TitleBarIconButton';
+import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import UserAvatar from '../../components/UserAvatar';
 
 import courseDatabase from '../../databases/courseDatabase';
@@ -109,9 +110,10 @@ var CoursePageContainer = React.createClass({
         <TitleBarScrollView
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
+          style={this.props.style}
           title={course.name}
           leftAction={
-            <TitleBarIconButton
+            <TitleBarActionIcon
               onPress={this._handleBack}
               icon={require('../../assets/images/icon_arrow_back_white.png')}
             />

@@ -2,10 +2,11 @@ import React, {
   StyleSheet,
   View,
   ScrollView,
-  Text,
   Image,
   TouchableOpacity
 } from 'react-native';
+
+import Text from './Text';
 
 let ListSelect = React.createClass({
   propTypes: {

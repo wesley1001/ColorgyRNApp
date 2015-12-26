@@ -1,25 +1,35 @@
 import React, {
+  PropTypes,
   StyleSheet,
   View,
   Text
 } from 'react-native';
 
+import THEME from '../constants/THEME';
+
 let TitleBarView = React.createClass({
   propTypes: {
-    title: React.PropTypes.string,
-    elevation: React.PropTypes.number
+    // The title text on this title bar
+    title: PropTypes.string,
+    // An action button on the left, normally TitleBarActionIcon or a 24x24 view
+    leftAction: PropTypes.element,
+    // An action button on the right, normally TitleBarActionIcon or a 24x24 view
+    rightAction: PropTypes.element
   },
 
   getDefaultProps: function() {
     return {
+      title: ''
     };
   },
 
   render() {
+    var actionPlaceholder = <View style={{ width: 24 }} />
+
     return (
-      <View style={styles.container} elevation={this.props.elevation}>
+      <View style={styles.container}>
         <View style={styles.actions}>
-          {this.props.leftAction}
+          {this.props.leftAction || actionPlaceholder}
         </View>
         <View style={styles.title}>
           <Text style={styles.titleText}>
@@ -27,7 +37,7 @@ let TitleBarView = React.createClass({
           </Text>
         </View>
         <View style={styles.actions}>
-          {this.props.rightAction}
+          {this.props.rightAction || actionPlaceholder}
         </View>
       </View>
     );
@@ -36,7 +46,7 @@ let TitleBarView = React.createClass({
 
 let styles = StyleSheet.create({
   container: {
-    height: 56,
+    height: THEME.ANDROID_TITLE_BAR_HEIGHT,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
@@ -45,14 +55,16 @@ let styles = StyleSheet.create({
     padding: 16
   },
   title: {
+    flex: 1,
     paddingLeft: 18,
     paddingRight: 18,
     paddingTop: 20,
-    paddingBottom: 20,
+    paddingBottom: 20
   },
   titleText: {
     fontSize: 20,
-    color: '#FFFFFF'
+    color: '#FFFFFF',
+    fontWeight: '500'
   }
 });
 

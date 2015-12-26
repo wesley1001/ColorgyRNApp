@@ -45,7 +45,7 @@ var App = React.createClass({
           onTabChanged={(t) => this.props.dispatch(selectTab({ tab: t }))}
           edgeHitWidth={-1}
         >
-          <View tabLabel="我的課表" style={{ flex: 1 }}>
+          <View tabLabel="我的課表" style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
             <TableContainer />
           </View>
           <View tabLabel="活動牆" style={{ flex: 1 }}>

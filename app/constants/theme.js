@@ -7,7 +7,12 @@ const TMEME = {
     '#50E3C2',
     '#4A90E2',
     '#7E1FD1'
-  ]
+  ],
+  BACKGROUND_COLOR: '#ECECEC',
+  THEME_BACKGROUND_COLOR: '#F9F5F3',
+  ANDROID_FONT_FAMILY: 'Droid Sans Mono',
+  ANDROID_TITLE_BAR_HEIGHT: 56,
+  ANDROID_APP_TAB_BAR_HEIGHT: 52
 };
 
 export default TMEME;

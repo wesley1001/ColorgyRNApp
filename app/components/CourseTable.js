@@ -4,14 +4,16 @@ import React, {
   Animated,
   View,
   ScrollView,
-  Text,
   TouchableOpacity,
   Image
 } from 'react-native';
 
+import THEME from '../constants/THEME';
+import Text from './Text';
+
 let deviceWidth = Dimensions.get('window').width;
 let deviceHeight = Dimensions.get('window').height;
-let cellPadding = 3;
+let cellPadding = 2;
 let headColumnWidth = 40;
 let columnWidth = (deviceWidth - headColumnWidth) / 5;
 let headRowHeight = 40;
@@ -20,10 +22,9 @@ let rowHeight = rowMinHeight;
 
 let CourseTable = React.createClass({
   propTypes: {
-    courses: React.PropTypes.object,
-    coursesTimeIndex: React.PropTypes.object,
-    periodData: React.PropTypes.object,
-    onCoursePress: React.PropTypes.func
+    courses: React.PropTypes.object.isRequired,
+    periodData: React.PropTypes.object.isRequired,
+    onCoursePress: React.PropTypes.func.isRequired
   },
 
   getDefaultProps() {
@@ -47,8 +48,22 @@ let CourseTable = React.createClass({
   },
 
   render() {
-    var { courses, coursesTimeIndex, periodData } = this.props;
+    var { courses, periodData } = this.props;
     var periodDataOrders = Object.keys(periodData);
+
+    var coursesTimeIndex = {};
+
+    for (let courseCode in courses) {
+      let course = courses[courseCode];
+      for (let i=1; i<=10; i++) {
+        if (course[`day_${i}`] && course[`period_${i}`]) {
+          let day = course[`day_${i}`];
+          let period = course[`period_${i}`];
+          if (!coursesTimeIndex[`${day}-${period}`]) coursesTimeIndex[`${day}-${period}`] = [];
+          coursesTimeIndex[`${day}-${period}`].push({ code: course.code, number: i });
+        }
+      }
+    }
 
     return (
       <View style={{ flex: 1 }}>
@@ -87,7 +102,7 @@ let CourseTable = React.createClass({
         <View style={{ flex: 1 }}>
           <ScrollView
             style={{ flex: 1 }}
-            contentContainerStyle={{ flexDirection: 'row', paddingTop: -cellPadding, paddingBottom: -cellPadding }}
+            contentContainerStyle={{ flexDirection: 'row', paddingTop: -cellPadding, paddingBottom: -cellPadding, width: deviceWidth, height: rowHeight * (periodDataOrders.length || 10) }}
           >
             <View style={styles.headColumn}>
               {periodDataOrders.map((periodDataOrder) => {
@@ -97,9 +112,15 @@ let CourseTable = React.createClass({
                     <Text style={styles.headColumnText}>
                       {period.code}
                     </Text>
-                    <Text style={styles.headColumnSmallText}>
-                      {period.time.replace('-', '\n|\n')}
-                    </Text>
+                    {(() => {
+                      if (period.time) {
+                        return (
+                          <Text style={styles.headColumnSmallText}>
+                            {period.time.replace('-', '\n|\n')}
+                          </Text>
+                        );
+                      }
+                    })()}
                   </View>
                 );
               })}
@@ -218,7 +239,7 @@ let styles = StyleSheet.create({
     marginTop: cellPadding,
     marginBottom: cellPadding,
     width: 10000,
-    backgroundColor: '#F9F5F3'
+    backgroundColor: THEME.THEME_BACKGROUND_COLOR
   },
   column: {
     width: columnWidth

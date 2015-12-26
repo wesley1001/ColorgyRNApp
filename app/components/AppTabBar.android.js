@@ -1,15 +1,13 @@
-import React from 'react-native';
-
-var {
+import React, {
   Dimensions,
   StyleSheet,
-  Text,
   View,
   TouchableHighlight,
   PanResponder,
   Animated,
   Image
-} = React;
+} from 'react-native';
+import Text from './Text';
 
 import THEME from '../constants/THEME';
 
@@ -28,11 +26,12 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   tabs: {
-    height: 52,
+    height: THEME.ANDROID_APP_TAB_BAR_HEIGHT,
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderTopColor: '#B2B2B2',
-    borderTopWidth: 1
+    borderTopWidth: 1,
+    elevation: 7
   }
 });
 
@@ -117,7 +116,7 @@ var AppTabBar = React.createClass({
     var backgroundColor = this.props.backgroundColor;
 
     return (
-      <View elevation={7} style={[styles.tabs, { backgroundColor }]}>
+      <View style={[styles.tabs, { backgroundColor }]}>
         {this.props.tabs.map((tab, i) => this.renderTabOption(tab, i))}
       </View>
     );

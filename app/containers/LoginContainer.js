@@ -1,6 +1,5 @@
 import React, {
   StyleSheet,
-  Text,
   View,
   Image,
   TouchableOpacity,
@@ -10,6 +9,8 @@ import React, {
 import { connect } from 'react-redux/native';
 
 import { FBLoginManager } from 'NativeModules';
+
+import Text from '../components/Text';
 
 import colorgyAPI from '../utils/colorgyAPI';
 import alert from '../utils/alert';

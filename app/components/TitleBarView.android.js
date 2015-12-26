@@ -23,10 +23,10 @@ let TitleBarView = React.createClass({
 
   render() {
     var offsetTop = this.props.enableOffsetTop ? this.props.offsetTop : 0;
+
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, this.props.style]}>
         <View
-          elevation={4}
           style={[styles.head, {
             backgroundColor: this.props.color,
             paddingTop: offsetTop
@@ -55,10 +55,12 @@ let styles = StyleSheet.create({
     alignItems: 'stretch'
   },
   head: {
+    elevation: 4
   },
   body: {
     flex: 1,
-    alignItems: 'stretch'
+    alignItems: 'stretch',
+    backgroundColor: THEME.BACKGROUND_COLOR
   }
 });
 

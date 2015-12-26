@@ -1,11 +1,25 @@
 import { handleActions } from 'redux-actions';
+import LOADING_STATE from '../constants/LOADING_STATE';
+
+const defaultState = {
+  // The last courses update time of each organization in the course database
+  // e.g.: `{ NTUST: 1451152095378 }`
+  courseDatabaseUpdatedTime: {},
+  // Loading status of the course database
+  courseDatabaseLoading: LOADING_STATE.PENDING,
+  // Loading status of the table data (from the local database)
+  tableLoading: LOADING_STATE.PENDING,
+  // Courses of the current year & term to display on the table
+  tableCourses: {}
+};
 
 export default handleActions({
+  // Database related actions
   COURSE_DATABASE_LOADING: (state, action) => {
     return {
       ...state,
       courseDatabaseLoadingProgress: action.payload.progress,
-      courseDatabaseStatus: 'loading'
+      courseDatabaseLoading: LOADING_STATE.LOADING
     };
   },
   COURSE_DATABASE_LOAD: (state, action) => {
@@ -16,20 +30,19 @@ export default handleActions({
     return {
       ...state,
       courseDatabaseUpdatedTime: courseDatabaseUpdatedTime,
-      courseDatabaseStatus: 'ready'
+      courseDatabaseLoading: LOADING_STATE.DONE
     };
   },
   COURSE_DATABASE_LOAD_FAILED: (state, action) => {
     return {
       ...state,
-      courseDatabaseStatus: 'failed'
+      courseDatabaseLoading: LOADING_STATE.ERROR
     };
   },
   COURSE_DATABASE_UPDATING: (state, action) => {
     return {
       ...state,
-      courseDatabaseUpdatingProgress: action.payload.progress,
-      courseDatabaseStatus: 'updating'
+      courseDatabaseUpdatingProgress: action.payload.progress
     };
   },
   COURSE_DATABASE_UPDATED: (state, action) => {
@@ -39,8 +52,7 @@ export default handleActions({
     }
     return {
       ...state,
-      courseDatabaseUpdatedTime: courseDatabaseUpdatedTime,
-      courseDatabaseStatus: 'ready'
+      courseDatabaseUpdatedTime: courseDatabaseUpdatedTime
     };
   },
   COURSE_DATABASE_UPDATE_FAILED: (state, action) => {
@@ -49,10 +61,11 @@ export default handleActions({
     };
   },
 
+  // Table loading actions
   LOAD_TABLE_COURSES: (state, action) => {
     return {
       ...state,
-      tableStatus: 'loading'
+      tableLoading: LOADING_STATE.LOADING
     };
   },
   TABLE_COURSES_LOADED: (state, action) => {
@@ -60,13 +73,13 @@ export default handleActions({
       ...state,
       tableCourses: action.payload.courses,
       tablePeriodData: action.payload.periodData,
-      tableStatus: 'ready'
+      tableLoading: LOADING_STATE.DONE
     };
   },
   LOAD_TABLE_COURSES_FAILED: (state, action) => {
     return {
       ...state,
-      tableStatus: 'failed'
+      tableLoading: LOADING_STATE.ERROR
     };
   },
   TABLE_COURSES_TIME_INDEXED: (state, action) => {
@@ -76,6 +89,7 @@ export default handleActions({
     };
   },
 
+  // Course managing actions
   COURSE_ADDED: (state, action) => {
     var tableCourses = state.tableCourses;
     tableCourses[action.payload.course.code] = action.payload.course;
@@ -95,6 +109,7 @@ export default handleActions({
     };
   },
 
+  // Syncing actions
   SYNC_USER_COURSES: (state, action) => {
     return {
       ...state
@@ -110,8 +125,4 @@ export default handleActions({
       ...state
     };
   }
-}, {
-  courseDatabaseUpdatedTime: {},
-  courseDatabaseStatus: null,
-  tableStatus: 'new'
-});
+}, defaultState);

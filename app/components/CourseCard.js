@@ -6,7 +6,7 @@ import React, {
   Image
 } from 'react-native';
 
-import theme from '../constants/theme';
+import THEME from '../constants/THEME';
 
 let CourseCard = React.createClass({
   propTypes: {
@@ -30,10 +30,10 @@ let CourseCard = React.createClass({
     if (this.props.actionName && this.props.onActionPress) {
       action = (
         <TouchableOpacity
-          style={{ borderWidth: 1, borderColor: theme.color, borderRadius: 2, paddingTop: 2, paddingBottom: 2, paddingLeft: 8, paddingRight: 8 }}
+          style={{ borderWidth: 1, borderColor: THEME.COLOR, borderRadius: 2, paddingTop: 2, paddingBottom: 2, paddingLeft: 8, paddingRight: 8 }}
           onPress={this.props.onActionPress}
         >
-          <Text style={{ textAlign:'center', color: theme.color }}>
+          <Text style={{ textAlign:'center', color: THEME.COLOR }}>
             {this.props.actionName}
           </Text>
         </TouchableOpacity>

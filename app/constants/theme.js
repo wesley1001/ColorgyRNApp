@@ -1,6 +1,6 @@
-const theme = {
-  color: '#F89680',
-  colorPalette: [
+const TMEME = {
+  COLOR: '#F89680',
+  COLOR_PALETTE: [
     '#F89680',
     '#F5A623',
     '#F8E71C',
@@ -10,4 +10,4 @@ const theme = {
   ]
 };
 
-export default theme;
+export default TMEME;

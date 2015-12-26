@@ -3,7 +3,7 @@ import React, {
   View
 } from 'react-native';
 
-import theme from '../constants/theme';
+import THEME from '../constants/THEME';
 import TitleBar from './TitleBar';
 
 let TitleBarView = React.createClass({
@@ -16,7 +16,7 @@ let TitleBarView = React.createClass({
 
   getDefaultProps: function() {
     return {
-      color: theme.color,
+      color: THEME.COLOR,
       offsetTop: 0
     };
   },

@@ -167,7 +167,7 @@ var UserPageContainer = React.createClass({
               if (user.cover_photo_url) {
                 return (
                   <Image
-                    source={{ uri: user.cover_photo_url }}
+                    source={user.cover_photo_url ? { uri: user.cover_photo_url } : require('../assets/images/defaults/users/cover_photo.jpg')}
                     style={{
                       width: this.props.deviceWidth,
                       height: 450,
@@ -195,7 +195,7 @@ var UserPageContainer = React.createClass({
               <View style={styles.headBackground} />
               <Image
                 style={styles.headAvatar}
-                source={{ uri: user.avatar_url }}
+                source={user.avatar_url ? { uri: user.avatar_url } : require('../assets/images/defaults/users/avatar.jpg')}
               />
               <View style={styles.headInfo}>
                 <View style={styles.headName}>
@@ -347,8 +347,7 @@ var styles = StyleSheet.create({
     width: 120,
     borderRadius: 120,
     borderWidth: 4,
-    borderColor: '#FFFFFF',
-    elevation: 3
+    borderColor: '#FFFFFF'
   },
   headInfo: {
     flexDirection: 'column'

@@ -2,21 +2,19 @@ import React, { View, Text } from 'react-native';
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
 
+import ScrollableTabView from '../components/ScrollableTabView';
+import AppTabBar from '../components/AppTabBar';
+
 import AppInitializeContainer from './AppInitializeContainer';
 import LoginContainer from './LoginContainer';
 import OrgSelectContainer from './OrgSelectContainer';
 import DevModeContainer from './DevModeContainer';
-
 import TableContainer from './table';
-
-import ScrollableTabView from '../components/ScrollableTabView';
-import AppTabBar from '../components/AppTabBar';
 
 import { doDeviceInfo } from '../actions/deviceInfoActions';
 import { selectTab } from '../actions/appTabActions';
-
+import { doUpdateMe, doClearAccessToken } from '../actions/colorgyAPIActions';
 import { enterDevMode } from '../actions/devModeActions';
-import { doClearAccessToken } from '../actions/colorgyAPIActions';
 
 var App = React.createClass({
   componentWillMount: function() {
@@ -53,6 +51,7 @@ var App = React.createClass({
           </View>
           <View tabLabel="我的資料" style={{ flex: 1 }}>
             <Text onPress={() => this.props.dispatch(doClearAccessToken()) }>Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out</Text>
+            <Text onPress={() => this.props.dispatch(doUpdateMe({ unconfirmedOrganizationCode: null, unconfirmedDepartmentCode: null, unconfirmedStartedYear: null })) }>Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org </Text>
             <Text onPress={() => this.props.dispatch(enterDevMode()) }>Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode</Text>
           </View>
         </ScrollableTabView>

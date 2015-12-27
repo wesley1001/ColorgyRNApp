@@ -1,4 +1,5 @@
 import React, {
+  InteractionManager,
   StyleSheet,
   View,
   ScrollView,
@@ -125,7 +126,10 @@ var OrgSelectContainer = React.createClass({
   _handleOrgSelect(e) {
     var orgCode = e.value;
     this.setState({ orgCode });
-    this._fetchDeps(orgCode);
+
+    InteractionManager.runAfterInteractions(() => {
+      this._fetchDeps(orgCode);
+    });
   },
 
   _handleDepSelect(e) {

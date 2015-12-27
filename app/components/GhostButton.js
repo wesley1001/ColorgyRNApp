@@ -1,6 +1,7 @@
 import React, {
   StyleSheet,
-  TouchableHighlight
+  TouchableHighlight,
+  TouchableOpacity
 } from 'react-native';
 
 import THEME from '../constants/THEME';
@@ -31,13 +32,13 @@ let GhostButton = React.createClass({
       </Text>
     );
     return (
-      <TouchableHighlight
+      <TouchableOpacity
         style={[styles.button, this.props.style, { borderColor: this.props.color }]}
         underlayColor={this.props.color}
         onPress={this._handlePress}
       >
         {text || this.props.children}
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   }
 });

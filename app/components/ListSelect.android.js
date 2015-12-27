@@ -1,7 +1,9 @@
 import React, {
+  InteractionManager,
   StyleSheet,
   View,
   ScrollView,
+  ListView,
   Image,
   TouchableOpacity
 } from 'react-native';
@@ -38,60 +40,77 @@ let ListSelect = React.createClass({
   },
 
   getInitialState() {
+    var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+
     return {
-      selected: null
+      selectedValue: null,
+      dataSource: ds.cloneWithRows(this._getSelections({}))
     };
   },
 
-  _getSelections() {
+  _getSelections(selectedValue = this.state.selected) {
     return this.props.options.map((option, i) => {
       var selected = false;
-      if (this.state.selected === option.value) selected = true;
-
-      return (
-        <TouchableOpacity
-          key={option.value}
-          style={[styles.option, selected && styles.activeOption]}
-          onPress={() => this._handleSelect(option.value)}
-        >
-          <Text
-            style={[styles.optionText, selected && styles.activeOptionText]}
-          >
-            {option.name}
-          </Text>
-          <Image
-            style={styles.checkMarkIcon}
-            source={require('../assets/images/icon_done_white.png')} />
-        </TouchableOpacity>
-      );
+      if (selectedValue === option.value) selected = true;
+      return { ...option, selected };
     });
   },
 
+  _renderRow: function(rowData, sectionID: number, rowID: number) {
+    return (
+      <TouchableOpacity
+        style={[styles.option, rowData.selected && styles.activeOption]}
+        onPress={() => this._handleSelect(rowData.value)}
+      >
+        <Text
+          style={[styles.optionText, rowData.selected && styles.activeOptionText]}
+        >
+          {rowData.name}
+        </Text>
+        <Image
+          style={styles.checkMarkIcon}
+          source={require('../assets/images/icon_done_white.png')} />
+      </TouchableOpacity>
+    );
+  },
+
   _handleSelect(value) {
-    this.setState({ selected: value });
-    if (this.props.onSelect) this.props.onSelect({ value: value });
+    this.setState({
+      selectedValue: value,
+      dataSource: this.state.dataSource.cloneWithRows(
+        this._getSelections(value)
+      )
+    });
+
+    InteractionManager.runAfterInteractions(() => {
+      if (this.props.onSelect) this.props.onSelect({ value: value });
+    });
   },
 
   render() {
     return (
-      <ScrollView style={[styles.view, this.props.style]} contentContainerStyle={styles.container}>
-        {this._getSelections()}
-      </ScrollView>
+      <View style={[styles.container, this.props.style]}>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this._renderRow}
+        />
+      </View>
     );
   }
 });
 
 let styles = StyleSheet.create({
-  view: {
-    marginLeft: -9,
-    marginRight: -9
-  },
   container: {
+    marginLeft: -8,
+    marginRight: -8,
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    padding: 8
+    paddingVertical: 8,
+    paddingHorizontal: 0
   },
   option: {
+    marginLeft: 8,
+    marginRight: 8,
     marginBottom: 8,
     height: 44,
     borderWidth: 1.8,

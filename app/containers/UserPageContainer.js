@@ -7,6 +7,7 @@ import React, {
   TouchableNativeFeedback
 } from 'react-native';
 import { connect } from 'react-redux/native';
+import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from 'underscore';
 
@@ -167,7 +168,11 @@ var UserPageContainer = React.createClass({
                 return (
                   <Image
                     source={{ uri: user.cover_photo_url }}
-                    style={{ width: this.props.deviceWidth, height: 450 }}
+                    style={{
+                      width: this.props.deviceWidth,
+                      height: 450,
+                      opacity: 0.8
+                    }}
                   />
                 );
               }
@@ -176,6 +181,16 @@ var UserPageContainer = React.createClass({
           hideTitleInitially={true}
         >
           <View style={styles.container}>
+            <LinearGradient
+              colors={['#00000000', '#00000077', '#000000AA']}
+              style={{
+                position: 'absolute',
+                top: 60,
+                left: 0,
+                right: 0,
+                height: 400
+              }}
+            />
             <View style={styles.head}>
               <View style={styles.headBackground} />
               <Image
@@ -215,7 +230,7 @@ var UserPageContainer = React.createClass({
                               return (
                                 <CourseTable
                                   width={this.props.windowWidth - 32 - 4}
-                                  height={800}
+                                  height={720}
                                   style={{ marginRight: 4 }}
                                   courses={courses}
                                   periodData={periodData}
@@ -310,9 +325,10 @@ var styles = StyleSheet.create({
     bottom: 0
   },
   head: {
-    marginTop: 90,
-    height: 160,
+    marginTop: 80,
+    height: 180,
     flexDirection: 'column',
+    paddingVertical: 8,
     paddingHorizontal: 16,
     justifyContent: 'center',
     alignItems: 'center'
@@ -326,6 +342,7 @@ var styles = StyleSheet.create({
     backgroundColor: THEME.BACKGROUND_COLOR
   },
   headAvatar: {
+    margin: 4,
     height: 120,
     width: 120,
     borderRadius: 120,
@@ -338,8 +355,8 @@ var styles = StyleSheet.create({
   },
   headName: {
     flex: 1,
-    paddingHorizontal: 8,
-    paddingVertical: 8
+    paddingHorizontal: 4,
+    paddingVertical: 4
   },
   headNameText: {
     color: '#FFFFFF',

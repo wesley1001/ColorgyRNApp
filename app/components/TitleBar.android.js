@@ -86,8 +86,8 @@ let styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    paddingLeft: 18,
-    paddingRight: 18,
+    paddingLeft: 2,
+    paddingRight: 2,
     paddingTop: 20,
     paddingBottom: 20
   },

@@ -53,7 +53,7 @@ let CourseTable = React.createClass({
     var columnWidth = (width - headColumnWidth) / 5;
     var headRowHeight = 40;
     var rowMinHeight = height / 10;
-    var rowHeight = 64;
+    var rowHeight = 72;
     if (rowHeight < rowMinHeight) rowHeight = rowMinHeight;
 
     if (!this.props.scrollable) {

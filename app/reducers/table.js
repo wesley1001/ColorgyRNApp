@@ -124,5 +124,15 @@ export default handleActions({
     return {
       ...state
     };
-  }
+  },
+
+  TABLE_NAVIGATE_BACK: (state, action) => {
+    var navigateBackCount = state.navigateBackCount || 0;
+    navigateBackCount++;
+
+    return {
+      ...state,
+      navigateBackCount
+    };
+  },
 }, defaultState);

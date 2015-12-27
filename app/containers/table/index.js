@@ -25,11 +25,18 @@ var Table = React.createClass({
     }
   },
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.navigateBackCount !== this.props.navigateBackCount) {
+      this.navigator.pop();
+    }
+  },
+
   render() {
     if (this.props.courseDatabaseUpdatedTime &&
         this.props.courseDatabaseUpdatedTime[this.props.organizationCode]) {
       return (
         <Navigator
+          ref={(navigator) => this.navigator = navigator}
           initialRoute={{ name: 'index' }}
           renderScene={(route, navigator) => {
             switch(route.name) {
@@ -104,6 +111,7 @@ export default connect((state) => ({
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
   courseDatabaseUpdatedTime: state.table.courseDatabaseUpdatedTime,
   courseDatabaseLoadingProgress: state.table.courseDatabaseLoadingProgress,
+  navigateBackCount: state.table.navigateBackCount,
   networkConnectivity: state.deviceInfo.networkConnectivity,
   translucentStatusBar: state.deviceInfo.translucentStatusBar,
   statusBarHeight: state.deviceInfo.statusBarHeight

@@ -1,4 +1,4 @@
-import React, { View, Text } from 'react-native';
+import React, { Platform, View, Text } from 'react-native';
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
 
@@ -15,10 +15,18 @@ import { doDeviceInfo } from '../actions/deviceInfoActions';
 import { selectTab } from '../actions/appTabActions';
 import { doUpdateMe, doClearAccessToken } from '../actions/colorgyAPIActions';
 import { enterDevMode } from '../actions/devModeActions';
+import { doBackPress } from '../actions/appActions';
 
 var App = React.createClass({
   componentWillMount: function() {
     this.props.dispatch(doDeviceInfo());
+
+    if (Platform.OS === 'android') {
+      React.BackAndroid.addEventListener('hardwareBackPress', () => {
+        this.props.dispatch(doBackPress());
+        return true;
+      });
+    }
   },
 
   render: function() {

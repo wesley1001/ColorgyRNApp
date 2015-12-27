@@ -188,3 +188,5 @@ export const doSyncUserCourses = (userId, orgCode, courseYear = colorgyAPI.getCu
     dispatch(userCoursesSyncFailed(e));
   });
 };
+
+export const tableNavigateBack = createAction('TABLE_NAVIGATE_BACK');

@@ -7,6 +7,7 @@ import React, {
   Dimensions
 } from 'react-native';
 import { connect } from 'react-redux/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from 'underscore';
 
 import Text from '../../components/Text';
@@ -113,10 +114,9 @@ var CoursePageContainer = React.createClass({
           style={this.props.style}
           title={course.name}
           leftAction={
-            <TitleBarActionIcon
-              onPress={this._handleBack}
-              icon={require('../../assets/images/icon_arrow_back_white.png')}
-            />
+            <TitleBarActionIcon onPress={this._handleBack}>
+              <Icon name="arrow-back" size={24} color="#FFFFFF" />
+            </TitleBarActionIcon>
           }
           background={<View>
             <Image source={require('../../assets/images/bg_1.jpg')} style={{ width: deviceWidth }} />

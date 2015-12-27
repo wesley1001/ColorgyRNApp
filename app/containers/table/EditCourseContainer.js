@@ -5,6 +5,7 @@ import React, {
   ScrollView
 } from 'react-native';
 import { connect } from 'react-redux/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from 'underscore';
 
 import Text from '../../components/Text';
@@ -72,16 +73,14 @@ var TableContainer = React.createClass({
         style={this.props.style}
         title="已選課程"
         leftAction={
-          <TitleBarActionIcon
-            onPress={this._handleBack}
-            icon={require('../../assets/images/icon_arrow_back_white.png')}
-          />
+          <TitleBarActionIcon onPress={this._handleBack}>
+            <Icon name="arrow-back" size={24} color="#FFFFFF" />
+          </TitleBarActionIcon>
         }
         rightAction={
-          <TitleBarActionIcon
-            onPress={this._handleAdd}
-            icon={require('../../assets/images/icon_add_white.png')}
-          />
+          <TitleBarActionIcon onPress={this._handleAdd}>
+            <Icon name="add" size={24} color="#FFFFFF" />
+          </TitleBarActionIcon>
         }
       >
         <ScrollView

@@ -1,4 +1,5 @@
 import React, {
+  PropTypes,
   View,
   TouchableNativeFeedback,
   TouchableHighlight,
@@ -8,8 +9,7 @@ import React, {
 
 let TitleBarActionIcon = React.createClass({
   propTypes: {
-    icon: React.PropTypes.any.isRequired,
-    onPress: React.PropTypes.func
+    onPress: PropTypes.func
   },
 
   getDefaultProps() {
@@ -32,10 +32,7 @@ let TitleBarActionIcon = React.createClass({
                 background={TouchableNativeFeedback.Ripple(null, true)}
               >
                 <View style={{ padding: 16 }}>
-                  <Image
-                    source={this.props.icon}
-                    style={{ width: 24, height: 24 }}
-                  />
+                  {this.props.children}
                 </View>
               </TouchableNativeFeedback>
             );
@@ -46,10 +43,7 @@ let TitleBarActionIcon = React.createClass({
                 underlayColor="#33333344"
               >
                 <View style={{ padding: 16 }}>
-                  <Image
-                    source={this.props.icon}
-                    style={{ width: 24, height: 24 }}
-                  />
+                  {this.props.children}
                 </View>
               </TouchableHighlight>
             );

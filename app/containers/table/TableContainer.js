@@ -5,6 +5,7 @@ import React, {
   TouchableNativeFeedback
 } from 'react-native';
 import { connect } from 'react-redux/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import THEME from '../../constants/THEME';
 
@@ -45,10 +46,9 @@ var TableContainer = React.createClass({
             offsetTop={this.props.statusBarHeight}
             title="Table"
             rightAction={
-              <TitleBarActionIcon
-                onPress={this._handleEdit}
-                icon={require('../../assets/images/icon_mode_edit_white.png')}
-              />
+              <TitleBarActionIcon onPress={this._handleEdit}>
+                <Icon name="mode-edit" size={24} color="#FFFFFF" />
+              </TitleBarActionIcon>
             }
           >
             <Text>Loading</Text>
@@ -70,10 +70,9 @@ var TableContainer = React.createClass({
             style={this.props.style}
             title="Table"
             rightAction={
-              <TitleBarActionIcon
-                onPress={this._handleEdit}
-                icon={require('../../assets/images/icon_mode_edit_white.png')}
-              />
+              <TitleBarActionIcon onPress={this._handleEdit}>
+                <Icon name="mode-edit" size={24} color="#FFFFFF" />
+              </TitleBarActionIcon>
             }
           >
             <CourseTable

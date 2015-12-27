@@ -14,6 +14,7 @@ import com.facebook.soloader.SoLoader;
 
 import org.pgsqlite.SQLitePluginPackage;
 import com.magus.fblogin.FacebookLoginPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 import me.neo.react.StatusBarPackage;
 
 public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
@@ -37,6 +38,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .addPackage(new MainReactPackage())
                 .addPackage(new SQLitePluginPackage(this))
                 .addPackage(mFacebookLoginPackage)
+                .addPackage(new VectorIconsPackage())
                 .addPackage(new StatusBarPackage(this))
                 .addPackage(new AppNativePackage(this))
                 .setUseDeveloperSupport(BuildConfig.DEBUG)

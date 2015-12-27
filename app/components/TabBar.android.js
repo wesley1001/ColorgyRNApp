@@ -9,6 +9,7 @@ var {
   Animated,
 } = React;
 
+import THEME from '../constants/THEME';
 import Text from './Text';
 
 var deviceWidth = Dimensions.get('window').width;
@@ -60,7 +61,7 @@ var TabBar = React.createClass({
     return (
       <TouchableOpacity style={[styles.tab]} key={name} onPress={() => this.props.goToTab(tab)}>
         <View>
-          <Text style={textStyle}>{name.toUpperCase()}</Text>
+          <Text style={[textStyle, this.props.textStyle]}>{name.toUpperCase()}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -83,9 +84,9 @@ var TabBar = React.createClass({
     var backgroundColor = this.props.backgroundColor;
 
     return (
-      <View style={[styles.tabs, {backgroundColor}]}>
+      <View style={[styles.tabs, { backgroundColor }, this.props.style]}>
         {this.props.tabs.map((tab, i) => this.renderTabOption(tab, i))}
-        <Animated.View style={[tabUnderlineStyle, {left}]} />
+        <Animated.View style={[tabUnderlineStyle, { left }, this.props.tabUnderlineStyle]} />
       </View>
     );
   },

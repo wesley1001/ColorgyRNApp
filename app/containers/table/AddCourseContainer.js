@@ -7,6 +7,7 @@ import React, {
   TouchableNativeFeedback
 } from 'react-native';
 import { connect } from 'react-redux/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from 'underscore';
 
 import courseDatabase from '../../databases/courseDatabase';
@@ -78,10 +79,9 @@ var TableContainer = React.createClass({
         style={this.props.style}
         title="加選課程"
         leftAction={
-          <TitleBarActionIcon
-            onPress={this._handleBack}
-            icon={require('../../assets/images/icon_arrow_back_white.png')}
-          />
+          <TitleBarActionIcon onPress={this._handleBack}>
+            <Icon name="arrow-back" size={24} color="#FFFFFF" />
+          </TitleBarActionIcon>
         }
       >
         <View style={styles.searchBar}>

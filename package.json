@@ -11,6 +11,7 @@
     "react-native-android-statusbar": "^0.1.2",
     "react-native-facebook-login": "^1.0.2",
     "react-native-sqlite-storage": "^2.1.1",
+    "react-native-vector-icons": "^1.0.3",
     "react-redux": "^3.1.2",
     "redux": "^3.0.5",
     "redux-actions": "^0.9.0",

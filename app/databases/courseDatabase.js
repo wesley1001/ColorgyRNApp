@@ -313,11 +313,11 @@ courseDatabase.getPeriodData = (orgCode, options = {}) => {
   });
 };
 
-function parseCourseRows (rows, periodData) {
+var parseCourseRows = function(rows, periodData) {
   var courses = {};
 
   for (let i=0; i<rows.length; i++) {
-    let row = rows.item(i);
+    let row = (rows.item ? rows.item(i) : rows[i]);
     row.fullSemester = row.full_semester;
     row.studentsEnrolled = row.students_enrolled;
     let times = [];
@@ -371,6 +371,8 @@ function parseCourseRows (rows, periodData) {
 
   return courses;
 }
+
+courseDatabase.parseCourseRows = parseCourseRows;
 
 courseDatabase.findCourses = (orgCode, courseCodes) => {
   if (typeof courseCodes === 'string') {

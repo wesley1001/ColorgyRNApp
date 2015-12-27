@@ -1,4 +1,5 @@
 import React, {
+  PropTypes,
   Dimensions,
   StyleSheet,
   Animated,
@@ -11,27 +12,22 @@ import React, {
 import THEME from '../constants/THEME';
 import Text from './Text';
 
-let deviceWidth = Dimensions.get('window').width;
-let deviceHeight = Dimensions.get('window').height;
-let cellPadding = 2;
-let headColumnWidth = 40;
-let columnWidth = (deviceWidth - headColumnWidth) / 5;
-let headRowHeight = 40;
-let rowMinHeight = deviceHeight / 10;
-let rowHeight = rowMinHeight;
-
 let CourseTable = React.createClass({
   propTypes: {
-    courses: React.PropTypes.object.isRequired,
-    periodData: React.PropTypes.object.isRequired,
-    onCoursePress: React.PropTypes.func.isRequired
+    courses: PropTypes.object.isRequired,
+    periodData: PropTypes.object.isRequired,
+    onCoursePress: PropTypes.func.isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    scrollable: PropTypes.bool
   },
 
   getDefaultProps() {
     return {
       courses: {},
       coursesTimeIndex: {},
-      periodData: {}
+      periodData: {},
+      scrollable: true
     };
   },
 
@@ -51,6 +47,19 @@ let CourseTable = React.createClass({
     var { courses, periodData } = this.props;
     var periodDataOrders = Object.keys(periodData);
 
+    var { width, height } = this.props;
+    var cellPadding = 2;
+    var headColumnWidth = 40;
+    var columnWidth = (width - headColumnWidth) / 5;
+    var headRowHeight = 40;
+    var rowMinHeight = height / 10;
+    var rowHeight = 64;
+    if (rowHeight < rowMinHeight) rowHeight = rowMinHeight;
+
+    if (!this.props.scrollable) {
+      rowHeight = (height - headRowHeight) / periodDataOrders.length;
+    }
+
     var coursesTimeIndex = {};
 
     for (let courseCode in courses) {
@@ -66,35 +75,35 @@ let CourseTable = React.createClass({
     }
 
     return (
-      <View style={{ flex: 1 }}>
-        <View style={[styles.headRow]}>
+      <View style={[{ flex: 1 }, this.props.style]}>
+        <View style={[styles.headRow, { height: headRowHeight }]}>
           <Animated.View
-            style={[styles.headRow, { transform: [{
+            style={[styles.headRow, { height: headRowHeight, transform: [{
               translateX: this.state.scrollX.interpolate({
                 inputRange: [0, 1],
                 outputRange: [0, -1]
               }),
             }] }]}
           >
-            <Text style={[styles.headRowText, { marginLeft: headColumnWidth }]}>
+            <Text style={[styles.headRowText, { width: columnWidth }, { marginLeft: headColumnWidth }]}>
               Mon
             </Text>
-            <Text style={styles.headRowText}>
+            <Text style={[styles.headRowText, { width: columnWidth }]}>
               Tue
             </Text>
-            <Text style={styles.headRowText}>
+            <Text style={[styles.headRowText, { width: columnWidth }]}>
               Wed
             </Text>
-            <Text style={styles.headRowText}>
+            <Text style={[styles.headRowText, { width: columnWidth }]}>
               Thu
             </Text>
-            <Text style={styles.headRowText}>
+            <Text style={[styles.headRowText, { width: columnWidth }]}>
               Fri
             </Text>
-            <Text style={styles.headRowText}>
+            <Text style={[styles.headRowText, { width: columnWidth }]}>
               Sat
             </Text>
-            <Text style={styles.headRowText}>
+            <Text style={[styles.headRowText, { width: columnWidth }]}>
               Sun
             </Text>
           </Animated.View>
@@ -102,13 +111,13 @@ let CourseTable = React.createClass({
         <View style={{ flex: 1 }}>
           <ScrollView
             style={{ flex: 1 }}
-            contentContainerStyle={{ flexDirection: 'row', paddingTop: -cellPadding, paddingBottom: -cellPadding, width: deviceWidth, height: rowHeight * (periodDataOrders.length || 10) }}
+            contentContainerStyle={{ flexDirection: 'row', paddingTop: -cellPadding, paddingBottom: -cellPadding, width: width, height: rowHeight * (periodDataOrders.length || 10) }}
           >
-            <View style={styles.headColumn}>
+            <View style={[styles.headColumn, { width: headColumnWidth }]}>
               {periodDataOrders.map((periodDataOrder) => {
                 var period = periodData[periodDataOrder];
                 return (
-                  <View key={periodDataOrder} style={styles.headColumnMark}>
+                  <View key={periodDataOrder} style={[styles.headColumnMark, { height: rowHeight }]}>
                     <Text style={styles.headColumnText}>
                       {period.code}
                     </Text>
@@ -135,19 +144,19 @@ let CourseTable = React.createClass({
                 }
               }])}
             >
-            <View style={styles.backgroundGrid}>
+            <View style={[styles.backgroundGrid, { left: cellPadding }]}>
               {periodDataOrders.map((periodDataOrder) => {
-                return (<View key={periodDataOrder} style={styles.backgroundGridRow} />);
+                return (<View key={periodDataOrder} style={[styles.backgroundGridRow, { height: (rowHeight - cellPadding * 2), marginTop: cellPadding, marginBottom: cellPadding }]} />);
               })}
             </View>
 
               {[1, 2, 3, 4, 5, 6, 7].map((day) => {
 
                 return (
-                  <View key={day} style={styles.column}>
+                  <View key={day} style={[styles.column, { width: columnWidth }]}>
                     {periodDataOrders.map((period) => {
                       return (
-                        <View key={period} style={styles.cell}>
+                        <View key={period} style={[styles.cell, { padding: cellPadding, height: rowHeight }]}>
                           {(() => {
                             if (coursesTimeIndex[`${day}-${period}`]) {
                               let courseCode = coursesTimeIndex[`${day}-${period}`][0].code;
@@ -194,23 +203,19 @@ let CourseTable = React.createClass({
 
 let styles = StyleSheet.create({
   headRow: {
-    height: headRowHeight,
     backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center'
   },
   headRowText: {
-    width: columnWidth,
     textAlign: 'center'
   },
   headColumn: {
-    width: headColumnWidth,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center'
   },
   headColumnMark: {
-    height: rowHeight,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -229,26 +234,19 @@ let styles = StyleSheet.create({
   },
   backgroundGrid: {
     position: 'absolute',
-    left: cellPadding,
     right: 0,
     top: 0,
     bottom: 0
   },
   backgroundGridRow: {
-    height: (rowHeight - cellPadding * 2),
-    marginTop: cellPadding,
-    marginBottom: cellPadding,
     width: 10000,
     backgroundColor: THEME.THEME_BACKGROUND_COLOR
   },
   column: {
-    width: columnWidth
   },
   cell: {
-    height: rowHeight,
     justifyContent: 'center',
-    alignItems: 'stretch',
-    padding: cellPadding
+    alignItems: 'stretch'
   },
   course: {
     flex: 1,

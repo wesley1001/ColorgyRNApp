@@ -22,7 +22,8 @@ var ScrollableTabView = React.createClass({
     color: PropTypes.string,
     backgroundColor: PropTypes.string,
     activeColor: PropTypes.string,
-    tabBar: PropTypes.any
+    tabBar: PropTypes.any,
+    autoHeight: PropTypes.bool
   },
 
   getDefaultProps() {
@@ -195,7 +196,13 @@ var ScrollableTabView = React.createClass({
           pointerEvents={(this.state.animating ? 'box-only' : 'auto')}
           {...this._panResponder.panHandlers}
           >
-          {this.props.children}
+          {(() => {
+            if (this.props.autoHeight) {
+              return (this.props.children.map((c, i) => <View key={i} style={{ width: deviceWidth, flex: 1 }}><View style={{ width: deviceWidth, position: (this.state.animating || i === this.getCurrentTab()) ? 'relative' : 'absolute', flex: 1 }}>{c}</View></View>));
+            } else {
+              return (this.props.children.map((c, i) => <View key={i} style={{ width: deviceWidth, flex: 1 }}>{c}</View>));
+            }
+          })()}
         </Animated.View>
 
         {this.props.tabBarPosition === 'bottom' ? this.renderTabBar(tabBarProps) : null}

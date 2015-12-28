@@ -8,10 +8,13 @@ import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from 'underscore';
 
+import THEME from '../../constants/THEME';
+
 import Text from '../../components/Text';
 import TitleBarView from '../../components/TitleBarView';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import CourseCard from '../../components/CourseCard';
+import GhostButton from '../../components/GhostButton';
 
 import {
   doSyncUserCourses,
@@ -91,17 +94,25 @@ var TableContainer = React.createClass({
               <CourseCard
                 key={course.code}
                 course={course}
-                actionName="刪除"
                 onPress={this._handleCoursePress}
-                onActionPress={() => {
-                  this.props.dispatch(
-                    doRemoveCourse(
-                      course,
-                      this.props.userId,
-                      this.props.organizationCode
-                    )
-                  );
-                }}
+                action={<GhostButton
+                  type="tiny"
+                  value="移除"
+                  confirmValue="確認移除"
+                  setLoadingAfterPress={true}
+                  confirmColor={THEME.DANGER_COLOR}
+                  initialWidth={48}
+                  confirmWidth={78}
+                  onPress={() => {
+                    this.props.dispatch(
+                      doRemoveCourse(
+                        course,
+                        this.props.userId,
+                        this.props.organizationCode
+                      )
+                    );
+                  }}
+                />}
               />
             );
           })}

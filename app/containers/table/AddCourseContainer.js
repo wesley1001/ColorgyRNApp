@@ -4,11 +4,14 @@ import React, {
   View,
   Image,
   ScrollView,
-  TouchableNativeFeedback
+  TouchableNativeFeedback,
+  ProgressBarAndroid
 } from 'react-native';
 import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from 'underscore';
+
+import THEME from '../../constants/THEME';
 
 import courseDatabase from '../../databases/courseDatabase';
 
@@ -17,6 +20,7 @@ import TextInput from '../../components/TextInput';
 import TitleBarView from '../../components/TitleBarView';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import CourseCard from '../../components/CourseCard';
+import GhostButton from '../../components/GhostButton';
 
 import {
   doLoadTableCourses,
@@ -101,31 +105,51 @@ var TableContainer = React.createClass({
                 key={course.code}
                 course={course}
                 onPress={this._handleCoursePress}
-                actionName={selected ? '刪除' : '選擇'}
-                onActionPress={() => {
-                  if (selected) {
-                    this.props.dispatch(
-                      doRemoveCourse(
-                        course,
-                        this.props.userId,
-                        this.props.organizationCode
-                      )
-                    );
-                  } else {
-                    this.props.dispatch(
-                      doAddCourse(
-                        course,
-                        this.props.userId,
-                        this.props.organizationCode
-                      )
-                    );
-                  }
-                }}
+                action={selected ?
+                  <GhostButton
+                    type="tiny"
+                    key="remove"
+                    value="移除"
+                    confirmValue="確認移除"
+                    setLoadingAfterPress={true}
+                    confirmColor={THEME.DANGER_COLOR}
+                    initialWidth={48}
+                    confirmWidth={78}
+                    onPress={() => {
+                      this.props.dispatch(
+                        doRemoveCourse(
+                          course,
+                          this.props.userId,
+                          this.props.organizationCode
+                        )
+                      );
+                    }}
+                  />
+                :
+                  <GhostButton
+                    type="tiny"
+                    key="add"
+                    value="加選課程"
+                    confirmValue="確認加選"
+                    setLoadingAfterPress={true}
+                    confirmColor={THEME.SUCCESS_COLOR}
+                    initialWidth={78}
+                    confirmWidth={78}
+                    onPress={() => {
+                      this.props.dispatch(
+                        doAddCourse(
+                          course,
+                          this.props.userId,
+                          this.props.organizationCode
+                        )
+                      );
+                    }}
+                  />
+                }
               />
             );
           })}
         </ScrollView>
-
       </TitleBarView>
     );
   }

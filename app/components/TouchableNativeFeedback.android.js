@@ -6,7 +6,7 @@ import React, {
 
 let AppTouchableNativeFeedback = React.createClass({
   render() {
-    if (parseFloat(Platform.Version) >= 21) {
+    if (true || parseFloat(Platform.Version) >= 21) {
       return (
         <TouchableNativeFeedback {...this.props}>
           {this.props.children}

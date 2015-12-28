@@ -1,4 +1,5 @@
 import React, {
+  PropTypes,
   StyleSheet,
   View,
   TouchableOpacity,
@@ -12,10 +13,9 @@ import TouchableNativeFeedback from './TouchableNativeFeedback';
 
 let CourseCard = React.createClass({
   propTypes: {
-    course: React.PropTypes.object,
-    onPress: React.PropTypes.func,
-    actionName: React.PropTypes.string,
-    onActionPress: React.PropTypes.func
+    course: PropTypes.object,
+    onPress: PropTypes.func,
+    action: PropTypes.element
   },
 
   getDefaultProps() {
@@ -27,20 +27,7 @@ let CourseCard = React.createClass({
   render() {
     var course = this.props.course;
 
-    var action = null;
-
-    if (this.props.actionName && this.props.onActionPress) {
-      action = (
-        <TouchableOpacity
-          style={{ borderWidth: 1, borderColor: THEME.COLOR, borderRadius: 2, paddingTop: 2, paddingBottom: 2, paddingLeft: 8, paddingRight: 8 }}
-          onPress={this.props.onActionPress}
-        >
-          <Text style={{ textAlign:'center', color: THEME.COLOR }}>
-            {this.props.actionName}
-          </Text>
-        </TouchableOpacity>
-      );
-    }
+    var action = this.props.action;
 
     var Container = View;
     if (this.props.onPress) Container = TouchableNativeFeedback;
@@ -93,21 +80,20 @@ let styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
     margin: 5,
-    paddingTop: 4,
-    paddingBottom: 15,
+    paddingTop: 12,
+    paddingBottom: 12,
     paddingLeft: 15,
     paddingRight: 15,
     borderLeftWidth: 2,
     elevation: 2
   },
   title: {
-    paddingTop: 15,
     paddingBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
   titleText: {
-    fontSize: 20
+    fontSize: 18
   },
   detailsRow: {
     flexDirection: 'row'
@@ -117,7 +103,8 @@ let styles = StyleSheet.create({
     justifyContent: 'center'
   },
   detailsItemText: {
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 12
   },
   detailsItemIcon: {
     alignItems: 'center',

@@ -1,3 +1,4 @@
+import React, { InteractionManager } from 'react-native';
 import { createAction } from 'redux-actions';
 import colorgyAPI from '../utils/colorgyAPI';
 import courseDatabase from '../databases/courseDatabase';
@@ -130,12 +131,15 @@ export const doAddCourse = (
 ) => (dispatch) => {
   dispatch(courseAdded({ course }));
 
-  tableDatabase.addUserCourse(
-    course.code, userId, orgCode, year, term
-  ).then(() => {
-    dispatch(doLoadTableCourses(userId, orgCode));
-  }).catch((e) => {
-    console.error(e);
+
+  InteractionManager.runAfterInteractions(() => {
+    tableDatabase.addUserCourse(
+      course.code, userId, orgCode, year, term
+    ).then(() => {
+      dispatch(doLoadTableCourses(userId, orgCode));
+    }).catch((e) => {
+      console.error(e);
+    });
   });
 };
 
@@ -157,12 +161,14 @@ export const doRemoveCourse = (
 ) => (dispatch) => {
   dispatch(courseRemoved({ course }));
 
-  tableDatabase.removeUserCourse(
-    course.code, userId, orgCode, year, term
-  ).then(() => {
-    dispatch(doLoadTableCourses(userId, orgCode));
-  }).catch((e) => {
-    console.error(e);
+  InteractionManager.runAfterInteractions(() => {
+    tableDatabase.removeUserCourse(
+      course.code, userId, orgCode, year, term
+    ).then(() => {
+      dispatch(doLoadTableCourses(userId, orgCode));
+    }).catch((e) => {
+      console.error(e);
+    });
   });
 };
 

@@ -29,7 +29,7 @@ var styles = StyleSheet.create({
     height: THEME.ANDROID_APP_TAB_BAR_HEIGHT,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    borderTopColor: '#B2B2B2',
+    borderTopColor: '#ECECEC',
     borderTopWidth: 1,
     elevation: 7
   }

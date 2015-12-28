@@ -21,6 +21,7 @@ import TitleBarScrollView from '../components/TitleBarScrollView';
 import TitleBarActionIcon from '../components/TitleBarActionIcon';
 import ScrollableTabView from '../components/ScrollableTabView';
 import CourseTable from '../components/CourseTable';
+import FadeInView from '../components/FadeInView';
 
 var UserPageContainer = React.createClass({
 
@@ -191,20 +192,22 @@ var UserPageContainer = React.createClass({
                 height: 400
               }}
             />
-            <View style={styles.head}>
-              <View style={styles.headBackground} />
-              <Image
-                style={styles.headAvatar}
-                source={user.avatar_url ? { uri: user.avatar_url } : require('../assets/images/defaults/users/avatar.jpg')}
-              />
-              <View style={styles.headInfo}>
-                <View style={styles.headName}>
-                  <Text style={styles.headNameText}>{user.name}</Text>
-                </View>
-                <View style={styles.headData}>
+            <FadeInView>
+              <View style={styles.head}>
+                <View style={styles.headBackground} />
+                <Image
+                  style={styles.headAvatar}
+                  source={user.avatar_url ? { uri: user.avatar_url } : require('../assets/images/defaults/users/avatar.jpg')}
+                />
+                <View style={styles.headInfo}>
+                  <View style={styles.headName}>
+                    <Text style={styles.headNameText}>{user.name}</Text>
+                  </View>
+                  <View style={styles.headData}>
+                  </View>
                 </View>
               </View>
-            </View>
+            </FadeInView>
 
             <View style={styles.containerBackground} />
 
@@ -212,42 +215,44 @@ var UserPageContainer = React.createClass({
               switch (this.state.loading) {
                 case LOADING_STATE.DONE:
                   return (
-                    <ScrollableTabView
-                      autoHeight={true}
-                      edgeHitWidth={1200}
-                      color="#FFFFFF"
-                      backgroundColor="transparent"
-                      activeColor="#FFFFFFAA"
-                      style={{ marginHorizontal: 0, height: 60 }}
-                      tabUnderlineStyle={{ height: 4 }}
-                      textStyle={{ fontSize: 16 }}
-                    >
-                      <View tabLabel="課表">
-                        <View style={styles.card}>
-                          {(() => {
-                            var { courses, periodData } = this.state;
-                            if (courses && periodData) {
-                              return (
-                                <CourseTable
-                                  width={this.props.windowWidth - 32 - 4}
-                                  height={720}
-                                  style={{ marginRight: 4 }}
-                                  courses={courses}
-                                  periodData={periodData}
-                                  onCoursePress={this._handleCoursePress}
-                                />
-                              );
-                            }
-                          })()}
+                    <FadeInView>
+                      <ScrollableTabView
+                        autoHeight={true}
+                        edgeHitWidth={1200}
+                        color="#FFFFFF"
+                        backgroundColor="transparent"
+                        activeColor="#FFFFFFAA"
+                        style={{ marginHorizontal: 0, height: 60 }}
+                        tabUnderlineStyle={{ height: 4 }}
+                        textStyle={{ fontSize: 16 }}
+                      >
+                        <View tabLabel="課表">
+                          <View style={styles.card}>
+                            {(() => {
+                              var { courses, periodData } = this.state;
+                              if (courses && periodData) {
+                                return (
+                                  <CourseTable
+                                    width={this.props.windowWidth - 32 - 4}
+                                    height={720}
+                                    style={{ marginRight: 4 }}
+                                    courses={courses}
+                                    periodData={periodData}
+                                    onCoursePress={this._handleCoursePress}
+                                  />
+                                );
+                              }
+                            })()}
+                          </View>
                         </View>
-                      </View>
-                      <View tabLabel="基本資料">
-                        <View style={styles.card}>
-                          <Text>{user.cover_photo_url}</Text>
-                          <Text style={{ fontSize: 24 }}>{JSON.stringify(user, null, 2)}</Text>
+                        <View tabLabel="基本資料">
+                          <View style={styles.card}>
+                            <Text>{user.cover_photo_url}</Text>
+                            <Text style={{ fontSize: 24 }}>{JSON.stringify(user, null, 2)}</Text>
+                          </View>
                         </View>
-                      </View>
-                    </ScrollableTabView>
+                      </ScrollableTabView>
+                    </FadeInView>
                   );
                   break;
                 default:

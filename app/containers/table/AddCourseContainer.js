@@ -115,6 +115,8 @@ var TableContainer = React.createClass({
                     confirmColor={THEME.DANGER_COLOR}
                     initialWidth={48}
                     confirmWidth={78}
+                    touchAreaIncreaseHorizontal={2}
+                    touchAreaIncreaseVertical={12}
                     onPress={() => {
                       InteractionManager.runAfterInteractions(() => {
                         this.props.dispatch(
@@ -137,6 +139,8 @@ var TableContainer = React.createClass({
                     confirmColor={THEME.SUCCESS_COLOR}
                     initialWidth={78}
                     confirmWidth={78}
+                    touchAreaIncreaseHorizontal={2}
+                    touchAreaIncreaseVertical={12}
                     onPress={() => {
                       InteractionManager.runAfterInteractions(() => {
                         this.props.dispatch(

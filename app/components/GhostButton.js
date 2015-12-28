@@ -88,7 +88,14 @@ let GhostButton = React.createClass({
         onPressIn={this._handlePressIn}
         onPressOut={this._handlePressOut}
       >
-        <View>
+        <View
+          style={{
+            marginHorizontal: -this.props.touchAreaIncreaseHorizontal || 0,
+            marginVertical: -this.props.touchAreaIncreaseVertical || 0,
+            paddingHorizontal: this.props.touchAreaIncreaseHorizontal || 0,
+            paddingVertical: this.props.touchAreaIncreaseVertical || 0
+          }}
+        >
           <Animated.View
             style={[
               styles.button,
@@ -132,10 +139,10 @@ let GhostButton = React.createClass({
               {
                 borderColor: color,
                 position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
+                top: this.props.touchAreaIncreaseVertical || 0,
+                left: this.props.touchAreaIncreaseHorizontal || 0,
+                right: this.props.touchAreaIncreaseHorizontal || 0,
+                bottom: this.props.touchAreaIncreaseVertical || 0,
                 backgroundColor: color
               },
               this.props.style,

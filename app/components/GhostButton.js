@@ -1,5 +1,6 @@
 import React, {
   StyleSheet,
+  View,
   TouchableHighlight,
   TouchableOpacity
 } from 'react-native';
@@ -20,25 +21,31 @@ let GhostButton = React.createClass({
     };
   },
 
+  getInitialState() {
+    return {};
+  },
+
   _handlePress() {
     if (this.props.onPress) this.props.onPress();
   },
 
   render() {
-    var text = null;
-    if (this.props.text) text = (
-      <Text style={[styles.text, this.props.textStyle, { color: this.props.color }]}>
-        {this.props.text}
-      </Text>
-    );
+    var value = this.props.value || this.props.text;
+
     return (
-      <TouchableOpacity
-        style={[styles.button, this.props.style, { borderColor: this.props.color }]}
+      <TouchableHighlight
+        style={[styles.button, (this.props.type === 'small' && styles.smallButton), { borderColor: this.props.color }, this.props.style]}
         underlayColor={this.props.color}
         onPress={this._handlePress}
+        onPressIn={() => this.setState({ press: true })}
+        onPressOut={() => this.setState({ press: false })}
       >
-        {text || this.props.children}
-      </TouchableOpacity>
+        <View>
+          <Text style={[styles.text, this.props.textStyle, { color: (this.state.press ? this.props.backgroundColor || 'white' : this.props.color) }]}>
+            {value}
+          </Text>
+        </View>
+      </TouchableHighlight>
     );
   }
 });
@@ -47,12 +54,18 @@ let styles = StyleSheet.create({
   button: {
     borderWidth: 1.4,
     borderRadius: 1,
-    paddingTop: 4,
-    paddingBottom: 4,
-    paddingLeft: 12,
-    paddingRight: 12,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  smallButton: {
+    paddingTop: 4,
+    paddingBottom: 4,
+    paddingLeft: 8,
+    paddingRight: 8,
   },
   text: {
     fontSize: 16

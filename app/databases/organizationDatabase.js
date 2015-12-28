@@ -74,11 +74,16 @@ organizationDatabase.updateDepartment = (orgCode) => {
       short_name
     ) VALUES ${insertSQLValues.join(', ')}`;
 
+    if (!insertSQLValues || insertSQLValues.length <= 0) {
+      insertSQL = null;
+    }
+
     return insertSQL;
 
   }).then((insertSQL) => {
     return organizationDatabase.executeSql('DELETE FROM departments WHERE organization_code = ?;', [orgCode]).then((r) => {
-      return organizationDatabase.executeSql(insertSQL);
+      if (insertSQL) return organizationDatabase.executeSql(insertSQL);
+      return true;
     }).then((r) => {
       organizationDatabase.executeSql(`INSERT OR REPLACE INTO info (ID, key, value) VALUES ((SELECT ID FROM info WHERE key = 'organization_${orgCode}_updated_at'), '${orgCode}_departments_updated_at', ${(new Date()).getTime()})`);
     });

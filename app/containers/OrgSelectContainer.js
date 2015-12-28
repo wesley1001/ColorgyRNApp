@@ -10,6 +10,8 @@ import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
 import { FBLoginManager } from 'NativeModules';
 
+import THEME from '../constants/THEME';
+
 import Text from '../components/Text';
 
 import organizationDatabase, { sqlValue } from '../databases/organizationDatabase';
@@ -30,8 +32,9 @@ var OrgSelectContainer = React.createClass({
     return StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: '#EEEEEE',
-        padding: 24
+        backgroundColor: THEME.BACKGROUND_COLOR,
+        padding: 24,
+        paddingTop: 12
       },
       instructionsText: {
         fontSize: 16,
@@ -125,10 +128,10 @@ var OrgSelectContainer = React.createClass({
 
   _handleOrgSelect(e) {
     var orgCode = e.value;
-    this.setState({ orgCode });
-
-    InteractionManager.runAfterInteractions(() => {
-      this._fetchDeps(orgCode);
+    this.setState({ orgCode, depOptions: null, depData: {} }, () => {
+      InteractionManager.runAfterInteractions(() => {
+        this._fetchDeps(orgCode);
+      });
     });
   },
 
@@ -155,7 +158,7 @@ var OrgSelectContainer = React.createClass({
 
     if (this.props.updating) {
       return (
-        <View style={styles.container}>
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
           <ProgressBarAndroid />
           <Text></Text>
           <Text>資料上傳中⋯⋯</Text>
@@ -169,11 +172,12 @@ var OrgSelectContainer = React.createClass({
         offsetTop={this.props.statusBarHeight}
         title="歡迎來到 Colorgy"
       >
-        <ScrollableTabView currentTab={this.state.step} edgeHitWidth={-1}>
+        <ScrollableTabView
+          currentTab={this.state.step}
+          edgeHitWidth={-1}
+          renderTabBar={false}
+        >
           <View tabLabel="選擇學校" style={styles.container}>
-            <Text style={styles.instructionsText}>
-              在開始之前，我們需要知道一些關於您的資訊，來為您準備最適切的服務與功能。
-            </Text>
             <View style={[styles.card, { marginTop: 14 }]}>
               <Text style={[styles.instructionsText, { marginBottom: 14 }]}>
                 您就讀的是哪一所學校呢？
@@ -184,7 +188,7 @@ var OrgSelectContainer = React.createClass({
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                       <Text>選項載入失敗，請檢查您的網路連線，然後</Text>
                       <Text></Text>
-                      <GhostButton text="再試一次" onPress={this._fetchOrgs} />
+                      <GhostButton type="small" text="再試一次" onPress={this._fetchOrgs} />
                     </View>
                   );
                 } else if (this.state.orgOptions) {
@@ -219,15 +223,9 @@ var OrgSelectContainer = React.createClass({
                 onPress={() => this._proceedToStep(1)}
               />
             </View>
-            <Text style={[styles.hintText, { marginTop: 12, marginBottom: 0 }]}>
-              {this.state.orgCode ? `安安，${this.state.orgData[this.state.orgCode].short_name}的同學！` : '選擇學校後就可以繼續囉。'}
-            </Text>
           </View>
 
           <View tabLabel="選擇科系" style={styles.container}>
-            <Text style={styles.instructionsText}>
-              現在我們需要一些您在學校的資訊，來幫您找到您感興趣的資訊及朋友圈。
-            </Text>
             <View style={[styles.card, { marginTop: 14 }]}>
               <Text style={[styles.instructionsText, { marginBottom: 14 }]}>
                 您是哪一個系所的同學呢？
@@ -238,7 +236,7 @@ var OrgSelectContainer = React.createClass({
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                       <Text>選項載入失敗，請檢查您的網路連線，然後</Text>
                       <Text></Text>
-                      <GhostButton text="再試一次" onPress={this._fetchDeps(this.state.orgCode)} />
+                      <GhostButton type="small" text="再試一次" onPress={this._fetchDeps(this.state.orgCode)} />
                     </View>
                   );
                 } else if (this.state.depOptions) {
@@ -273,15 +271,9 @@ var OrgSelectContainer = React.createClass({
                 onPress={() => this._proceedToStep(2)}
               />
             </View>
-            <Text style={[styles.hintText, { marginTop: 12, marginBottom: 0 }]}>
-              {this.state.depCode ? `好的，${this.state.orgData[this.state.orgCode].short_name}${this.state.depData[this.state.depCode].short_name}。準備好繼續了嗎？` : '請挑選您的系所。如果找不到的話，先選擇學院或是相近的科系，日後再回來修改也可以喔！'}
-            </Text>
           </View>
 
           <View tabLabel="選擇入學年度" style={styles.container}>
-            <Text style={styles.instructionsText}>
-              好極了！現在只剩下最後一步：為了幫您找到學長學姊、學弟學妹，請告訴我們......
-            </Text>
             <View style={[styles.card, { marginTop: 14 }]}>
               <Text style={[styles.instructionsText, { marginBottom: 14 }]}>
                 您的入學年度是？
@@ -300,7 +292,7 @@ var OrgSelectContainer = React.createClass({
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                       <Text>選項載入失敗，請檢查您的網路連線，然後</Text>
                       <Text></Text>
-                      <GhostButton text="再試一次" onPress={this._fetchYears()} />
+                      <GhostButton type="small" text="再試一次" onPress={this._fetchYears()} />
                     </View>
                   );
                 }
@@ -319,9 +311,6 @@ var OrgSelectContainer = React.createClass({
                 onPress={() => this._handleDone()}
               />
             </View>
-            <Text style={[styles.hintText, { marginTop: 12, marginBottom: 0 }]}>
-              {this.state.year ? `這些資料往後還可以在「個人資料」頁面中修改喔。` : '請選擇入學年度後繼續。'}
-            </Text>
           </View>
         </ScrollableTabView>
       </TitleBarView>

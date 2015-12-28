@@ -26,6 +26,8 @@ var LoginContainer = React.createClass({
   },
 
   render: function() {
+    var { networkConnectivity } = this.props;
+
     if (this.props.loggingIn) {
       var statusText = '登入中，請稍候⋯⋯';
       if (this.props.meUpdating) statusText = '正在同步個人資料⋯⋯';
@@ -59,7 +61,7 @@ var LoginContainer = React.createClass({
               />
             </TouchableWithoutFeedback>
           </View>
-          <TouchableOpacity style={styles.fbLoginButton}>
+          <TouchableOpacity style={[styles.fbLoginButton, !networkConnectivity && styles.disabledFbLoginButton]}>
             <View>
               <Image
                 style={styles.fbLoginButtonIcon}
@@ -68,7 +70,7 @@ var LoginContainer = React.createClass({
             <Text
               style={styles.fbLoginButtonText}
               onPress={this._handleFBLogin} >
-              使用 Facebook 登入
+              {networkConnectivity ? '使用 Facebook 登入' : '請連上網路後再登入'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -126,6 +128,9 @@ var styles = StyleSheet.create({
     height: 20,
     marginRight: 10
   },
+  disabledFbLoginButton: {
+    backgroundColor: '#AAAAAA'
+  },
   fbLoginButtonText: {
     color: '#FFFFFF',
     fontSize: 18,
@@ -136,5 +141,6 @@ var styles = StyleSheet.create({
 export default connect((state) => ({
   loggingIn: (state.colorgyAPI.refreshingAccessToken || state.colorgyAPI.meUpdating),
   meUpdating: state.colorgyAPI.meUpdating,
-  refreshingAccessToken: state.colorgyAPI.refreshingAccessToken
+  refreshingAccessToken: state.colorgyAPI.refreshingAccessToken,
+  networkConnectivity: state.deviceInfo.networkConnectivity
 }))(LoginContainer);

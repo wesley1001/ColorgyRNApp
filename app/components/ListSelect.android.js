@@ -111,7 +111,8 @@ let styles = StyleSheet.create({
   option: {
     marginLeft: 8,
     marginRight: 8,
-    marginBottom: 8,
+    marginTop: 4,
+    marginBottom: 4,
     height: 44,
     borderWidth: 1.8,
     borderColor: '#E0E0E0',

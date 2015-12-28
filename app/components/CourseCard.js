@@ -1,6 +1,7 @@
 import React, {
   PropTypes,
   StyleSheet,
+  Animated,
   View,
   TouchableOpacity,
   Image
@@ -24,7 +25,21 @@ let CourseCard = React.createClass({
     };
   },
 
+  getInitialState() {
+    return {
+      removed: false,
+      removingOpacityValue: new Animated.Value(1)
+    };
+  },
+
+  remove() {
+    Animated.timing(this.state.removingOpacityValue, { toValue: 0, duration: 1000 }).start();
+    setTimeout(() => { this.setState({ removed: true }); }, 1000);
+  },
+
   render() {
+    if (this.state.removed) return null;
+
     var course = this.props.course;
 
     var action = this.props.action;
@@ -33,45 +48,54 @@ let CourseCard = React.createClass({
     if (this.props.onPress) Container = TouchableNativeFeedback;
 
     return (
-      <Container
-        onPress={() => { this.props.onPress({ course: this.props.course, courseCode: this.props.course.code }) }}
-      >
-        <View style={[styles.container, { borderLeftColor: course.color }]}>
-          <View style={styles.title}>
-            <Text style={styles.titleText}>{course.name}</Text>
-            {action}
+      <Animated.View style={{
+        opacity: this.state.removingOpacityValue
+      }}>
+        <Container
+          onPress={() => { this.props.onPress({ course: this.props.course, courseCode: this.props.course.code }) }}
+        >
+          <View
+            style={[
+              styles.container,
+              { borderLeftColor: course.color }
+            ]}
+          >
+            <View style={styles.title}>
+              <Text style={styles.titleText}>{course.name}</Text>
+              <View style={styles.actions}>{action}</View>
+            </View>
+            <View style={styles.detailsRow}>
+              <View style={styles.detailsItem}>
+                <View style={styles.detailsItemIcon}>
+                  <Image
+                    style={{ width: 18, height: 18 }}
+                    source={require('../assets/images/icon_lecturer_grey.png')}
+                  />
+                </View>
+                <Text style={styles.detailsItemText}>{course.lecturer}</Text>
+              </View>
+              <View style={styles.detailsItem}>
+                <View style={styles.detailsItemIcon}>
+                  <Image
+                    style={{ width: 18, height: 18 }}
+                    source={require('../assets/images/icon_code_grey.png')}
+                  />
+                </View>
+                <Text style={styles.detailsItemText}>{course.code}</Text>
+              </View>
+              <View style={styles.detailsItem}>
+                <View style={styles.detailsItemIcon}>
+                  <Image
+                    style={{ width: 18, height: 18 }}
+                    source={require('../assets/images/icon_time_grey.png')}
+                  />
+                </View>
+                <Text style={styles.detailsItemText}>{course.times}</Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.detailsRow}>
-            <View style={styles.detailsItem}>
-              <View style={styles.detailsItemIcon}>
-                <Image
-                  style={{ width: 18, height: 18 }}
-                  source={require('../assets/images/icon_lecturer_grey.png')}
-                />
-              </View>
-              <Text style={styles.detailsItemText}>{course.lecturer}</Text>
-            </View>
-            <View style={styles.detailsItem}>
-              <View style={styles.detailsItemIcon}>
-                <Image
-                  style={{ width: 18, height: 18 }}
-                  source={require('../assets/images/icon_code_grey.png')}
-                />
-              </View>
-              <Text style={styles.detailsItemText}>{course.code}</Text>
-            </View>
-            <View style={styles.detailsItem}>
-              <View style={styles.detailsItemIcon}>
-                <Image
-                  style={{ width: 18, height: 18 }}
-                  source={require('../assets/images/icon_time_grey.png')}
-                />
-              </View>
-              <Text style={styles.detailsItemText}>{course.times}</Text>
-            </View>
-          </View>
-        </View>
-      </Container>
+        </Container>
+      </Animated.View>
     );
   }
 });
@@ -93,7 +117,12 @@ let styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   titleText: {
+    flex: 1,
     fontSize: 18
+  },
+  actions: {
+    width: 110,
+    alignItems: 'flex-end'
   },
   detailsRow: {
     flexDirection: 'row'

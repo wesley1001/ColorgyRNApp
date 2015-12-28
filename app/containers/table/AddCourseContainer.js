@@ -116,13 +116,15 @@ var TableContainer = React.createClass({
                     initialWidth={48}
                     confirmWidth={78}
                     onPress={() => {
-                      this.props.dispatch(
-                        doRemoveCourse(
-                          course,
-                          this.props.userId,
-                          this.props.organizationCode
-                        )
-                      );
+                      InteractionManager.runAfterInteractions(() => {
+                        this.props.dispatch(
+                          doRemoveCourse(
+                            course,
+                            this.props.userId,
+                            this.props.organizationCode
+                          )
+                        );
+                      });
                     }}
                   />
                 :
@@ -136,13 +138,15 @@ var TableContainer = React.createClass({
                     initialWidth={78}
                     confirmWidth={78}
                     onPress={() => {
-                      this.props.dispatch(
-                        doAddCourse(
-                          course,
-                          this.props.userId,
-                          this.props.organizationCode
-                        )
-                      );
+                      InteractionManager.runAfterInteractions(() => {
+                        this.props.dispatch(
+                          doAddCourse(
+                            course,
+                            this.props.userId,
+                            this.props.organizationCode
+                          )
+                        );
+                      });
                     }}
                   />
                 }

@@ -48,7 +48,7 @@ let GhostButton = React.createClass({
       } else {
         Animated.spring(this.state.width, { toValue: 1 }).start();
         this.setState({ confirm: true }, () => {
-          setTimeout(this._cancelConfirm, 10000);
+          setTimeout(this._cancelConfirm, 3200);
         });
       }
     } else {
@@ -106,7 +106,7 @@ let GhostButton = React.createClass({
           >
             {(() => {
               if (this.state.loading) {
-                return (<ProgressBarAndroid styleAttr="Small" color={color} />);
+                return (<View style={{ height: ((this.props.type === 'tiny') ? 18 : 20), justifyContent: 'center', alignItems: 'center' }}><ProgressBarAndroid styleAttr="Small" color={color} /></View>);
               } else {
                 return (
                   <Text
@@ -150,7 +150,7 @@ let GhostButton = React.createClass({
           >
             {(() => {
               if (this.state.loading) {
-                return (<ProgressBarAndroid styleAttr="Small" color={color} />);
+                return (<View style={{ height: ((this.props.type === 'tiny') ? 18 : 20), justifyContent: 'center', alignItems: 'center' }}><ProgressBarAndroid styleAttr="Small" color={this.props.backgroundColor || 'white'} /></View>);
               } else {
                 return (
                   <Text

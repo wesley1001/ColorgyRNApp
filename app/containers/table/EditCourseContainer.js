@@ -23,6 +23,7 @@ import {
 } from '../../actions/tableActions';
 
 var TableContainer = React.createClass({
+  courseRefs: {},
 
   getInitialState() {
     return {
@@ -92,6 +93,7 @@ var TableContainer = React.createClass({
           {coursesArray.map((course) => {
             return (
               <CourseCard
+                ref={(ref) => this.courseRefs[course.code] = ref}
                 key={course.code}
                 course={course}
                 onPress={this._handleCoursePress}
@@ -104,13 +106,16 @@ var TableContainer = React.createClass({
                   initialWidth={48}
                   confirmWidth={78}
                   onPress={() => {
-                    this.props.dispatch(
-                      doRemoveCourse(
-                        course,
-                        this.props.userId,
-                        this.props.organizationCode
-                      )
-                    );
+                    this.courseRefs[course.code].remove();
+                    InteractionManager.runAfterInteractions(() => {
+                      this.props.dispatch(
+                        doRemoveCourse(
+                          course,
+                          this.props.userId,
+                          this.props.organizationCode
+                        )
+                      );
+                    });
                   }}
                 />}
               />

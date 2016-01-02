@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
+    <title>tab_icon_board@1x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Tab-Icons" sketch:type="MSArtboardGroup" transform="translate(-96.000000, -48.000000)" stroke="#979797" stroke-width="1.5">
+            <g id="tab_icon_board" sketch:type="MSLayerGroup" transform="translate(96.000000, 48.000000)">
+                <path d="M13.5980984,15.3236103 L1.9105608,15.3236103 C1.40750406,15.3236103 1,14.9139607 1,14.4082554 L1,1.91535498 C1,1.4100532 1.40750406,1 1.9105608,1 L13.5980984,1 C14.1007537,1 14.5086592,1.4100532 14.5086592,1.91535498 L14.5086592,14.4082554 C14.5086592,14.9139607 14.1007537,15.3236103 13.5980984,15.3236103 Z M14.5086592,18.397395 C14.5086592,17.8920932 14.1007537,17.48204 13.5980984,17.48204 L1.9105608,17.48204 C1.40750406,17.48204 1,17.8920932 1,18.397395 L1,22.0850486 C1,22.5903504 1.40750406,23 1.9105608,23 L13.5980984,23 C14.1007537,23 14.5086592,22.5903504 14.5086592,22.0850486 L14.5086592,18.397395 L14.5086592,18.397395 Z M17.6105577,23 L22.101935,23 C22.6049917,23 23.0124958,22.5860445 23.0124958,22.0754315 L23.0124958,11.048341 L23.0124958,1.92497636 C23.0124958,1.41436331 22.6049917,1 22.101935,1 L17.6105577,1 C17.1079025,1 16.6999969,1.41436331 16.6999969,1.92497636 L16.6999969,22.0754315 C16.6999969,22.5860445 17.1079025,23 17.6105577,23 Z" id="activityboard" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

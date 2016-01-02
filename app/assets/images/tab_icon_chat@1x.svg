@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
+    <title>tab_icon_chat@1x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Tab-Icons" sketch:type="MSArtboardGroup" transform="translate(-144.000000, -48.000000)" stroke="#979797" stroke-width="1.5">
+            <g id="tab_icon_chat" sketch:type="MSLayerGroup" transform="translate(144.000000, 48.000000)">
+                <path d="M2.99908159,17.6051973 L17.5341464,1 L1.91649829,1 C1.41016127,1 1,1.4185214 1,1.93517885 L1,16.6700185 C1,17.1866759 1.41016127,17.6051973 1.91649829,17.6051973 L2.99908159,17.6051973 L2.99908159,17.6051973 Z M5.81404063,17.7218885 L20.3491055,1.11669119 L22.0835017,1.11669119 C22.5898387,1.11669119 23,1.53562492 23,2.05187004 L23,16.787122 C23,17.3033671 22.5898387,17.7218885 22.0835017,17.7218885 L20.0533044,17.7218885 L17.3878623,22.7260025 C17.0298299,23.0913325 16.4495426,23.0913325 16.0919143,22.7260025 L13.5016348,17.7218885 L5.81404063,17.7218885 L5.81404063,17.7218885 Z" id="blurredchat" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -69,7 +69,7 @@ let CourseCard = React.createClass({
                 <View style={styles.detailsItemIcon}>
                   <Image
                     style={{ width: 18, height: 18 }}
-                    source={require('../assets/images/icon_lecturer_grey.png')}
+                    source={require('../assets/images/icon_lecturer.png')}
                   />
                 </View>
                 <Text style={styles.detailsItemText}>{course.lecturer}</Text>
@@ -78,7 +78,7 @@ let CourseCard = React.createClass({
                 <View style={styles.detailsItemIcon}>
                   <Image
                     style={{ width: 18, height: 18 }}
-                    source={require('../assets/images/icon_code_grey.png')}
+                    source={require('../assets/images/icon_code.png')}
                   />
                 </View>
                 <Text style={styles.detailsItemText}>{course.code}</Text>
@@ -87,7 +87,7 @@ let CourseCard = React.createClass({
                 <View style={styles.detailsItemIcon}>
                   <Image
                     style={{ width: 18, height: 18 }}
-                    source={require('../assets/images/icon_time_grey.png')}
+                    source={require('../assets/images/icon_time.png')}
                   />
                 </View>
                 <Text style={styles.detailsItemText}>{course.times}</Text>

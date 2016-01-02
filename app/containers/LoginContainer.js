@@ -7,6 +7,7 @@ import React, {
   TouchableWithoutFeedback
 } from 'react-native';
 import { connect } from 'react-redux/native';
+import Icon from 'react-native-vector-icons/Zocial';
 
 import { FBLoginManager } from 'NativeModules';
 
@@ -57,15 +58,13 @@ var LoginContainer = React.createClass({
             >
               <Image
                 style={styles.logoImage}
-                source={require('../assets/images/colorgy.png')}
+                source={require('../assets/images/colorgy_icon_with_text.png')}
               />
             </TouchableWithoutFeedback>
           </View>
           <TouchableOpacity style={[styles.fbLoginButton, !networkConnectivity && styles.disabledFbLoginButton]}>
-            <View>
-              <Image
-                style={styles.fbLoginButtonIcon}
-                source={require('../assets/images/icon_fb_white.png')} />
+            <View style={{ marginRight: 4 }}>
+              <Icon name="facebook" style={styles.fbLoginButtonText} />
             </View>
             <Text
               style={styles.fbLoginButtonText}
@@ -105,13 +104,12 @@ var styles = StyleSheet.create({
     alignItems: 'center'
   },
   logo: {
-    marginBottom: 32,
+    marginBottom: 8,
     alignItems: 'center',
     justifyContent: 'center'
   },
   logoImage: {
-    width: 142,
-    height: 162
+    width: 180
   },
   fbLoginButton: {
     backgroundColor: '#4A90E2',

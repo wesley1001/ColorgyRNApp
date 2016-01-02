@@ -119,25 +119,25 @@ var CoursePageContainer = React.createClass({
             </TitleBarActionIcon>
           }
           background={<View>
-            <Image source={require('../../assets/images/bg_1.jpg')} style={{ width: deviceWidth }} />
+            <Image style={{ width: deviceWidth }} />
           </View>}
         >
           <View style={[styles.container]}>
             <View style={styles.infoBlock}>
               <View style={styles.infoBox}>
-                <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_lecturer_grey.png')} />
+                <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_lecturer.png')} />
                 <Text>{course.lecturer}</Text>
               </View>
               <View style={styles.infoBox}>
-                <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_code_grey.png')} />
+                <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_code.png')} />
                 <Text>{course.code}</Text>
               </View>
               <View style={styles.infoBox}>
-                <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_credit_grey.png')} />
+                <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_credit.png')} />
                 <Text>{course.credits} 學分</Text>
               </View>
               <View style={styles.infoBox}>
-                <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_time_grey.png')} />
+                <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_time.png')} />
                 <Text>{course.timeLocations}</Text>
               </View>
             </View>

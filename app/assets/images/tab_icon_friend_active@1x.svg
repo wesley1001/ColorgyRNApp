@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
+    <title>tab_icon_friend_active@1x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Tab-Icons" sketch:type="MSArtboardGroup" transform="translate(-192.000000, -96.000000)" fill="#F89680">
+            <g id="tab_icon_friend_active" sketch:type="MSLayerGroup" transform="translate(192.000000, 96.000000)">
+                <path d="M20.7409925,20.956127 L20.7409925,22.0611523 C20.7409925,22.9903611 19.9961911,23.75 19.0704828,23.75 L1.92050973,23.75 C0.994483403,23.75 0.25,22.9904541 0.25,22.0611523 L0.25,1.9388477 C0.25,1.00922499 0.994395487,0.25 1.92050973,0.25 L19.0704828,0.25 C19.9962791,0.25 20.7409925,1.00931793 20.7409925,1.9388477 L20.7409925,8.24253942 L20.6049127,7.81172401 L23.344525,11.7157243 L23.2664356,11.621768 C23.9112375,12.2801585 23.9112375,13.3412147 23.2661392,13.9991644 L23.1868169,14.080067 L23.087136,14.1339277 L20.3475236,15.6142273 L20.7409925,14.9543898 L20.7409925,18.9366446 L16.1222755,14.802699 L15.1213609,15.9199142 L20.7409925,20.956127 Z" id="chatlist_pink" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

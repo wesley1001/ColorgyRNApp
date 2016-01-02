@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_classmate_active@1x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Common-Icons" sketch:type="MSArtboardGroup" transform="translate(-48.000000, -96.000000)" stroke="#F89680">
+            <g id="icon_classmate_active" sketch:type="MSLayerGroup" transform="translate(48.000000, 96.000000)">
+                <path d="M18.3114398,14.1486471 L20.3038575,13.0720656 C20.5653808,12.8053287 20.5653808,12.3733113 20.3038575,12.1065743 L18.3114398,9.2673014 L18.3114398,4.68249727 C18.3114398,4.30557333 18.0118392,4 17.6419874,4 L5.16945236,4 C4.79989577,4 4.5,4.30557333 4.5,4.68249727 L4.5,19.3172017 C4.5,19.6941256 4.79989577,20 5.16945236,20 L17.6419874,20 C18.0118392,20 18.3114398,19.6941256 18.3114398,19.3172017 L18.3114398,14.1486471 L18.3114398,14.1486471 Z M18.3114398,17.291386 L15.1339025,14.4442856 L18.3114398,17.291386 Z M8.0867947,20 L12.2758899,20 C12.6457417,20 12.9453423,19.6941256 12.9453423,19.3172017 L12.9453423,14.1486471 L14.93776,13.0720656 C15.1992833,12.8053287 15.1992833,12.3733113 14.93776,12.1065743 L12.9453423,9.2673014 L12.9453423,4.68249727 C12.9453423,4.30557333 12.6457417,4 12.2758899,4 L8.0867947,4 M12.9453423,17.291386 L9.76780493,14.4442856" id="friend" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

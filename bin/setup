@@ -32,9 +32,9 @@ mv node_modules/react-native/packager/react-packager/src/FileWatcher/index.js no
 sed "s/const MAX_WAIT_TIME = 25000;/const MAX_WAIT_TIME = 250000;/g" node_modules/react-native/packager/react-packager/src/FileWatcher/index.js.bak > node_modules/react-native/packager/react-packager/src/FileWatcher/index.js
 
 # Set up configurable variables
-# if [ ! -f config.js ]; then
-#   cp sample.config.js config.js
-# fi
+if [ ! -f config.js ]; then
+  cp sample.config.js config.js
+fi
 
 # Only if this isn't CI
 # if [ -z "$CI" ]; then

@@ -7,10 +7,12 @@ import thunkMiddleware from 'redux-thunk';
 import reduxPersistExpectIngs from 'redux-persist-except-ings';
 import createLogger from 'redux-logger';
 
+import gaMiddleware from './middlewares/gaMiddleware';
 import alertMiddleware from './middlewares/alertMiddleware';
 
 var createStoreWithMiddleware = applyMiddleware(
   thunkMiddleware,
+  gaMiddleware,
   alertMiddleware
 )(createStore);
 
@@ -23,6 +25,7 @@ if (__DEV__) {
 
   createStoreWithMiddleware = applyMiddleware(
     thunkMiddleware,
+    gaMiddleware,
     alertMiddleware,
     loggerMiddleware
   )(createStore);

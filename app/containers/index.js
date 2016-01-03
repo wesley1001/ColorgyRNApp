@@ -17,8 +17,11 @@ import { doUpdateMe, doClearAccessToken } from '../actions/colorgyAPIActions';
 import { enterDevMode } from '../actions/devModeActions';
 import { doBackPress } from '../actions/appActions';
 
+import ga from '../utils/ga';
+
 var App = React.createClass({
   componentWillMount: function() {
+    ga.sendScreenView('Start', 'Start');
     this.props.dispatch(doDeviceInfo());
 
     if (Platform.OS === 'android') {

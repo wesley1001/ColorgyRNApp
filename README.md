@@ -9,7 +9,18 @@ Colorgy mobile app on Android, using [React Native](https://facebook.github.io/r
 ./bin/setup
 ```
 
+Then edit `config.js` (automatically copied from `sample.config.js` if not exists) to set the configurations.
+
+### Run on Android
+
+```bash
+react-native run-android
+```
+
+
 ## Build
+
+### Android
 
 Edit `~/.gradle/gradle.properties`, fill in the necessary properties:
 

@@ -15,6 +15,8 @@ import UserPageContainer from '../UserPageContainer';
 
 import { doLoadCourseDatabase, doSyncUserCourses } from '../../actions/tableActions';
 
+import ga from '../../utils/ga';
+
 var Table = React.createClass({
 
   componentWillMount() {
@@ -25,10 +27,26 @@ var Table = React.createClass({
     }
   },
 
+  componentDidMount() {
+    this.navigator.navigationContext.addListener('didfocus', (e) => {
+      this._reportRouteUpdate();
+    });
+
+    this._reportRouteUpdate();
+  },
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.navigateBackCount !== this.props.navigateBackCount) {
       this.navigator.pop();
     }
+  },
+
+  _reportRouteUpdate() {
+    var currentRouteStack = this.navigator.state.routeStack;
+    var currentRoute = currentRouteStack[currentRouteStack.length - 1];
+    var currentRouteString = JSON.stringify(currentRoute);
+
+    ga.sendScreenView('Table', currentRouteString);
   },
 
   render() {

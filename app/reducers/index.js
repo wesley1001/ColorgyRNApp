@@ -5,6 +5,7 @@ import colorgyAPI from './colorgyAPI';
 import appTab from './appTab';
 import deviceInfo from './deviceInfo';
 import table from './table';
+import board from './board';
 import devMode from './devMode';
 import counter from './counter';
 
@@ -14,6 +15,7 @@ export default combineReducers({
   appTab,
   deviceInfo,
   table,
+  board,
   devMode,
   counter
 });

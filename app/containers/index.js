@@ -10,6 +10,7 @@ import LoginContainer from './LoginContainer';
 import OrgSelectContainer from './OrgSelectContainer';
 import DevModeContainer from './DevModeContainer';
 import TableContainer from './table';
+import BoardContainer from './board';
 
 import { doDeviceInfo } from '../actions/deviceInfoActions';
 import { selectTab } from '../actions/appTabActions';
@@ -58,7 +59,7 @@ var App = React.createClass({
             <TableContainer />
           </View>
           <View tabLabel="活動牆" style={{ flex: 1 }}>
-
+            <BoardContainer />
           </View>
           <View tabLabel="更多" style={{ flex: 1 }}>
             <Text onPress={() => this.props.dispatch(doClearAccessToken()) }>Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out</Text>

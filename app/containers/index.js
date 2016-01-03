@@ -60,7 +60,7 @@ var App = React.createClass({
           <View tabLabel="活動牆" style={{ flex: 1 }}>
 
           </View>
-          <View tabLabel="我的資料" style={{ flex: 1 }}>
+          <View tabLabel="更多" style={{ flex: 1 }}>
             <Text onPress={() => this.props.dispatch(doClearAccessToken()) }>Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out</Text>
             <Text onPress={() => this.props.dispatch(doUpdateMe({ unconfirmedOrganizationCode: null, unconfirmedDepartmentCode: null, unconfirmedStartedYear: null })) }>Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org </Text>
             <Text onPress={() => this.props.dispatch(enterDevMode()) }>Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode</Text>

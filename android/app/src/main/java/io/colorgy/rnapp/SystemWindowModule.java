@@ -1,4 +1,4 @@
-package com.colorgyrnapp;
+package io.colorgy.rnapp;
 
 import android.app.Activity;
 import android.content.Context;

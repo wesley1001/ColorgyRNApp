@@ -209,7 +209,15 @@ function generateUUID() {
  */
 function getCurrentYear() {
   var date = (new Date());
-  return ((date.getMonth() + 1 > 6) ? date.getFullYear() : date.getFullYear() - 1);
+  var month = date.getMonth() + 1;
+
+  if (month > 6) {
+    return date.getFullYear();
+  } else if (month < 2) {
+    return date.getFullYear() - 1;
+  } else {
+    return date.getFullYear() - 1;
+  }
 }
 
 /**
@@ -219,7 +227,15 @@ function getCurrentYear() {
  */
 function getCurrentTerm() {
   var date = (new Date());
-  return ((date.getMonth() + 1 > 6) ? 1 : 2);
+  var month = date.getMonth() + 1;
+
+  if (month > 6) {
+    return 1;
+  } else if (month < 2) {
+    return 1;
+  } else {
+    return 2;
+  }
 }
 
 colorgyAPI = {

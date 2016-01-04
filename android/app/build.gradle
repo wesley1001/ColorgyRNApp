@@ -86,6 +86,7 @@ dependencies {
     compile "com.facebook.react:react-native:0.17.+"
     compile project(':RNDeviceInfo')
     compile project(':react-native-sqlite-storage')
+    compile project(':react-native-google-analytics-native')
     compile project(':react-native-facebook-login')
     compile project(':react-native-linear-gradient')
     compile project(':react-native-vector-icons')

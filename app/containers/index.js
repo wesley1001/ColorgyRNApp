@@ -22,7 +22,6 @@ import ga from '../utils/ga';
 
 var App = React.createClass({
   componentWillMount: function() {
-    ga.sendScreenView('Start', 'Start');
     this.props.dispatch(doDeviceInfo());
 
     if (Platform.OS === 'android') {
@@ -31,6 +30,11 @@ var App = React.createClass({
         return true;
       });
     }
+  },
+
+  componentDidMount: function() {
+    ga.setUserID(this.props.uuid);
+    ga.sendScreenView('Start');
   },
 
   render: function() {
@@ -76,6 +80,7 @@ export default connect((state) => ({
   stateReady: state.app.stateReady,
   isLogin: (state.colorgyAPI.hasAccessToken && state.colorgyAPI.meUpdatedAt),
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
+  uuid: state.colorgyAPI.me && state.colorgyAPI.me.uuid,
   deviceInfo: state.deviceInfo,
   isDevMode: state.devMode.devMode,
   currentTab: state.appTab.currentTab

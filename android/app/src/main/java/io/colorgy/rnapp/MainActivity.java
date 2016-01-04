@@ -14,6 +14,7 @@ import com.facebook.soloader.SoLoader;
 
 import com.learnium.RNDeviceInfo.*;
 import org.pgsqlite.SQLitePluginPackage;
+import com.reactnativega.GoogleAnalyticsPackage;
 import com.magus.fblogin.FacebookLoginPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -40,6 +41,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .addPackage(new MainReactPackage())
                 .addPackage(new RNDeviceInfo())
                 .addPackage(new SQLitePluginPackage(this))
+                .addPackage(new GoogleAnalyticsPackage(this))
                 .addPackage(mFacebookLoginPackage)
                 .addPackage(new LinearGradientPackage())
                 .addPackage(new VectorIconsPackage())

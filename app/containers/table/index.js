@@ -57,7 +57,7 @@ var Table = React.createClass({
     var currentRoute = currentRouteStack[currentRouteStack.length - 1];
     var currentRouteString = JSON.stringify(currentRoute);
 
-    ga.sendScreenView('Table', currentRouteString);
+    ga.sendScreenView(`Table:${currentRouteString}`);
   },
 
   render() {

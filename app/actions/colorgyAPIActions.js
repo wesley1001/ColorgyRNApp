@@ -8,6 +8,7 @@
 import { createAction } from 'redux-actions';
 import store from '../store';
 import colorgyAPI from '../utils/colorgyAPI';
+import ga from '../utils/ga';
 import error from '../utils/errorHandler';
 
 export const requestAccessToken = createAction('REQUEST_ACCESS_TOKEN');
@@ -139,6 +140,7 @@ export const doGetAccessToken = (callback, forceRefresh, errorCallback) => (disp
  * Clear the access token, i.e. logout.
  */
 export const doClearAccessToken = () => (dispatch) => {
+  ga.setUserID('null');
   dispatch(clearAccessToken());
 };
 
@@ -163,6 +165,7 @@ export const doUpdateMe = (updatedData) => (dispatch) => {
       }
     }).then((json) => {
       var data = colorgyAPI.camelizeObject(json);
+      ga.setUserID(data.uuid);
       dispatch(updateMeSuccess(data));
     }).catch((e) => {
       dispatch(updateMeFaild(e));

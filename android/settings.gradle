@@ -8,6 +8,9 @@ project(':RNDeviceInfo').projectDir = new File(rootProject.projectDir, '../node_
 include ':react-native-sqlite-storage'
 project(':react-native-sqlite-storage').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sqlite-storage/src/android')
 
+include ':react-native-google-analytics-native'
+project(':react-native-google-analytics-native').projectDir = new File(settingsDir, '../node_modules/react-native-google-analytics-native/android')
+
 include ':react-native-facebook-login'
 project(':react-native-facebook-login').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-facebook-login/android')
 

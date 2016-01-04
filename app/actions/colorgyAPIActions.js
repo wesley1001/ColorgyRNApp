@@ -1,5 +1,14 @@
+/**
+ * Colorgy API actions.
+ *
+ * Note that dealing with access tokens and sending requests with access token
+ * may be useally done using utils/colorgyAPI.
+ */
+
 import { createAction } from 'redux-actions';
+import store from '../store';
 import colorgyAPI from '../utils/colorgyAPI';
+import error from '../utils/errorHandler';
 
 export const requestAccessToken = createAction('REQUEST_ACCESS_TOKEN');
 export const clearAccessToken = createAction('CLEAR_ACCESS_TOKEN');
@@ -13,7 +22,10 @@ export const updateMe = createAction('UPDATE_ME');
 export const updateMeSuccess = createAction('UPDATE_ME_SUCCESS');
 export const updateMeFaild = createAction('UPDATE_ME_FAILD');
 
-export const doRequestAccessToken = userCredentials => dispatch => {
+/**
+ * Request an access token with specified user credentials, i.e. login.
+ */
+export const doRequestAccessToken = (userCredentials) => (dispatch) => {
   dispatch(requestAccessToken());
 
   let scopeString = 'public%20email%20account%20identity%20info%20write%20notifications%20notifications:send%20api%20api:write%20offline_access';
@@ -43,6 +55,9 @@ export const doRequestAccessToken = userCredentials => dispatch => {
     });
 };
 
+/**
+ * Refresh the access token.
+ */
 export const doRefreshAccessToken = () => (dispatch, getState) => {
   dispatch(refreshAccessToken());
 
@@ -64,16 +79,75 @@ export const doRefreshAccessToken = () => (dispatch, getState) => {
         dispatch(refreshAccessTokenSuccess(json));
       } else {
         dispatch(refreshAccessTokenFailed(json));
-        dispatch(doClearAccessToken());
       }
   }).catch(reason => {
     dispatch(refreshAccessTokenFailed({ error: 'request_error' }));
-    dispatch(doClearAccessToken());
+    error('colorgyAPIActions: refreshAccessTokenFailed: request_error', reason);
   });
 };
 
-export const doClearAccessToken = userCredentials => dispatch => {
+/**
+ * Get the latest access token, and pass it into a callback function.
+ */
+export const doGetAccessToken = (callback, forceRefresh, errorCallback) => (dispatch) => {
+  var waitTimout = 0;
+
+  var getAccessTokenFunction = () => {
+    var colorgyAPIState = store.getState().colorgyAPI;
+    var nowTime = (new Date()).getTime() / 1000;
+
+    if (colorgyAPIState.hasAccessToken) {
+      // If the access token is refreshing, wait until it is finished
+      // TODO: check this in a more safe (blocking) way.
+      if (colorgyAPIState.refreshingAccessToken) {
+        console.log('colorgyAPIActions: Waiting for access token refresh to be done...');
+        waitTimout++;
+
+        if (waitTimout < 50) {
+          setTimeout(() => { getAccessTokenFunction() }, 500);
+        } else {
+          error('colorgyAPIActions: Timeout while waiting for access token refresh');
+          if (errorCallback) errorCallback();
+        }
+
+      // Proceed if the access token is not refreshing
+      } else {
+
+        // if the access token is going to expire
+        if (colorgyAPIState.accessTokenExpiresAt - nowTime < 100 || forceRefresh) {
+          forceRefresh = false;
+          store.dispatch(doRefreshAccessToken());
+          console.log('colorgyAPIActions: The access token is going to expire, refreshing...');
+          setTimeout(() => { getAccessTokenFunction() }, 1000);
+
+        // Just return the token
+        } else {
+          callback(colorgyAPIState.accessToken);
+        }
+      }
+
+    } else {
+      error('colorgyAPIActions: REQUESTING_ACCESS_TOKEN_WHILE_NO_ACCESS_TOKEN');
+      if (errorCallback) errorCallback();
+    }
+  };
+
+  getAccessTokenFunction();
+};
+
+/**
+ * Clear the access token, i.e. logout.
+ */
+export const doClearAccessToken = () => (dispatch) => {
   dispatch(clearAccessToken());
+};
+
+/**
+ * The vaild acess token has been lost while updating. Clear it.
+ */
+export const doAccessTokenLose = () => (dispatch) => {
+  dispatch(doClearAccessToken());
+  error('colorgyAPIActions: FATAL_ERROR: ACCESS_TOKEN_LOSE');
 };
 
 export const doUpdateMe = (updatedData) => (dispatch) => {

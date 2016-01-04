@@ -1,5 +1,6 @@
 import store from '../store';
-import { doRequestAccessToken, doRefreshAccessToken, doClearAccessToken } from '../actions/colorgyAPIActions';
+import error from './errorHandler';
+import { doRequestAccessToken, doGetAccessToken, doRefreshAccessToken, doClearAccessToken, doAccessTokenLose } from '../actions/colorgyAPIActions';
 
 var colorgyAPI = {};
 
@@ -23,39 +24,7 @@ function requestAccessToken(credentials) {
  */
 function getAccessToken(forceRefresh = false) {
   return new Promise((resolve, reject) => {
-
-    var getAccessTokenFunction = () => {
-      var colorgyAPIState = store.getState().colorgyAPI;
-      var nowTime = (new Date()).getTime() / 1000;
-
-      if (colorgyAPIState.hasAccessToken) {
-        // If the access token is refreshing, wait until it is finished
-        if (colorgyAPIState.refreshingAccessToken) {
-          console.log('colorgyAPI.getAccessToken: Waiting for refresh to done...');
-          setTimeout(() => { getAccessTokenFunction(resolve, reject) }, 500);
-
-        // Proceed if the access token is not refreshing
-        } else {
-
-          // if the access token is going to expire
-          if (colorgyAPIState.accessTokenExpiresAt - nowTime < 100 || forceRefresh) {
-            forceRefresh = false;
-            store.dispatch(doRefreshAccessToken());
-            console.log('colorgyAPI.getAccessToken: The access token is going to expire, refreshing...')
-            setTimeout(() => { getAccessTokenFunction(resolve, reject) }, 500);
-
-          // Just return the token
-          } else {
-            resolve(colorgyAPIState.accessToken);
-          }
-        }
-
-      } else {
-        reject('NO_ACCESS_TOKEN');
-      }
-    };
-
-    getAccessTokenFunction();
+    store.dispatch(doGetAccessToken(resolve, forceRefresh, reject));
   });
 }
 
@@ -95,7 +64,7 @@ function clearAccessToken() {
                 if (r.status != 401) {
                   resolve(r);
                 } else {
-                  store.dispatch(doClearAccessToken());
+                  store.dispatch(doAccessTokenLose());
                   reject(r);
                 }
               });
@@ -107,6 +76,7 @@ function clearAccessToken() {
 
         // Request error
         }).catch((e) => {
+          error('colorgyAPI.fetch', e);
           reject(e);
         });
 

@@ -28,17 +28,28 @@ var Table = React.createClass({
   },
 
   componentDidMount() {
-    this.navigator.navigationContext.addListener('didfocus', (e) => {
-      this._reportRouteUpdate();
-    });
+    // this.navigator.navigationContext.addListener('didfocus', (e) => {
+    //   this._reportRouteUpdate();
+    // });
 
-    this._reportRouteUpdate();
+    // this._reportRouteUpdate();
   },
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.navigateBackCount !== this.props.navigateBackCount) {
       this.navigator.pop();
     }
+  },
+
+  _registerNavigator(navigator) {
+    if (!navigator) return;
+    this.navigator = navigator;
+
+    navigator.navigationContext.addListener('didfocus', (e) => {
+      this._reportRouteUpdate();
+    });
+
+    this._reportRouteUpdate();
   },
 
   _reportRouteUpdate() {
@@ -54,7 +65,7 @@ var Table = React.createClass({
         this.props.courseDatabaseUpdatedTime[this.props.organizationCode]) {
       return (
         <Navigator
-          ref={(navigator) => this.navigator = navigator}
+          ref={(navigator) => this._registerNavigator(navigator)}
           initialRoute={{ name: 'index' }}
           renderScene={(route, navigator) => {
             switch(route.name) {

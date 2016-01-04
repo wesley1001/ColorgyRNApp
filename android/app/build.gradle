@@ -55,10 +55,10 @@ android {
 
     defaultConfig {
         applicationId "io.colorgy.rnapp"
+        versionCode 2
+        versionName "0.0.2"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }

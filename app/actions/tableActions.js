@@ -1,6 +1,9 @@
 import React, { InteractionManager } from 'react-native';
 import { createAction } from 'redux-actions';
+import store from '../store';
 import colorgyAPI from '../utils/colorgyAPI';
+import ga from '../utils/ga';
+import error from '../utils/errorHandler';
 import courseDatabase from '../databases/courseDatabase';
 import tableDatabase from '../databases/tableDatabase';
 
@@ -43,12 +46,12 @@ export const doLoadCourseDatabase = (orgCode) => (dispatch) => {
         dispatch(courseDatabaseLoad({ updatedTime: obj }));
       }).catch((e) => {
         dispatch(courseDatabaseLoadFailed());
-        console.error(e);
+        error(e);
       });
     }
   }).catch((e) => {
     dispatch(courseDatabaseLoadFailed());
-    console.error(e);
+    error(e);
   });
 };
 
@@ -63,6 +66,7 @@ export const courseDatabaseUpdateFailed = createAction('COURSE_DATABASE_UPDATE_F
  */
 export const doUpdateCourseDatabase = (orgCode) => (dispatch) => {
   dispatch(courseDatabaseUpdating({ progress: null }));
+  var startedAt = (new Date()).getTime();
 
   courseDatabase.updateData(
     orgCode,
@@ -75,9 +79,10 @@ export const doUpdateCourseDatabase = (orgCode) => (dispatch) => {
     var obj = {};
     obj[orgCode] = updatedTime;
     dispatch(courseDatabaseUpdated({ updatedTime: obj }));
+    ga.sendTiming('LocalDataUpdate', (new Date()).getTime() - startedAt, `UpdateCourseDatabase-${orgCode}`, `local-data-update,${orgCode}`);
   }).catch((e) => {
-    dispatch(courseDatabaseUpdateFailed());
-    console.error(e);
+    dispatch(courseDatabaseUpdateFailed(e));
+    error(e);
   });
 };
 
@@ -100,12 +105,12 @@ export const doLoadTableCourses = (userId, orgCode) => (dispatch) => {
       dispatch(tableCourseLoaded({ courses: courses, periodData: periodData }));
       // TODO: Maybe we can set the scheduled notifications here
     }).catch((e) => {
-      console.error(e);
+      error(e);
       dispatch(loadTableCourseFailed(e));
     });
 
   }).catch((e) => {
-    console.error(e);
+    error(e);
     dispatch(loadTableCourseFailed(e));
   });
 };
@@ -138,7 +143,7 @@ export const doAddCourse = (
     ).then(() => {
       dispatch(doLoadTableCourses(userId, orgCode));
     }).catch((e) => {
-      console.error(e);
+      error(e);
     });
   });
 };
@@ -167,7 +172,7 @@ export const doRemoveCourse = (
     ).then(() => {
       dispatch(doLoadTableCourses(userId, orgCode));
     }).catch((e) => {
-      console.error(e);
+      error(e);
     });
   });
 };
@@ -184,14 +189,18 @@ export const userCoursesSyncFailed = createAction('USER_COURSES_SYNC_FAILED');
  * @param {string} orgCode
  */
 export const doSyncUserCourses = (userId, orgCode, courseYear = colorgyAPI.getCurrentYear(), courseTerm = colorgyAPI.getCurrentTerm()) => (dispatch) => {
+  if (store.getState().table.userCourseSyncing) return;
+
   dispatch(syncUserCourses());
+  var startedAt = (new Date()).getTime();
 
   tableDatabase.syncUserCourses(userId, orgCode, courseYear, courseTerm).then(() => {
     dispatch(userCoursesSynced());
     dispatch(doLoadTableCourses(userId, orgCode));
+    ga.sendTiming('LocalDataSync', (new Date()).getTime() - startedAt, `SyncUserCourses`, `local-data-sync`);
   }).catch((e) => {
-    console.error(e);
     dispatch(userCoursesSyncFailed(e));
+    error(e);
   });
 };
 

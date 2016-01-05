@@ -112,17 +112,20 @@ export default handleActions({
   // Syncing actions
   SYNC_USER_COURSES: (state, action) => {
     return {
-      ...state
+      ...state,
+      userCourseSyncing: true
     };
   },
   USER_COURSES_SYNCED: (state, action) => {
     return {
-      ...state
+      ...state,
+      userCourseSyncing: false
     };
   },
   USER_COURSES_SYNC_FAILD: (state, action) => {
     return {
-      ...state
+      ...state,
+      userCourseSyncing: false
     };
   },
 

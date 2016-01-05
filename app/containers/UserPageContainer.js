@@ -14,6 +14,8 @@ import _ from 'underscore';
 import LOADING_STATE from '../constants/LOADING_STATE';
 import THEME from '../constants/THEME';
 
+import ga from '../utils/ga';
+
 import courseDatabase from '../databases/courseDatabase';
 
 import Text from '../components/Text';
@@ -27,7 +29,8 @@ var UserPageContainer = React.createClass({
 
   getInitialState() {
     return {
-      loading: LOADING_STATE.PENDING
+      loading: LOADING_STATE.PENDING,
+      loadingStartedAt: (new Date()).getTime()
     };
   },
 
@@ -135,6 +138,9 @@ var UserPageContainer = React.createClass({
 
     Promise.all([fetchData, fetchCourse]).then(() => {
       this.setState({ loading: LOADING_STATE.DONE });
+      var loadingTime = (new Date()).getTime() - this.state.loadingStartedAt;
+      ga.sendTiming('PageLoad', loadingTime, 'UserPageLoad', 'page-load');
+
     }).catch((e) => {
       this.setState({ loading: LOADING_STATE.ERROR });
     });

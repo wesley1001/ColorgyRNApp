@@ -169,7 +169,7 @@ export const doUpdateMe = (updatedData) => (dispatch) => {
       dispatch(updateMeSuccess(data));
     }).catch((e) => {
       dispatch(updateMeFaild(e));
-      console.error(e);
+      error('colorgyAPI: updateMeFaild: ', e);
     });
 
   } else {
@@ -193,7 +193,7 @@ export const doUpdateMe = (updatedData) => (dispatch) => {
       dispatch(updateMeSuccess(data));
     }).catch((e) => {
       dispatch(updateMeFaild(e));
-      console.error(e);
+      error('colorgyAPI: updateMeFaild: ', e);
     });
   }
 };

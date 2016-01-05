@@ -17,6 +17,8 @@ import Text from '../components/Text';
 import organizationDatabase, { sqlValue } from '../databases/organizationDatabase';
 import colorgyAPI from '../utils/colorgyAPI';
 import alert from '../utils/alert';
+import ga from '../utils/ga';
+import error from '../utils/errorHandler';
 
 import { doClearAccessToken, doUpdateMe } from '../actions/colorgyAPIActions';
 
@@ -60,7 +62,8 @@ var OrgSelectContainer = React.createClass({
 
   getInitialState: function() {
     return {
-      step: 0
+      step: 0,
+      selectStartedAt: (new Date()).getTime()
     };
   },
 
@@ -74,7 +77,7 @@ var OrgSelectContainer = React.createClass({
   },
 
   _fetchOrgs() {
-    this.setState({ fetchOrgFaild: false });
+    this.setState({ fetchOrgFaild: false, fetchOrgStartedAt: (new Date()).getTime() });
 
     organizationDatabase.getOrganizations({ onlyWithDepartments: true }).then((data) => {
       var orgOptions = data.map((org) => ({ name: `${org.code} - ${org.name}`, value: org.code }));
@@ -87,15 +90,17 @@ var OrgSelectContainer = React.createClass({
         orgData: dataObj,
         fetchOrgFaild: false
       });
+      var loadingTime = (new Date()).getTime() - this.state.fetchOrgStartedAt;
+      ga.sendTiming('DataLoad', loadingTime, 'UserSelectOrgsLoad', 'data-load');
     }).catch((e) => {
-      console.error(e);
+      error('UserOrgSelect: fetchOrgFaild: ', e);
       alert('網路錯誤');
       this.setState({ fetchOrgFaild: true });
     });
   },
 
   _fetchDeps(orgCode) {
-    this.setState({ fetchDepFaild: false });
+    this.setState({ fetchDepFaild: false, fetchDepStartedAt: (new Date()).getTime() });
 
     organizationDatabase.getDepartments(orgCode).then((data) => {
       var depOptions = data.map((dep) => ({ name: `${dep.name} (${dep.code})`, value: dep.code }));
@@ -108,8 +113,10 @@ var OrgSelectContainer = React.createClass({
         depData: dataObj,
         fetchDepFaild: false
       });
+      var loadingTime = (new Date()).getTime() - this.state.fetchDepStartedAt;
+      ga.sendTiming('DataLoad', loadingTime, 'UserSelectDepsLoad', 'data-load');
     }).catch((e) => {
-      console.error(e);
+      error('UserOrgSelect: fetchDepFaild: ', e);
       alert('網路錯誤');
       this.setState({ fetchDepFaild: true });
     });
@@ -151,6 +158,9 @@ var OrgSelectContainer = React.createClass({
       unconfirmedDepartmentCode: this.state.depCode,
       unconfirmedStartedYear: this.state.year
     }));
+
+    var selectingTime = (new Date()).getTime() - this.state.selectStartedAt;
+    ga.sendTiming('UserAction', selectingTime, 'UserOrgSelect', 'user-action');
   },
 
   render: function() {

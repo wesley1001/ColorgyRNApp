@@ -10,7 +10,7 @@ import TabBar from './TabBar';
 
 var deviceWidth = Dimensions.get('window').width;
 
-var ScrollableTabView = React.createClass({
+var ScrollableTab = React.createClass({
   propTypes: {
     initialTab: PropTypes.number,
     currentTab: PropTypes.number,
@@ -211,4 +211,4 @@ var ScrollableTabView = React.createClass({
   }
 });
 
-export default ScrollableTabView;
+export default ScrollableTab;

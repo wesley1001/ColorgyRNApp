@@ -4,13 +4,13 @@ import React, {
   Animated,
   View,
   TouchableOpacity,
+  TouchableNativeFeedback,
   Image
 } from 'react-native';
 
 import THEME from '../constants/THEME';
 
 import Text from './Text';
-import TouchableNativeFeedback from './TouchableNativeFeedback';
 
 let CourseCard = React.createClass({
   propTypes: {

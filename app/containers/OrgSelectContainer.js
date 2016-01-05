@@ -22,8 +22,8 @@ import error from '../utils/errorHandler';
 
 import { doClearAccessToken, doUpdateMe } from '../actions/colorgyAPIActions';
 
-import TitleBarView from '../components/TitleBarView';
-import ScrollableTabView from '../components/ScrollableTabView';
+import TitleBarLayout from '../components/TitleBarLayout';
+import ScrollableTab from '../components/ScrollableTab';
 import ListSelect from '../components/ListSelect';
 import Button from '../components/Button';
 import GhostButton from '../components/GhostButton';
@@ -177,12 +177,12 @@ var OrgSelectContainer = React.createClass({
     }
 
     return (
-      <TitleBarView
+      <TitleBarLayout
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={this.props.statusBarHeight}
         title="歡迎來到 Colorgy"
       >
-        <ScrollableTabView
+        <ScrollableTab
           currentTab={this.state.step}
           edgeHitWidth={-1}
           renderTabBar={false}
@@ -322,8 +322,8 @@ var OrgSelectContainer = React.createClass({
               />
             </View>
           </View>
-        </ScrollableTabView>
-      </TitleBarView>
+        </ScrollableTab>
+      </TitleBarLayout>
     );
   }
 });

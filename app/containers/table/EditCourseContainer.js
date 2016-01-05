@@ -11,7 +11,7 @@ import _ from 'underscore';
 import THEME from '../../constants/THEME';
 
 import Text from '../../components/Text';
-import TitleBarView from '../../components/TitleBarView';
+import TitleBarLayout from '../../components/TitleBarLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import CourseCard from '../../components/CourseCard';
 import GhostButton from '../../components/GhostButton';
@@ -71,21 +71,15 @@ var TableContainer = React.createClass({
     }
 
     return (
-      <TitleBarView
+      <TitleBarLayout
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={this.props.statusBarHeight}
         style={this.props.style}
         title="已選課程"
-        leftAction={
-          <TitleBarActionIcon onPress={this._handleBack}>
-            <Icon name="arrow-back" size={24} color="#FFFFFF" />
-          </TitleBarActionIcon>
-        }
-        rightAction={
-          <TitleBarActionIcon onPress={this._handleAdd}>
-            <Icon name="add" size={24} color="#FFFFFF" />
-          </TitleBarActionIcon>
-        }
+        actions={[
+          { title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' },
+          { title: '加選課程', icon: require('../../assets/images/icon_add_white.png'), onPress: this._handleAdd, show: 'always' }
+        ]}
       >
         <ScrollView
           contentContainerStyle={styles.container}
@@ -124,7 +118,7 @@ var TableContainer = React.createClass({
             );
           })}
         </ScrollView>
-      </TitleBarView>
+      </TitleBarLayout>
     );
   }
 });

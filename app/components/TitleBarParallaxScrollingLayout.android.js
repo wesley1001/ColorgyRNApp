@@ -1,4 +1,5 @@
 import React, {
+  PropTypes,
   StyleSheet,
   View,
   ScrollView,
@@ -10,14 +11,15 @@ import THEME from '../constants/THEME';
 
 import TitleBar from './TitleBar';
 
-let TitleBarScrollView = React.createClass({
+let TitleBarParallaxScrollingLayout = React.createClass({
   propTypes: {
-    title: React.PropTypes.string,
-    color: React.PropTypes.string,
-    enableOffsetTop: React.PropTypes.bool,
-    offsetTop: React.PropTypes.number,
-    background: React.PropTypes.element,
-    hideTitleInitially: React.PropTypes.bool
+    title: PropTypes.string,
+    color: PropTypes.string,
+    enableOffsetTop: PropTypes.bool,
+    background: PropTypes.element,
+    hideTitleInitially: PropTypes.bool,
+    enableOffsetTop: PropTypes.bool,
+    offsetTop: PropTypes.number
   },
 
   getDefaultProps: function() {
@@ -110,16 +112,14 @@ let TitleBarScrollView = React.createClass({
           >
             <TitleBar
               title={this.props.title}
-              leftAction={this.props.leftAction}
-              rightAction={this.props.rightAction}
+              actions={this.props.actions}
               translateTitle={this.state.hideTitle}
             >
             </TitleBar>
           </Animated.View>
           <TitleBar
             title={this.props.title}
-            leftAction={this.props.leftAction}
-            rightAction={this.props.rightAction}
+            actions={this.props.actions}
             translateTitle={this.state.hideTitle}
           >
           </TitleBar>
@@ -149,4 +149,4 @@ let styles = StyleSheet.create({
   },
 });
 
-export default TitleBarScrollView;
+export default TitleBarParallaxScrollingLayout;

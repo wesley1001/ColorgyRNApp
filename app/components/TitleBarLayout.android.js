@@ -1,4 +1,5 @@
 import React, {
+  PropTypes,
   StyleSheet,
   View
 } from 'react-native';
@@ -6,12 +7,13 @@ import React, {
 import THEME from '../constants/THEME';
 import TitleBar from './TitleBar';
 
-let TitleBarView = React.createClass({
+let TitleBarLayout = React.createClass({
   propTypes: {
-    title: React.PropTypes.string,
-    color: React.PropTypes.string,
-    enableOffsetTop: React.PropTypes.bool,
-    offsetTop: React.PropTypes.number
+    title: PropTypes.string,
+    color: PropTypes.string,
+    actions: PropTypes.array,
+    enableOffsetTop: PropTypes.bool,
+    offsetTop: PropTypes.number
   },
 
   getDefaultProps: function() {
@@ -34,8 +36,7 @@ let TitleBarView = React.createClass({
         >
           <TitleBar
             title={this.props.title}
-            leftAction={this.props.leftAction}
-            rightAction={this.props.rightAction}
+            actions={this.props.actions}
           >
           </TitleBar>
         </View>
@@ -64,4 +65,4 @@ let styles = StyleSheet.create({
   }
 });
 
-export default TitleBarView;
+export default TitleBarLayout;

@@ -2,18 +2,18 @@ import React, {
 } from 'react-native';
 import { connect } from 'react-redux/native';
 
-import TitleBarView from '../components/TitleBarView';
+import TitleBarLayout from '../components/TitleBarLayout';
 
 var AppInitializeContainer = React.createClass({
 
   render() {
     return (
-      <TitleBarView
+      <TitleBarLayout
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={this.props.statusBarHeight}
         title=""
       >
-      </TitleBarView>
+      </TitleBarLayout>
     );
   }
 });

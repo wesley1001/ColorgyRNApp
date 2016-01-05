@@ -2,7 +2,7 @@ import React, {
   Animated
 } from 'react-native';
 
-let FadeInView = React.createClass({
+let FadeInAnimation = React.createClass({
   propTypes: {
   },
 
@@ -34,4 +34,4 @@ let FadeInView = React.createClass({
   }
 });
 
-export default FadeInView;
+export default FadeInAnimation;

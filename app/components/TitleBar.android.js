@@ -3,25 +3,25 @@ import React, {
   StyleSheet,
   Animated,
   View,
-  Text
+  Text,
+  ToolbarAndroid
 } from 'react-native';
 
 import THEME from '../constants/THEME';
 
-let TitleBarView = React.createClass({
+let TitleBar = React.createClass({
   propTypes: {
     // The title text on this title bar
     title: PropTypes.string,
-    // An action button on the left, normally TitleBarActionIcon or a 24x24 view
-    leftAction: PropTypes.element,
-    // An action button on the right, normally TitleBarActionIcon or a 24x24 view
-    rightAction: PropTypes.element,
+    actions: PropTypes.array,
+    onActionSelected: PropTypes.func,
     translateTitle: PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
-      title: ''
+      title: '',
+      actions: []
     };
   },
 
@@ -40,35 +40,50 @@ let TitleBarView = React.createClass({
     }
   },
 
+  _handleActionSelect(position) {
+    var actions = this.props.actions.slice(0) || [];
+    actions.shift();
+    var action = actions[position];
+
+    if (action && action.onPress) {
+      action.onPress();
+    }
+  },
+
   render() {
-    var actionPlaceholder = <View style={{ width: 24 }} />
+    var actions = this.props.actions.slice(0) || [];
+    var leftAction = actions.shift();
+    var leftIcon = leftAction ? leftAction.icon : undefined;
+    var handleLeftIconPress = leftAction ? leftAction.onPress : undefined;
 
     return (
       <View style={styles.container}>
-        <View style={styles.actions}>
-          {this.props.leftAction || actionPlaceholder}
-        </View>
-        <Animated.View
-          style={[styles.title, {
-            opacity: this.state.titleTranslate.interpolate({
-              inputRange: [0, 0.7, 1],
-              outputRange: [1, 0, 0]
-            }),
-            transform: [{
-              translateY: this.state.titleTranslate.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, THEME.ANDROID_TITLE_BAR_HEIGHT / 2]
-              })
-            }]
-          }]}
+        <ToolbarAndroid
+          style={styles.toolbar}
+          navIcon={leftIcon}
+          actions={actions}
+          onActionSelected={this._handleActionSelect}
+          onIconClicked={handleLeftIconPress}
         >
-          <Text style={styles.titleText}>
-            {this.props.title}
-          </Text>
-        </Animated.View>
-        <View style={styles.actions}>
-          {this.props.rightAction || actionPlaceholder}
-        </View>
+          <Animated.View
+            style={[styles.title, {
+              opacity: this.state.titleTranslate.interpolate({
+                inputRange: [0, 0.7, 1],
+                outputRange: [1, 0, 0]
+              }),
+              transform: [{
+                translateY: this.state.titleTranslate.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, THEME.ANDROID_TITLE_BAR_HEIGHT / 2]
+                })
+              }]
+            }]}
+          >
+            <Text style={styles.titleText}>
+              {this.props.title}
+            </Text>
+          </Animated.View>
+        </ToolbarAndroid>
       </View>
     );
   }
@@ -84,18 +99,25 @@ let styles = StyleSheet.create({
   actions: {
     padding: 16
   },
+  toolbar: {
+    flex: 1,
+    height: THEME.ANDROID_TITLE_BAR_HEIGHT,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   title: {
     flex: 1,
     paddingLeft: 2,
     paddingRight: 2,
-    paddingTop: 20,
-    paddingBottom: 20
+    paddingTop: 14,
+    paddingBottom: 14
   },
   titleText: {
     fontSize: 20,
+    lineHeight: THEME.ANDROID_TITLE_BAR_HEIGHT - 14,
     color: '#FFFFFF',
     fontWeight: '500'
   }
 });
 
-export default TitleBarView;
+export default TitleBar;

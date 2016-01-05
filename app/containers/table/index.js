@@ -5,7 +5,7 @@ import React, {
 import { connect } from 'react-redux/native';
 
 import Text from '../../components/Text';
-import TitleBarView from '../../components/TitleBarView';
+import TitleBarLayout from '../../components/TitleBarLayout';
 
 import TableContainer from './TableContainer';
 import CoursePageContainer from './CoursePageContainer';
@@ -113,7 +113,7 @@ var Table = React.createClass({
 
     } else {
       return (
-        <TitleBarView
+        <TitleBarLayout
           title="Table"
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
@@ -129,7 +129,7 @@ var Table = React.createClass({
             progress={this.props.courseDatabaseLoadingProgress}
           />
           <Text style={{ textAlign: 'center' }}>正在為您下載課程資料，請稍候⋯⋯</Text>
-        </TitleBarView>
+        </TitleBarLayout>
       );
     }
   }

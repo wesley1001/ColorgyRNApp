@@ -17,7 +17,7 @@ import courseDatabase from '../../databases/courseDatabase';
 
 import Text from '../../components/Text';
 import TextInput from '../../components/TextInput';
-import TitleBarView from '../../components/TitleBarView';
+import TitleBarLayout from '../../components/TitleBarLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import CourseCard from '../../components/CourseCard';
 import GhostButton from '../../components/GhostButton';
@@ -77,16 +77,14 @@ var TableContainer = React.createClass({
     var selectedCourseCodes = Object.keys(selectedCourses);
 
     return (
-      <TitleBarView
+      <TitleBarLayout
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={this.props.statusBarHeight}
         style={this.props.style}
         title="加選課程"
-        leftAction={
-          <TitleBarActionIcon onPress={this._handleBack}>
-            <Icon name="arrow-back" size={24} color="#FFFFFF" />
-          </TitleBarActionIcon>
-        }
+        actions={[
+          { title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' }
+        ]}
       >
         <View style={styles.searchBar}>
           <TextInput
@@ -158,7 +156,7 @@ var TableContainer = React.createClass({
             );
           })}
         </ScrollView>
-      </TitleBarView>
+      </TitleBarLayout>
     );
   }
 });

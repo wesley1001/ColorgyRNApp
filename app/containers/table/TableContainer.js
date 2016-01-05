@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import THEME from '../../constants/THEME';
 
 import Text from '../../components/Text';
-import TitleBarView from '../../components/TitleBarView';
+import TitleBarLayout from '../../components/TitleBarLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import CourseTable from '../../components/CourseTable';
 
@@ -41,7 +41,7 @@ var TableContainer = React.createClass({
     switch (this.props.tableStatus) {
       case 'new':
         return (
-          <TitleBarView
+          <TitleBarLayout
             enableOffsetTop={this.props.translucentStatusBar}
             offsetTop={this.props.statusBarHeight}
             title="Table"
@@ -53,7 +53,7 @@ var TableContainer = React.createClass({
           >
             <Text>Loading</Text>
 
-          </TitleBarView>
+          </TitleBarLayout>
         );
         break;
 
@@ -64,11 +64,15 @@ var TableContainer = React.createClass({
         if (this.props.translucentStatusBar) courseTableHeight -= this.props.statusBarHeight;
 
         return (
-          <TitleBarView
+          <TitleBarLayout
             enableOffsetTop={this.props.translucentStatusBar}
             offsetTop={this.props.statusBarHeight}
             style={this.props.style}
             title="Table"
+            actions={[
+              null,
+              { title: '管理課程', icon: require('../../assets/images/icon_edit_white.png'), onPress: this._handleEdit, show: 'always' }
+            ]}
             rightAction={
               <TitleBarActionIcon onPress={this._handleEdit}>
                 <Icon name="mode-edit" size={24} color="#FFFFFF" />
@@ -83,7 +87,7 @@ var TableContainer = React.createClass({
               onCoursePress={this._handleCoursePress}
             />
 
-          </TitleBarView>
+          </TitleBarLayout>
         );
         break;
     }

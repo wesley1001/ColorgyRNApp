@@ -8,7 +8,7 @@ import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Text from '../../components/Text';
-import TitleBarView from '../../components/TitleBarView';
+import TitleBarLayout from '../../components/TitleBarLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 
 import ga from '../../utils/ga';
@@ -29,7 +29,7 @@ var Board = React.createClass({
 
   render() {
     return (
-      <TitleBarView
+      <TitleBarLayout
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={this.props.statusBarHeight}
         style={this.props.style}
@@ -49,7 +49,7 @@ var Board = React.createClass({
           startInLoadingState={true}
           style={styles.webView}
         />
-      </TitleBarView>
+      </TitleBarLayout>
     );
   }
 });

@@ -22,7 +22,7 @@ import {
   doRemoveCourse
 } from '../../actions/tableActions';
 
-import TitleBarScrollView from '../../components/TitleBarScrollView';
+import TitleBarParallaxScrollingLayout from '../../components/TitleBarParallaxScrollingLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import UserAvatar from '../../components/UserAvatar';
 
@@ -108,16 +108,12 @@ var CoursePageContainer = React.createClass({
 
     if (course) {
       return (
-        <TitleBarScrollView
+        <TitleBarParallaxScrollingLayout
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
           style={this.props.style}
           title={course.name}
-          leftAction={
-            <TitleBarActionIcon onPress={this._handleBack}>
-              <Icon name="arrow-back" size={24} color="#FFFFFF" />
-            </TitleBarActionIcon>
-          }
+          actions={[{ title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' }]}
           background={
             <View style={{ backgroundColor: '#333', height: 200 }}>
             </View>
@@ -188,7 +184,7 @@ var CoursePageContainer = React.createClass({
               })()}
             </View>
           </View>
-        </TitleBarScrollView>
+        </TitleBarParallaxScrollingLayout>
       );
     } else {
       return (

@@ -2,7 +2,7 @@ import React, { Platform, View, Text } from 'react-native';
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
 
-import ScrollableTabView from '../components/ScrollableTabView';
+import ScrollableTab from '../components/ScrollableTab';
 import AppTabBar from '../components/AppTabBar';
 
 import AppInitializeContainer from './AppInitializeContainer';
@@ -52,7 +52,7 @@ var App = React.createClass({
 
     } else {
       return(
-        <ScrollableTabView
+        <ScrollableTab
           tabBar={AppTabBar}
           tabBarPosition="bottom"
           currentTab={this.props.currentTab}
@@ -70,7 +70,7 @@ var App = React.createClass({
             <Text onPress={() => this.props.dispatch(doUpdateMe({ unconfirmedOrganizationCode: null, unconfirmedDepartmentCode: null, unconfirmedStartedYear: null })) }>Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org </Text>
             <Text onPress={() => this.props.dispatch(enterDevMode()) }>Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode</Text>
           </View>
-        </ScrollableTabView>
+        </ScrollableTab>
       );
     }
   }

@@ -257,7 +257,9 @@ let styles = StyleSheet.create({
     paddingBottom: 2
   },
   courseText: {
-    color: 'white'
+    color: 'white',
+    fontSize: 12,
+    marginBottom: 4
   }
 });
 

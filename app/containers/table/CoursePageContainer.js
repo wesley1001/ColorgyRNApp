@@ -12,6 +12,7 @@ import _ from 'underscore';
 
 import Text from '../../components/Text';
 
+import THEME from '../../constants/THEME';
 import LOADING_STATE from '../../constants/LOADING_STATE';
 
 import colorgyAPI from '../../utils/colorgyAPI';
@@ -111,7 +112,7 @@ var CoursePageContainer = React.createClass({
         <TitleBarParallaxScrollingLayout
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
-          style={this.props.style}
+          style={[{ backgroundColor: THEME.BACKGROUND_COLOR }, this.props.style]}
           title={course.name}
           actions={[{ title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' }]}
           background={
@@ -120,6 +121,7 @@ var CoursePageContainer = React.createClass({
           }
         >
           <View style={[styles.container]}>
+            <View style={styles.containerBackground} />
             <View style={styles.infoBlock}>
               <View style={styles.infoBox}>
                 <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_lecturer.png')} />
@@ -199,7 +201,6 @@ var CoursePageContainer = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EEEEEE',
     marginTop: 120
   },
   infoBlock: {

@@ -166,7 +166,9 @@ var styles = StyleSheet.create({
     flex: 1
   },
   searchBar: {
-    backgroundColor: '#CCCCCC',
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
     paddingLeft: 12,
     paddingRight: 12
   }

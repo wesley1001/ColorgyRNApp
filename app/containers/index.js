@@ -38,46 +38,57 @@ var App = React.createClass({
   },
 
   render: function() {
-    if (this.props.isDevMode) {
-      return (<DevModeContainer />);
+    var { overlayElement } = this.props;
 
-    } else if (!this.props.stateReady) {
-      return (<AppInitializeContainer />);
+    return (
+      <View style={{ flex: 1 }}>
+        {(() => {
+          if (this.props.isDevMode) {
+            return (<DevModeContainer />);
 
-    } else if (!this.props.isLogin) {
-      return(<LoginContainer />);
+          } else if (!this.props.stateReady) {
+            return (<AppInitializeContainer />);
 
-    } else if (!this.props.organizationCode) {
-      return(<OrgSelectContainer />);
+          } else if (!this.props.isLogin) {
+            return(<LoginContainer />);
 
-    } else {
-      return(
-        <ScrollableTab
-          tabBar={AppTabBar}
-          tabBarPosition="bottom"
-          currentTab={this.props.currentTab}
-          onTabChanged={(t) => this.props.dispatch(selectTab({ tab: t }))}
-          edgeHitWidth={-1}
-        >
-          <View tabLabel="我的課表" style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
-            <TableContainer />
-          </View>
-          <View tabLabel="活動牆" style={{ flex: 1 }}>
-            <BoardContainer />
-          </View>
-          <View tabLabel="更多" style={{ flex: 1 }}>
-            <Text onPress={() => this.props.dispatch(doClearAccessToken()) }>Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out</Text>
-            <Text onPress={() => this.props.dispatch(doUpdateMe({ unconfirmedOrganizationCode: null, unconfirmedDepartmentCode: null, unconfirmedStartedYear: null })) }>Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org </Text>
-            <Text onPress={() => this.props.dispatch(enterDevMode()) }>Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode</Text>
-          </View>
-        </ScrollableTab>
-      );
-    }
+          } else if (!this.props.organizationCode) {
+            return(<OrgSelectContainer />);
+
+          } else {
+            return(
+              <ScrollableTab
+                tabBar={AppTabBar}
+                tabBarPosition="bottom"
+                currentTab={this.props.currentTab}
+                onTabChanged={(t) => this.props.dispatch(selectTab({ tab: t }))}
+                edgeHitWidth={-1}
+              >
+                <View tabLabel="我的課表" style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
+                  <TableContainer />
+                </View>
+                <View tabLabel="活動牆" style={{ flex: 1 }}>
+                  <BoardContainer />
+                </View>
+                <View tabLabel="更多" style={{ flex: 1 }}>
+                  <Text onPress={() => this.props.dispatch(doClearAccessToken()) }>Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out Log Out</Text>
+                  <Text onPress={() => this.props.dispatch(doUpdateMe({ unconfirmedOrganizationCode: null, unconfirmedDepartmentCode: null, unconfirmedStartedYear: null })) }>Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org Clear My Org </Text>
+                  <Text onPress={() => this.props.dispatch(enterDevMode()) }>Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode Enter Dev Mode</Text>
+                </View>
+              </ScrollableTab>
+            );
+          }
+        })()}
+
+        {overlayElement}
+      </View>
+    );
   }
 });
 
 export default connect((state) => ({
   stateReady: state.app.stateReady,
+  overlayElement: state.app.overlayElement,
   isLogin: (state.colorgyAPI.hasAccessToken && state.colorgyAPI.meUpdatedAt),
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
   uuid: state.colorgyAPI.me && state.colorgyAPI.me.uuid,

@@ -21,6 +21,7 @@ import TitleBarLayout from '../../components/TitleBarLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import CourseCard from '../../components/CourseCard';
 import GhostButton from '../../components/GhostButton';
+import Button from '../../components/Button';
 
 import {
   doLoadTableCourses,
@@ -29,16 +30,23 @@ import {
   doSyncUserCourses
 } from '../../actions/tableActions';
 
-var TableContainer = React.createClass({
+var AddCourseContainer = React.createClass({
+
+  getInitialState() {
+    return {
+      searchQuery: null,
+      courses: {}
+    };
+  },
 
   componentWillMount() {
     this.props.dispatch(doLoadTableCourses(this.props.userId, this.props.organizationCode));
   },
 
-  componentWillUnmount() {
-    InteractionManager.runAfterInteractions(() => {
-      this.props.dispatch(doSyncUserCourses(this.props.userId, this.props.organizationCode));
-    });
+  componentWillReceiveProps(nextProps) {
+    if (this.props.selectedCourses != nextProps.selectedCourses) {
+      this._handleSearch();
+    }
   },
 
   componentWillUnmount() {
@@ -49,18 +57,12 @@ var TableContainer = React.createClass({
     });
   },
 
-  getInitialState() {
-    return {
-      searchQuery: null,
-      courses: {}
-    };
-  },
-
   _handleBack() {
     this.props.navigator.pop();
   },
 
   _handleSearch(query) {
+    if (!query) query = this.state.searchQuery;
     this.setState({ searchQuery: query });
     courseDatabase.searchCourse(this.props.organizationCode, (query || '')).then((courses) => {
       this.setState({ courses });
@@ -69,6 +71,10 @@ var TableContainer = React.createClass({
 
   _handleCoursePress(payload) {
     this.props.navigator.push({ name: 'course', code: payload.courseCode });
+  },
+
+  _handleCreateCourse() {
+    this.props.navigator.push({ name: 'createCourse', courseName: this.state.searchQuery });
   },
 
   render() {
@@ -96,6 +102,17 @@ var TableContainer = React.createClass({
           />
         </View>
         <ScrollView>
+          {(()=> {
+            if (this.state.searchQuery && this.state.searchQuery.length > 0) {
+              return (
+                <Button
+                  style={styles.manuallyCreateCourseButton}
+                  value={`找不到課嗎？點這裡手動新增「${this.state.searchQuery}」課吧！`}
+                  onPress={this._handleCreateCourse}
+                />
+              );
+            }
+          })()}
           {_.values(courses).map((course) => {
             var selected = selectedCourseCodes.indexOf(course.code) > 0;
             return (
@@ -171,6 +188,9 @@ var styles = StyleSheet.create({
     borderBottomColor: '#EEEEEE',
     paddingLeft: 12,
     paddingRight: 12
+  },
+  manuallyCreateCourseButton: {
+    margin: 12
   }
 });
 
@@ -182,4 +202,4 @@ export default connect((state) => ({
   networkConnectivity: state.deviceInfo.networkConnectivity,
   translucentStatusBar: state.deviceInfo.translucentStatusBar,
   statusBarHeight: state.deviceInfo.statusBarHeight
-}))(TableContainer);
+}))(AddCourseContainer);

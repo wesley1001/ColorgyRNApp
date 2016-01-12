@@ -132,7 +132,8 @@ export const courseRemoved = createAction('COURSE_REMOVED');
 export const doAddCourse = (
   course, userId, orgCode,
   year = colorgyAPI.getCurrentYear(),
-  term = colorgyAPI.getCurrentTerm()
+  term = colorgyAPI.getCurrentTerm(),
+  successCallback, errorCallback
 ) => (dispatch) => {
   dispatch(courseAdded({ course }));
 
@@ -142,8 +143,10 @@ export const doAddCourse = (
       course.code, userId, orgCode, year, term
     ).then(() => {
       dispatch(doLoadTableCourses(userId, orgCode));
+      if (successCallback) successCallback();
     }).catch((e) => {
       error(e);
+      if (errorCallback) errorCallback();
     });
   });
 };
@@ -205,3 +208,21 @@ export const doSyncUserCourses = (userId, orgCode, courseYear = colorgyAPI.getCu
 };
 
 export const tableNavigateBack = createAction('TABLE_NAVIGATE_BACK');
+
+/**
+ * Create a custom course.
+ */
+// export const doCreateCourse = (orgCode, courseYear, courseTerm, course) => (dispatch) => {
+//   tableDatabase.createCourse(orgCode, courseYear, courseTerm, course);
+// };
+
+/**
+ * Create and add a custom course.
+ */
+export const doCreateAndAddCourse = (userId, orgCode, course, successCallback, errorCallback) => (dispatch) => {
+  courseDatabase.createCourse(orgCode, course).then((course) => {
+    dispatch(doAddCourse(course, userId, orgCode, course.year, course.term, successCallback, errorCallback));
+  }).catch((e) => {
+    if (errorCallback) errorCallback(e);
+  });
+};

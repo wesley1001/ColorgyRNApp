@@ -1,5 +1,6 @@
 import WebSQL from '../utils/WebSQL';
 import SQLite from 'react-native-sqlite-storage';
+import _ from 'underscore';
 import stringHash from 'string-hash';
 import colorgyAPI from '../utils/colorgyAPI';
 import THEME from '../constants/THEME';
@@ -9,7 +10,8 @@ var migartions = {
   '1.1': 'CREATE INDEX info_key_index ON info (key);',
   '2.1': 'CREATE TABLE courses(ID INTEGER PRIMARY KEY, organization_code CHARACTER(255), code CHARACTER(255), general_code CHARACTER(255), full_semester TINYINT, year SMALLINT, term TINYINT, name CHARACTER(255), name_en CHARACTER(255), lecturer CHARACTER(255), credits TINYINT, required TINYINT, url CHARACTER(255), website CHARACTER(255), prerequisites CHARACTER(255), day_1 TINYINT, day_2 TINYINT, day_3 TINYINT, day_4 TINYINT, day_5 TINYINT, day_6 TINYINT, day_7 TINYINT, day_8 TINYINT, day_9 TINYINT, period_1 TINYINT, period_2 TINYINT, period_3 TINYINT, period_4 TINYINT, period_5 TINYINT, period_6 TINYINT, period_7 TINYINT, period_8 TINYINT, period_9 TINYINT, location_1 CHARACTER(255), location_2 CHARACTER(255), location_3 CHARACTER(255), location_4 CHARACTER(255), location_5 CHARACTER(255), location_6 CHARACTER(255), location_7 CHARACTER(255), location_8 CHARACTER(255), location_9 CHARACTER(255), students_enrolled SMALLINT);',
   '2.2': 'ALTER TABLE courses ADD COLUMN search_keywords TEXT;',
-  '2.3': 'CREATE TABLE period_data(ID INTEGER PRIMARY KEY, organization_code CHARACTER(255), "order" INTEGER, code CHARACTER(255), time CHARACTER(255));'
+  '2.3': 'CREATE TABLE period_data(ID INTEGER PRIMARY KEY, organization_code CHARACTER(255), "order" INTEGER, code CHARACTER(255), time CHARACTER(255));',
+  '2.4': 'ALTER TABLE courses ADD COLUMN local_data BOOLEAN NOT NULL DEFAULT FALSE;'
 };
 
 var courseDatabase = new WebSQL('course', 'course', 3*1024*1024, migartions, SQLite);
@@ -201,7 +203,7 @@ courseDatabase.updateData = (orgCode, courseYear = colorgyAPI.getCurrentYear(), 
 
     // Clear the database and fire first request
     var firstRequestPromise = new Promise( (resolve, reject) => {
-      const sql = `DELETE FROM courses WHERE organization_code = ${sqlValue(orgCode)} AND year = ${courseYear} AND term = ${courseTerm}`;
+      const sql = `DELETE FROM courses WHERE local_data = 0 AND organization_code = ${sqlValue(orgCode)} AND year = ${courseYear} AND term = ${courseTerm}`;
       courseDatabase.executeSql(sql).then(() => {
         requestAndSaveCourses(`/${orgCode.toLowerCase()}/courses?filter[year]=${courseYear}&filter[term]=${courseTerm}&per_page=500`, resolve);
       }).catch((e) => {
@@ -272,6 +274,102 @@ courseDatabase.updateData = (orgCode, courseYear = colorgyAPI.getCurrentYear(), 
     }).catch((e) => {
       console.error(`courseDatabase: updateData(): Error`, e);
       updateReject(e);
+    });
+  });
+};
+
+
+courseDatabase.createCourse = (orgCode, course) => {
+  if (!course.code) course.code = `${orgCode}-${course.year}-${course.term}-${stringHash(course.name)}-${course.lecturer ? stringHash(course.lecturer) : ''}`;
+  if (!course.general_code) course.general_code = course.code;
+
+  var insertSQL = `INSERT INTO courses (
+    organization_code,
+    year,
+    term,
+    code,
+    general_code,
+    name,
+    lecturer,
+    day_1,
+    day_2,
+    day_3,
+    day_4,
+    day_5,
+    day_6,
+    day_7,
+    day_8,
+    day_9,
+    period_1,
+    period_2,
+    period_3,
+    period_4,
+    period_5,
+    period_6,
+    period_7,
+    period_8,
+    period_9,
+    location_1,
+    location_2,
+    location_3,
+    location_4,
+    location_5,
+    location_6,
+    location_7,
+    location_8,
+    location_9,
+    search_keywords,
+    local_data
+  ) VALUES (
+    ${sqlValue(orgCode)},
+    ${sqlValue(course.year)},
+    ${sqlValue(course.term)},
+    ${sqlValue(course.code)},
+    ${sqlValue(course.general_code)},
+    ${sqlValue(course.name)},
+    ${sqlValue(course.lecturer)},
+    ${sqlValue(course.day_1)},
+    ${sqlValue(course.day_2)},
+    ${sqlValue(course.day_3)},
+    ${sqlValue(course.day_4)},
+    ${sqlValue(course.day_5)},
+    ${sqlValue(course.day_6)},
+    ${sqlValue(course.day_7)},
+    ${sqlValue(course.day_8)},
+    ${sqlValue(course.day_9)},
+    ${sqlValue(course.period_1)},
+    ${sqlValue(course.period_2)},
+    ${sqlValue(course.period_3)},
+    ${sqlValue(course.period_4)},
+    ${sqlValue(course.period_5)},
+    ${sqlValue(course.period_6)},
+    ${sqlValue(course.period_7)},
+    ${sqlValue(course.period_8)},
+    ${sqlValue(course.period_9)},
+    ${sqlValue(course.location_1)},
+    ${sqlValue(course.location_2)},
+    ${sqlValue(course.location_3)},
+    ${sqlValue(course.location_4)},
+    ${sqlValue(course.location_5)},
+    ${sqlValue(course.location_6)},
+    ${sqlValue(course.location_7)},
+    ${sqlValue(course.location_8)},
+    ${sqlValue(course.location_9)},
+    ${sqlValue(course.name + course.lecturer)},
+    ${sqlValue(true)}
+  );`;
+
+  return new Promise((resolve, reject) => {
+    courseDatabase.executeSql(insertSQL).then((r) => {
+      courseDatabase.findCourses(orgCode, course.code).then((courses) => {
+        resolve(courses[course.code]);
+      }).catch((e) => {
+        console.error(e);
+        reject(e);
+      });
+    }).catch((e) => {
+      console.error(e);
+      reject(e);
     });
   });
 };

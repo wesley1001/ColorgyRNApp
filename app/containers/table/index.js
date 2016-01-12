@@ -11,6 +11,7 @@ import TableContainer from './TableContainer';
 import CoursePageContainer from './CoursePageContainer';
 import EditCourseContainer from './EditCourseContainer';
 import AddCourseContainer from './AddCourseContainer';
+import CreateCourseContainer from './CreateCourseContainer';
 import UserPageContainer from '../UserPageContainer';
 
 import { doLoadCourseDatabase, doSyncUserCourses } from '../../actions/tableActions';
@@ -89,6 +90,11 @@ var Table = React.createClass({
                   <AddCourseContainer navigator={navigator} />
                 );
                 break;
+              case 'createCourse':
+                return (
+                  <CreateCourseContainer navigator={navigator} courseName={route.courseName} />
+                );
+                break;
               case 'user':
                 return (
                   <UserPageContainer userId={route.id} navigator={navigator} />
@@ -101,6 +107,7 @@ var Table = React.createClass({
               case 'index':
               case 'editCourse':
               case 'addCourse':
+              case 'createCourse':
                 return Navigator.SceneConfigs.FloatFromBottom;
                 break;
               default:

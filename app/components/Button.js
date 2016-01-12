@@ -85,11 +85,12 @@ let styles = StyleSheet.create({
   smallButton: {
     paddingTop: 4,
     paddingBottom: 4,
-    paddingLeft: 8,
-    paddingRight: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
   text: {
-    fontSize: 16
+    fontSize: 16,
+    textAlign: 'center'
   }
 });
 

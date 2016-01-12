@@ -4,7 +4,7 @@ import colorgyAPI from '../utils/colorgyAPI';
 import courseDatabase from './courseDatabase';
 
 var migartions = {
-  '1.0': 'CREATE TABLE user_courses(uuid CHARACTER(255) PRIMARY KEY, user_id INTEGER, course_code CHARACTER(255), course_organization_code CHARACTER(255), year INTEGER, term INTEGER, deleted_at DATETIME, synced_at DATETIME);'
+  '1.0': 'CREATE TABLE user_courses(ID INTEGER PRIMARY KEY, uuid CHARACTER(255), user_id INTEGER, course_code CHARACTER(255), course_organization_code CHARACTER(255), year INTEGER, term INTEGER, deleted_at DATETIME, synced_at DATETIME);'
 };
 
 var tableDatabase = new WebSQL('table', 'table', 3*1024*1024, migartions, SQLite);

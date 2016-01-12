@@ -91,4 +91,5 @@ dependencies {
     compile project(':react-native-linear-gradient')
     compile project(':react-native-vector-icons')
     compile project(':react-native-android-statusbar')
+    compile project(':reactwheelview')
 }

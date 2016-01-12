@@ -15,3 +15,5 @@ export const doBackPress = () => (dispatch) => {
       break;
   }
 };
+
+export const setOverlayElement = createAction('SET_OVERLAY_ELEMENT');

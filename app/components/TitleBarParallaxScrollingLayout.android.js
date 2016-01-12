@@ -108,7 +108,6 @@ let TitleBarParallaxScrollingLayout = React.createClass({
                 outputRange: [0, 0, 1]
               })
             }}
-            elevation={4}
           >
             <TitleBar
               title={this.props.title}

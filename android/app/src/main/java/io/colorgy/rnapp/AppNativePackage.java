@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import io.colorgy.rnapp.views.*;
+
 public class AppNativePackage implements ReactPackage {
     private Activity mActivity = null;
 
@@ -34,6 +36,8 @@ public class AppNativePackage implements ReactPackage {
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        return Arrays.<ViewManager>asList();
+        return Arrays.<ViewManager>asList(
+            new ReactTableCreateCoursePageLayoutManager()
+        );
     }
 }

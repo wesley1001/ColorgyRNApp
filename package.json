@@ -8,6 +8,7 @@
   "dependencies": {
     "color": "^0.10.1",
     "react-native": "^0.17.0",
+    "react-native-android-design-support": "0.0.4",
     "react-native-android-statusbar": "^0.1.2",
     "react-native-device-info": "^0.7.0",
     "react-native-facebook-login": "^1.0.2",

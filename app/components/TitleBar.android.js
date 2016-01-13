@@ -15,7 +15,8 @@ let TitleBar = React.createClass({
     title: PropTypes.string,
     actions: PropTypes.array,
     onActionSelected: PropTypes.func,
-    translateTitle: PropTypes.bool
+    translateTitle: PropTypes.bool,
+    pure: PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -56,36 +57,44 @@ let TitleBar = React.createClass({
     var leftIcon = leftAction ? leftAction.icon : undefined;
     var handleLeftIconPress = leftAction ? leftAction.onPress : undefined;
 
-    return (
-      <View style={styles.container}>
-        <ToolbarAndroid
-          style={styles.toolbar}
-          navIcon={leftIcon}
-          actions={actions}
-          onActionSelected={this._handleActionSelect}
-          onIconClicked={handleLeftIconPress}
+    var toolbar = (
+      <ToolbarAndroid
+        style={styles.toolbar}
+        navIcon={leftIcon}
+        actions={actions}
+        onActionSelected={this._handleActionSelect}
+        onIconClicked={handleLeftIconPress}
+      >
+        <Animated.View
+          style={[styles.title, {
+            opacity: this.state.titleTranslate.interpolate({
+              inputRange: [0, 0.7, 1],
+              outputRange: [1, 0, 0]
+            }),
+            transform: [{
+              translateY: this.state.titleTranslate.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, THEME.ANDROID_TITLE_BAR_HEIGHT / 2]
+              })
+            }]
+          }]}
         >
-          <Animated.View
-            style={[styles.title, {
-              opacity: this.state.titleTranslate.interpolate({
-                inputRange: [0, 0.7, 1],
-                outputRange: [1, 0, 0]
-              }),
-              transform: [{
-                translateY: this.state.titleTranslate.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, THEME.ANDROID_TITLE_BAR_HEIGHT / 2]
-                })
-              }]
-            }]}
-          >
-            <Text style={styles.titleText}>
-              {this.props.title}
-            </Text>
-          </Animated.View>
-        </ToolbarAndroid>
-      </View>
+          <Text style={styles.titleText}>
+            {this.props.title}
+          </Text>
+        </Animated.View>
+      </ToolbarAndroid>
     );
+
+    if (this.props.pure) {
+      return toolbar;
+    } else {
+      return (
+        <View style={styles.container}>
+          {toolbar}
+        </View>
+      );
+    }
   }
 });
 

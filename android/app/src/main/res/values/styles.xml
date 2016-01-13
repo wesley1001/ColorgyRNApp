@@ -4,7 +4,37 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
 
+        <item name="colorPrimary">#F89680</item>
+        <item name="colorPrimaryDark">#F89680</item>
+        <item name="colorAccent">#F89680</item>
+
         <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style name="TitleInputText">
+        <item name="android:textSize">32dp</item>
+    </style>
+
+    <style name="TitleInputHint">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="ThemedTitleInputHint">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">#F89680</item>
+    </style>
+
+    <style name="SubtitleInputText">
+        <item name="android:textSize">18dp</item>
+    </style>
+
+    <style name="SubtitleInputHint">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="ThemedSubtitleInputHint">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">#F89680</item>
     </style>
 
 </resources>

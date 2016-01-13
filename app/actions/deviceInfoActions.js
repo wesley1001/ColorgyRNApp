@@ -27,6 +27,9 @@ export const doDeviceInfo = () => dispatch => {
   var windowHeight = Dimensions.get('window').height;
   dispatch(gotDeviceInfo({ windowWidth, windowHeight }));
 
+  var pixelRatio = PixelRatio.get();
+  dispatch(gotDeviceInfo({ pixelRatio }));
+
   if (NativeModules.SystemWindowAndroid) {
     NativeModules.SystemWindowAndroid.isTranslucentStatusBar((e) => {
       console.error('doDeviceInfo error', e);

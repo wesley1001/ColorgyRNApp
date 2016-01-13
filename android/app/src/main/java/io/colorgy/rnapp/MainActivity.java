@@ -18,6 +18,7 @@ import com.reactnativega.GoogleAnalyticsPackage;
 import com.magus.fblogin.FacebookLoginPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.reactnativeandroiddesignsupport.DesignSupportPackage;
 import me.neo.react.StatusBarPackage;
 import com.heng.wheel.WheelPackage;
 
@@ -46,6 +47,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .addPackage(mFacebookLoginPackage)
                 .addPackage(new LinearGradientPackage())
                 .addPackage(new VectorIconsPackage())
+                .addPackage(new DesignSupportPackage(this))
                 .addPackage(new StatusBarPackage(this))
                 .addPackage(new WheelPackage())
                 .addPackage(new AppNativePackage(this))

@@ -255,6 +255,7 @@ let styles = StyleSheet.create({
     paddingRight: 5,
     paddingTop: 2,
     paddingBottom: 2
+
   },
   courseText: {
     color: 'white',

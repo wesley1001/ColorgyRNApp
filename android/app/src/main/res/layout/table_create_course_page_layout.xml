@@ -1,0 +1,101 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+>
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+    >
+        <LinearLayout
+            android:id="@+id/table_create_course_page_layout_main_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+        >
+        </LinearLayout>
+
+        <me.henrytao.smoothappbarlayout.SmoothAppBarLayout
+            android:id="@+id/table_create_course_page_layout_app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+        >
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/table_create_course_page_layout_collapsing_toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:expandedTitleTextAppearance="@style/TitleInputText"
+                app:expandedTitleMarginStart="76dp"
+                app:expandedTitleMarginBottom="124dp"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="72dp"
+                    android:layout_marginRight="16dp"
+                    android:orientation="vertical"
+                    app:layout_collapseMode="parallax"
+                    app:layout_collapseParallaxMultiplier="0.6"
+                >
+                    <Space
+                        android:id="@+id/table_create_course_page_layout_inputs_space_top"
+                        android:layout_width="match_parent"
+                        android:layout_height="128dp"
+                    />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/table_create_course_page_layout_primary_inputlayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:hintTextAppearance="@style/ThemedTitleInputHint"
+                    >
+                        <EditText
+                            android:id="@+id/table_create_course_page_layout_primary_edittext"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="16dp"
+                            android:paddingTop="16dp"
+                            android:textColor="#fff"
+                            android:textColorHint="#33ffffff"
+                            android:textAppearance="@style/TitleInputText"
+                            android:inputType="textCapSentences"
+                        />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                    />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/table_create_course_page_layout_secondary_inputlayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:hintTextAppearance="@style/ThemedSubtitleInputHint"
+                    >
+
+                        <EditText
+                            android:id="@+id/table_create_course_page_layout_secondary_edittext"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="12dp"
+                            android:paddingTop="12dp"
+                            android:textColor="#fff"
+                            android:textColorHint="#33ffffff"
+                            android:textAppearance="@style/SubtitleInputText"
+                            android:inputType="textCapSentences"
+                        />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp"
+                    />
+                </LinearLayout>
+            </android.support.design.widget.CollapsingToolbarLayout>
+        </me.henrytao.smoothappbarlayout.SmoothAppBarLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

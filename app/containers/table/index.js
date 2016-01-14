@@ -39,6 +39,8 @@ var Table = React.createClass({
   componentWillReceiveProps(nextProps) {
     if (nextProps.navigateBackCount !== this.props.navigateBackCount) {
       this.navigator.pop();
+    } else if (nextProps.tabRePressCount !== this.props.tabRePressCount) {
+      this.navigator.popToTop();
     }
   },
 
@@ -148,6 +150,7 @@ export default connect((state) => ({
   courseDatabaseUpdatedTime: state.table.courseDatabaseUpdatedTime,
   courseDatabaseLoadingProgress: state.table.courseDatabaseLoadingProgress,
   navigateBackCount: state.table.navigateBackCount,
+  tabRePressCount: state.appTab.rePressCountOnTab['0'],
   networkConnectivity: state.deviceInfo.networkConnectivity,
   translucentStatusBar: state.deviceInfo.translucentStatusBar,
   statusBarHeight: state.deviceInfo.statusBarHeight

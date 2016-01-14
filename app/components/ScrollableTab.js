@@ -50,6 +50,17 @@ var ScrollableTab = React.createClass({
     };
   },
 
+  componentDidMount() {
+    if (this.props.currentTab) {
+      this.setState({
+        currentTab: this.props.currentTab,
+        currentActiveTab: this.props.currentTab
+      });
+
+      this.animateToTab(this.props.currentTab);
+    }
+  },
+
   componentWillReceiveProps(nextProps) {
     if (typeof this.props.currentTab === 'number' &&
         typeof nextProps.currentTab === 'number' &&
@@ -156,8 +167,8 @@ var ScrollableTab = React.createClass({
     var ViewTabBar = this.props.tabBar;
     if (this.props.renderTabBar === false) {
       return null;
-    } else if (this.props.renderTabBar) {
-      return React.cloneElement(this.props.renderTabBar(), props);
+    // } else if (this.props.renderTabBar) {
+    //   return React.cloneElement(this.props.renderTabBar(), props);
     } else {
       return <ViewTabBar {...props} />;
     }

@@ -63,6 +63,7 @@ var App = React.createClass({
                 currentTab={this.props.currentTab}
                 onTabChanged={(t) => this.props.dispatch(selectTab({ tab: t }))}
                 edgeHitWidth={-1}
+                renderTabBar={!this.props.hideAppTabBar}
               >
                 <View tabLabel="我的課表" style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
                   <TableContainer />
@@ -94,5 +95,6 @@ export default connect((state) => ({
   uuid: state.colorgyAPI.me && state.colorgyAPI.me.uuid,
   deviceInfo: state.deviceInfo,
   isDevMode: state.devMode.devMode,
-  currentTab: state.appTab.currentTab
+  currentTab: state.appTab.currentTab,
+  hideAppTabBar: state.appTab.hideAppTabBar
 }))(App);

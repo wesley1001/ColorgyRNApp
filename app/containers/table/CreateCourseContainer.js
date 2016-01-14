@@ -26,6 +26,7 @@ import GhostButton from '../../components/GhostButton';
 import Button from '../../components/Button';
 import TableCreateCoursePage from '../../components/TableCreateCoursePage';
 
+import { hideAppTabBar, showAppTabBar } from '../../actions/appTabActions';
 import {
   doLoadTableCourses,
   doAddCourse,
@@ -47,7 +48,13 @@ var CreateCourseContainer = React.createClass({
     };
   },
 
+  componentWillMount() {
+    this.props.dispatch(hideAppTabBar());
+  },
+
   componentWillUnmount() {
+    this.props.dispatch(showAppTabBar());
+
     InteractionManager.runAfterInteractions(() => {
       this.props.dispatch(doSyncUserCourses(this.props.userId, this.props.organizationCode));
     });
@@ -55,6 +62,10 @@ var CreateCourseContainer = React.createClass({
 
   _handleBack() {
     this.props.navigator.pop();
+  },
+
+  handleBack() {
+
   },
 
   _handleCourseTimeChange(index, data) {

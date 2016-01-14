@@ -363,7 +363,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   timeSelectionModal: {
-    height: 280,
+    height: 270,
     elevation: 24
   },
   timeSelectionModalHead: {

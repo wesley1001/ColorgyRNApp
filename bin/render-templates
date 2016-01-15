@@ -8,9 +8,5 @@ BASEDIR=$(dirname "$0")
 cd "$BASEDIR"
 cd ..
 
-# Render templates
-./bin/render-android-templates
-
-# Build
-cd android
-./gradlew assembleRelease
+# Find and render templates
+find android/templates -type f -exec bin/render-template {} \;

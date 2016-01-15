@@ -34,7 +34,7 @@ ANDROID_APP_RELEASE_KEY_PASSWORD=
 then run:
 
 ```bash
-cd android && ./gradlew assembleRelease
+bin/build-android
 ```
 
 The signed apk will locate at `android/app/build/outputs/apk`.

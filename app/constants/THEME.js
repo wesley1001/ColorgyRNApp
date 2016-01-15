@@ -1,5 +1,7 @@
-const TMEME = {
+module.exports = {
   COLOR: '#F89680',
+  COLOR_DARK: '#794A40',
+  COLOR_ACCENT: '#00CFE4',
   COLOR_PALETTE: [
     '#F89680',
     '#00D0AD',
@@ -23,5 +25,3 @@ const TMEME = {
   ANDROID_TITLE_BAR_HEIGHT: 56,
   ANDROID_APP_TAB_BAR_HEIGHT: 52
 };
-
-export default TMEME;

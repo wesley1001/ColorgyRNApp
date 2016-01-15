@@ -9,7 +9,7 @@ cd "$BASEDIR"
 cd ..
 
 # Render templates
-./bin/render-android-templates
+./bin/render-templates
 
 # Build
 cd android

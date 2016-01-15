@@ -8,19 +8,22 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Space;
 
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 public class ReactTableCreateCoursePageLayout extends FrameLayout {
+    public View mView;
     public LinearLayout mContent;
     public Toolbar mToolbar;
     public CollapsingToolbarLayout mCollapsingToolbarLayout;
@@ -42,6 +45,8 @@ public class ReactTableCreateCoursePageLayout extends FrameLayout {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View view = layoutInflater.inflate(R.layout.table_create_course_page_layout, this, false);
         this.addView(view);
+
+        mView = view;
 
         mContent = (LinearLayout) findViewById(R.id.table_create_course_page_layout_main_content);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.table_create_course_page_layout_collapsing_toolbar_layout);
@@ -66,6 +71,35 @@ public class ReactTableCreateCoursePageLayout extends FrameLayout {
                 onReceiveNativeEvent("secondaryInputChange", String.valueOf(s));
             }
         });
+
+        setup();
+    }
+
+    public void setup() {
+        setupUI(this);
+    }
+
+    private void setupUI(View view) {
+        // Set up touch listener for non-text box views to hide keyboard.
+        if(!(view instanceof EditText)) {
+            // view.setFocusable(true);
+            // view.setFocusableInTouchMode(true);
+            view.setOnTouchListener(new OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard();
+                    mView.requestFocus();
+                    return false;
+                }
+            });
+        }
+
+        // If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
 
     private void onReceiveNativeEvent(String eventType, String eventString) {
@@ -78,5 +112,11 @@ public class ReactTableCreateCoursePageLayout extends FrameLayout {
             "topChange",
             event
         );
+    }
+
+    private void hideSoftKeyboard() {
+        ReactContext reactContext = (ReactContext) getContext();
+        InputMethodManager inputMethodManager = (InputMethodManager) reactContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
     }
 }

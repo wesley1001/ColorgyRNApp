@@ -43,6 +43,8 @@ public class ReactTableCreateCoursePageLayoutManager extends ViewGroupManager<Re
         } else {
             view.mContent.addView(child, index);
         }
+
+        view.setup();
     }
 
     @Override

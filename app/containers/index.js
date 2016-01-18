@@ -69,9 +69,6 @@ var App = React.createClass({
                 <View tabLabel="我的課表" style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
                   <TableContainer />
                 </View>
-                <View tabLabel="活動牆" style={{ flex: 1 }}>
-                  <BoardContainer />
-                </View>
                 <View tabLabel="更多" style={{ flex: 1 }}>
                   <MoreContainer />
                 </View>

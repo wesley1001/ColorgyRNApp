@@ -9,13 +9,13 @@ import createLogger from 'redux-logger';
 
 import gaMiddleware from './middlewares/gaMiddleware';
 import failureReportMiddleware from './middlewares/failureReportMiddleware';
-import alertMiddleware from './middlewares/alertMiddleware';
+import notifyMiddleware from './middlewares/notifyMiddleware';
 
 var createStoreWithMiddleware = applyMiddleware(
   thunkMiddleware,
   gaMiddleware,
   failureReportMiddleware,
-  alertMiddleware
+  notifyMiddleware
 )(createStore);
 
 if (__DEV__) {
@@ -29,7 +29,7 @@ if (__DEV__) {
     thunkMiddleware,
     gaMiddleware,
     failureReportMiddleware,
-    alertMiddleware,
+    notifyMiddleware,
     loggerMiddleware
   )(createStore);
 }

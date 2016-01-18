@@ -16,7 +16,7 @@ import Text from '../components/Text';
 
 import organizationDatabase, { sqlValue } from '../databases/organizationDatabase';
 import colorgyAPI from '../utils/colorgyAPI';
-import alert from '../utils/alert';
+import notify from '../utils/notify';
 import ga from '../utils/ga';
 import error from '../utils/errorHandler';
 
@@ -94,7 +94,7 @@ var OrgSelectContainer = React.createClass({
       ga.sendTiming('DataLoad', loadingTime, 'UserSelectOrgsLoad', 'data-load');
     }).catch((e) => {
       error('UserOrgSelect: fetchOrgFaild: ', e);
-      alert('網路錯誤');
+      notify('網路錯誤');
       this.setState({ fetchOrgFaild: true });
     });
   },
@@ -117,7 +117,7 @@ var OrgSelectContainer = React.createClass({
       ga.sendTiming('DataLoad', loadingTime, 'UserSelectDepsLoad', 'data-load');
     }).catch((e) => {
       error('UserOrgSelect: fetchDepFaild: ', e);
-      alert('網路錯誤');
+      notify('網路錯誤');
       this.setState({ fetchDepFaild: true });
     });
   },

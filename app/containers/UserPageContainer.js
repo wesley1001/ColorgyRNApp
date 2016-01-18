@@ -13,7 +13,6 @@ import _ from 'underscore';
 import LOADING_STATE from '../constants/LOADING_STATE';
 import THEME from '../constants/THEME';
 
-import alert from '../utils/alert';
 import ga from '../utils/ga';
 
 import courseDatabase from '../databases/courseDatabase';

@@ -15,6 +15,7 @@ import TitleBarLayout from '../components/TitleBarLayout';
 import ListItem from '../components/ListItem';
 
 import colorgyAPI from '../utils/colorgyAPI';
+import notify from '../utils/notify';
 
 import { doClearAccessToken } from '../actions/colorgyAPIActions';
 import { doEnterDevModePress } from '../actions/devModeActions';
@@ -59,10 +60,12 @@ var MoreContainer = React.createClass({
           <ListItem
             text="問題回報"
             disabled={true}
+            onDisabledPress={() => notify('此功能尚未啟用')}
           />
           <ListItem
             text="關於我們"
             disabled={true}
+            onDisabledPress={() => notify('此功能尚未啟用')}
           />
           <ListItem
             text="登出"

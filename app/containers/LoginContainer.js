@@ -14,7 +14,7 @@ import { FBLoginManager } from 'NativeModules';
 import Text from '../components/Text';
 
 import colorgyAPI from '../utils/colorgyAPI';
-import alert from '../utils/alert';
+import notify from '../utils/notify';
 
 import { doEnterDevModePress } from '../actions/devModeActions';
 
@@ -52,7 +52,7 @@ var LoginContainer = React.createClass({
     } else {
       return (
         <View style={styles.container}>
-          <View style={styles.logo} onPress={() => alert('hi')}>
+          <View style={styles.logo}>
             <TouchableWithoutFeedback
               onPress={() => this.props.dispatch(doEnterDevModePress())}
             >
@@ -86,7 +86,7 @@ var LoginContainer = React.createClass({
             colorgyAPI.requestAccessToken({ username: 'facebook:access_token', password: fbToken });
             this.setState({ fbLoading: false });
           } else {
-            alert('發生錯誤！請檢查您的網路連線，以及確認您有正確登入、授權本 App 存取您的帳號');
+            notify('發生錯誤！請檢查您的網路連線，以及確認您有正確登入、授權本 App 存取您的帳號');
             this.setState({ fbLoading: false });
             console.error(error);
           }

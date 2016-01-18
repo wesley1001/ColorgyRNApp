@@ -103,7 +103,7 @@ var AddCourseContainer = React.createClass({
         </View>
         <ScrollView>
           {_.values(courses).map((course) => {
-            var selected = selectedCourseCodes.indexOf(course.code) > 0;
+            var selected = selectedCourseCodes.indexOf(course.code) >= 0;
             return (
               <CourseCard
                 key={course.code}

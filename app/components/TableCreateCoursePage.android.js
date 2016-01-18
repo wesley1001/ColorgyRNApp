@@ -333,6 +333,13 @@ let TableCreateCoursePage = React.createClass({
               onPress={handleAddCourseTime}
               style={styles.addCourseTimeButton}
             />
+            <Button
+              value="儲存"
+              type="small"
+              color={THEME.LIGHT_GREY}
+              onPress={handleSave}
+              style={styles.saveButton}
+            />
           </View>
         </NestedScrollViewAndroid>
         <ToolbarAndroid
@@ -389,6 +396,12 @@ var styles = StyleSheet.create({
     marginVertical: 32,
     marginHorizontal: 32,
     marginTop: 24
+  },
+  saveButton: {
+    width: 180,
+    marginVertical: 32,
+    marginHorizontal: 32,
+    marginTop: -8
   }
 });
 

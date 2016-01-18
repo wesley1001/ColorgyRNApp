@@ -96,7 +96,7 @@ var CreateCourseContainer = React.createClass({
 
   _deleteCourseTime(i) {
     var courseTimes = this.state.courseTimes;
-    courseTimes.pop(i);
+    courseTimes.splice(i, 1);
     this.setState({ courseTimes });
   },
 

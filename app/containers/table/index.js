@@ -40,7 +40,7 @@ var Table = React.createClass({
     if (nextProps.navigateBackCount !== this.props.navigateBackCount) {
       this.navigator.pop();
     } else if (nextProps.tabRePressCount !== this.props.tabRePressCount) {
-      this.navigator.popToTop();
+      if (this.navigator) this.navigator.popToTop();
     }
   },
 

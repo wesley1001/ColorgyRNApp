@@ -102,17 +102,6 @@ var AddCourseContainer = React.createClass({
           />
         </View>
         <ScrollView>
-          {(()=> {
-            if (this.state.searchQuery && this.state.searchQuery.length > 0) {
-              return (
-                <Button
-                  style={styles.manuallyCreateCourseButton}
-                  value={`找不到課嗎？點這裡手動新增「${this.state.searchQuery}」課吧！`}
-                  onPress={this._handleCreateCourse}
-                />
-              );
-            }
-          })()}
           {_.values(courses).map((course) => {
             var selected = selectedCourseCodes.indexOf(course.code) > 0;
             return (
@@ -172,6 +161,17 @@ var AddCourseContainer = React.createClass({
               />
             );
           })}
+          {(()=> {
+            if (this.state.searchQuery && this.state.searchQuery.length > 0) {
+              return (
+                <Button
+                  style={styles.manuallyCreateCourseButton}
+                  value={`手動新增「${this.state.searchQuery}」課程`}
+                  onPress={this._handleCreateCourse}
+                />
+              );
+            }
+          })()}
         </ScrollView>
       </TitleBarLayout>
     );

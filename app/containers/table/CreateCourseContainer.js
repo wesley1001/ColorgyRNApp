@@ -15,6 +15,7 @@ import THEME from '../../constants/THEME';
 
 import courseDatabase from '../../databases/courseDatabase';
 import colorgyAPI from '../../utils/colorgyAPI';
+import notify from '../../utils/notify';
 
 import { setOverlayElement } from '../../actions/appActions';
 import { doCreateAndAddCourse } from '../../actions/tableActions';
@@ -61,6 +62,7 @@ var CreateCourseContainer = React.createClass({
   },
 
   _handleBack() {
+    // TODO: Confirm before this
     this.props.navigator.pop();
   },
 
@@ -122,9 +124,11 @@ var CreateCourseContainer = React.createClass({
 
     this.props.dispatch(doCreateAndAddCourse(this.props.userId, this.props.organizationCode, course, () => {
       this.setState({ saving: false });
+      notify('已儲存');
       this.props.navigator.pop();
     }, () => {
       this.setState({ saving: false });
+      notify('儲存失敗');
     }));
   },
 

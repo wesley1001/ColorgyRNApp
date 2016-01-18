@@ -5,7 +5,8 @@ import React, {
   Image,
   ScrollView,
   ToolbarAndroid,
-  TouchableOpacity
+  TouchableOpacity,
+  ProgressBarAndroid
 } from 'react-native';
 import {
   NestedScrollViewAndroid,
@@ -190,6 +191,46 @@ let TableCreateCoursePage = React.createClass({
   },
 
   componentDidMount() {
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.saving !== this.props.saving) {
+      if (nextProps.saving === true) {
+        this.props.onSetOverlayElement(
+          <Modal
+            ref={(m) => {
+              this.isSavingModal = m;
+              if (m) {
+                m.reallyClose = m.close;
+                // Overwrite the close function to disable closing the modal
+                // when the user clicks on the backdrop
+                m.close = (() => {});
+                m.open();
+              }
+            }}
+            isDisabled={false}
+            swipeToClose={false}
+            position="center"
+            style={styles.isSavingModal}
+          >
+            <View style={styles.isSavingModalContent}>
+              <ProgressBarAndroid />
+              <Text>　</Text>
+              <Text>儲存中</Text>
+            </View>
+          </Modal>
+        );
+      } else {
+        if (this.isSavingModal) {
+          this.isSavingModal.reallyClose();
+
+          setTimeout(() => {
+            this.isSavingModal.reallyClose();
+            this.props.onSetOverlayElement(null);
+          }, 500);
+        }
+      }
+    }
   },
 
   render() {
@@ -402,6 +443,16 @@ var styles = StyleSheet.create({
     marginVertical: 32,
     marginHorizontal: 32,
     marginTop: -8
+  },
+  isSavingModal: {
+    width: 200,
+    height: 200,
+    elevation: 24
+  },
+  isSavingModalContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 

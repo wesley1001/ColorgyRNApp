@@ -45,7 +45,7 @@ var AddCourseContainer = React.createClass({
 
   componentWillReceiveProps(nextProps) {
     if (this.props.selectedCourses != nextProps.selectedCourses) {
-      this._handleSearch();
+      this._handleSearch(true);
     }
   },
 
@@ -62,7 +62,7 @@ var AddCourseContainer = React.createClass({
   },
 
   _handleSearch(query) {
-    if (!query) query = this.state.searchQuery;
+    if (query === true) query = this.state.searchQuery;
     this.setState({ searchQuery: query });
     courseDatabase.searchCourse(this.props.organizationCode, (query || '')).then((courses) => {
       this.setState({ courses });

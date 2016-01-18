@@ -14,7 +14,7 @@ Then edit `config.js` (automatically copied from `sample.config.js` if not exist
 ### Run on Android
 
 ```bash
-react-native run-android
+./bin/run-android
 ```
 
 

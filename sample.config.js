@@ -1,3 +1,4 @@
 module.exports = {
-  googleAnalyticsID: ''
+  googleAnalyticsID: '',
+  devLogger: 'simple'
 }

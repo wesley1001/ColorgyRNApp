@@ -19,6 +19,10 @@ export const refreshAccessToken = createAction('REFRESH_ACCESS_TOKEN');
 export const refreshAccessTokenSuccess = createAction('REFRESH_ACCESS_TOKEN_SUCCESS');
 export const refreshAccessTokenFailed = createAction('REFRESH_ACCESS_TOKEN_FAILED');
 
+export const gotDeviceUniqueID = createAction('GOT_DEVICE_UNIQUE_ID');
+export const gotDeviceName = createAction('GOT_DEVICE_NAME');
+export const gcmRegistered = createAction('GCM_REGISTERED');
+
 export const updateMe = createAction('UPDATE_ME');
 export const updateMeSuccess = createAction('UPDATE_ME_SUCCESS');
 export const updateMeFaild = createAction('UPDATE_ME_FAILD');
@@ -32,7 +36,7 @@ export const doRequestAccessToken = (userCredentials) => (dispatch) => {
   let scopeString = 'public%20email%20account%20identity%20info%20write%20notifications%20notifications:send%20api%20api:write%20offline_access';
 
   return fetch(`${colorgyAPI.baseURL}/oauth/token?scope=${scopeString}`, {
-    method: 'post',
+    method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
@@ -42,16 +46,15 @@ export const doRequestAccessToken = (userCredentials) => (dispatch) => {
       username: userCredentials.username,
       password: userCredentials.password
     })
-  }).then(req => req.json())
-    .then(json => {
+  }).then(req => req.json()).then(json => {
       if (json.access_token) {
         dispatch(requestAccessTokenSuccess(json));
         dispatch(doUpdateMe());
       } else {
         dispatch(requestAccessTokenFailed(json));
       }
-    })
-    .catch(reason => {
+    }).catch((reason) => {
+      error('colorgyAPIActions: requestAccessTokenFailed: request_error', reason);
       dispatch(requestAccessTokenFailed({ error: 'request_error' }));
     });
 };
@@ -140,8 +143,22 @@ export const doGetAccessToken = (callback, forceRefresh, errorCallback) => (disp
  * Clear the access token, i.e. logout.
  */
 export const doClearAccessToken = () => (dispatch) => {
+  const currentState = store.getState();
+  const deviceUniqueID = currentState.colorgyAPI && currentState.colorgyAPI.deviceUniqueID;
+
   ga.setUserID('null');
-  dispatch(clearAccessToken());
+
+  colorgyAPI.fetch(`/v1/me/devices/${deviceUniqueID}`, {
+    method: 'DELETE',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+
+  setTimeout(() => {
+    dispatch(clearAccessToken());
+  }, 1000);
 };
 
 /**
@@ -158,7 +175,7 @@ export const doUpdateMe = (updatedData) => (dispatch) => {
   if (!updatedData) {
     colorgyAPI.fetch('/v1/me').then((r) => {
       if (r.status != 200) {
-        dispatch(updateMeFaild(e));
+        dispatch(updateMeFaild(r));
         throw r;
       } else {
         return r.json();
@@ -191,6 +208,37 @@ export const doUpdateMe = (updatedData) => (dispatch) => {
     }).then((json) => {
       var data = colorgyAPI.camelizeObject(json);
       dispatch(updateMeSuccess(data));
+    }).catch((e) => {
+      dispatch(updateMeFaild(e));
+      error('colorgyAPI: updateMeFaild: ', e);
+    });
+  }
+
+  const currentState = store.getState();
+  const deviceUniqueID = currentState.colorgyAPI && currentState.colorgyAPI.deviceUniqueID;
+  const deviceName = currentState.colorgyAPI && currentState.colorgyAPI.deviceName;
+  const deviceGCMToken = currentState.colorgyAPI && currentState.colorgyAPI.gcmDeviceToken;
+
+  if (deviceUniqueID && deviceGCMToken) {
+    colorgyAPI.fetch(`/v1/me/devices/${deviceUniqueID}`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ user_device: {
+        type: 'android',
+        name: deviceName,
+        device_id: deviceGCMToken
+      } })
+    }).then((r) => {
+      if (r.status != 200 && r.status != 201) {
+        dispatch(updateMeFaild(r));
+        throw r;
+      } else {
+        return r.json();
+      }
+    }).then((json) => {
     }).catch((e) => {
       dispatch(updateMeFaild(e));
       error('colorgyAPI: updateMeFaild: ', e);

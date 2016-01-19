@@ -34,3 +34,4 @@ node_modules/
 npm-debug.log
 
 config.js
+/google-services.json

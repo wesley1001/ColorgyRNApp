@@ -16,6 +16,8 @@ import com.learnium.RNDeviceInfo.*;
 import org.pgsqlite.SQLitePluginPackage;
 import com.reactnativega.GoogleAnalyticsPackage;
 import com.magus.fblogin.FacebookLoginPackage;
+import com.oney.gcm.GcmPackage;
+import io.neson.react.notification.NotificationPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativeandroiddesignsupport.DesignSupportPackage;
@@ -45,6 +47,8 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .addPackage(new SQLitePluginPackage(this))
                 .addPackage(new GoogleAnalyticsPackage(this))
                 .addPackage(mFacebookLoginPackage)
+                .addPackage(new GcmPackage())
+                .addPackage(new NotificationPackage(this))
                 .addPackage(new LinearGradientPackage())
                 .addPackage(new VectorIconsPackage())
                 .addPackage(new DesignSupportPackage(this))

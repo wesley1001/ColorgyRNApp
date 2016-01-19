@@ -2,8 +2,21 @@
     package="io.colorgy.rnapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.SEND" />
+
+    <permission
+      android:name="io.colorgy.rnapp.permission.C2D_MESSAGE"
+      android:protectionLevel="signature" />
+    <uses-permission android:name="io.colorgy.rnapp.permission.C2D_MESSAGE" />
 
     <application
       android:allowBackup="true"
@@ -28,6 +41,42 @@
       <meta-data
         android:name="com.facebook.sdk.ApplicationId"
         android:value="@string/fb_app_id"/>
+      <meta-data
+        android:name="com.google.android.gms.version"
+        android:value="@integer/google_play_services_version" />
+
+      <receiver
+        android:name="com.google.android.gms.gcm.GcmReceiver"
+        android:exported="true"
+        android:permission="com.google.android.c2dm.permission.SEND" >
+        <intent-filter>
+          <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+          <category android:name="io.colorgy.rnapp" />
+        </intent-filter>
+      </receiver>
+      <service android:name="com.oney.gcm.GcmRegistrationService"/>
+      <service android:name="com.oney.gcm.BackgroundService"></service>
+
+      <service
+        android:name="io.neson.react.notification.GCMNotificationListenerService"
+        android:exported="false" >
+        <intent-filter>
+          <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+        </intent-filter>
+      </service>
+      <receiver android:name="com.oney.gcm.GcmBroadcastReceiver">
+        <intent-filter>
+          <action android:name="com.oney.gcm.GCMReceiveNotification" />
+          </intent-filter>
+      </receiver>
+
+      <receiver android:name="io.neson.react.notification.NotificationEventReceiver" />
+      <receiver android:name="io.neson.react.notification.NotificationPublisher" />
+      <receiver android:name="io.neson.react.notification.SystemBootEventReceiver">
+        <intent-filter>
+          <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+        </intent-filter>
+      </receiver>
     </application>
 
 </manifest>

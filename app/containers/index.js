@@ -15,7 +15,7 @@ import MoreContainer from './MoreContainer';
 
 import { doDeviceInfo } from '../actions/deviceInfoActions';
 import { selectTab } from '../actions/appTabActions';
-import { doUpdateMe } from '../actions/colorgyAPIActions';
+import { doUpdateMe, gcmRegistered } from '../actions/colorgyAPIActions';
 import { enterDevMode } from '../actions/devModeActions';
 import { doBackPress } from '../actions/appActions';
 
@@ -26,6 +26,18 @@ var App = React.createClass({
     this.props.dispatch(doDeviceInfo());
 
     if (Platform.OS === 'android') {
+      var GcmAndroid = require('react-native-gcm-android');
+      this.GcmAndroid = GcmAndroid;
+
+      GcmAndroid.addEventListener('register', (deviceToken) => {
+        this.props.dispatch(gcmRegistered({ deviceToken }));
+      });
+
+      GcmAndroid.addEventListener('notification', (message) => {
+      });
+
+      GcmAndroid.requestPermissions();
+
       React.BackAndroid.addEventListener('hardwareBackPress', () => {
         this.props.dispatch(doBackPress());
         return true;

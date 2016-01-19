@@ -77,6 +77,27 @@ export default handleActions({
     };
   },
 
+  GOT_DEVICE_UNIQUE_ID: (state, action) => {
+    return {
+      ...state,
+      deviceUniqueID: action.payload.deviceUniqueID
+    };
+  },
+
+  GOT_DEVICE_NAME: (state, action) => {
+    return {
+      ...state,
+      deviceName: action.payload.deviceName
+    };
+  },
+
+  GCM_REGISTERED: (state, action) => {
+    return {
+      ...state,
+      gcmDeviceToken: action.payload.deviceToken
+    };
+  },
+
   UPDATE_ME: (state, action) => {
     return {
       ...state,

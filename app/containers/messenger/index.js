@@ -46,11 +46,10 @@ var GiftedMessengerExample = React.createClass({
         title="隔壁小妹"
         textColor={"#000"}
         color={"#FFF"}
-        leftAction={
-          <TitleBarActionIcon onPress={this._handleBack}>
-            <Icon name="arrow-back" size={24} color="#000" />
-          </TitleBarActionIcon>
-        }
+        actions={[
+          { title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' },
+          { title: '加選課程', icon: require('../../assets/images/icon_add_white.png'), onPress: this._handleAdd, show: 'always' }
+        ]}
       >
         <GiftedMessenger
           ref={(c) => this._GiftedMessenger = c}

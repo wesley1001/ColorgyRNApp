@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.content.Intent;
+import android.content.Intent; 
+import com.imagepicker.ImagePickerPackage; 
 
 import com.facebook.react.LifecycleState;
 import com.facebook.react.ReactInstanceManager;
@@ -20,7 +22,7 @@ import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativeandroiddesignsupport.DesignSupportPackage;
 import me.neo.react.StatusBarPackage;
-import com.heng.wheel.WheelPackage;
+import com.heng.wheel.WheelPackage;  
 
 public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
 
@@ -29,11 +31,15 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
 
     private FacebookLoginPackage mFacebookLoginPackage;
 
+    private ImagePickerPackage mImagePicker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mReactRootView = new ReactRootView(this);
 
+        mImagePicker = new ImagePickerPackage(this);
+        
         mFacebookLoginPackage = new FacebookLoginPackage(this);
 
         mReactInstanceManager = ReactInstanceManager.builder()
@@ -51,6 +57,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .addPackage(new StatusBarPackage(this))
                 .addPackage(new WheelPackage())
                 .addPackage(new AppNativePackage(this))
+                .addPackage(mImagePicker)
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
@@ -68,6 +75,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
         }
         return super.onKeyUp(keyCode, event);
     }
+    
 
     @Override
     public void onBackPressed() {
@@ -106,5 +114,6 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
         super.onActivityResult(requestCode, resultCode, data);
 
         mFacebookLoginPackage.handleActivityResult(requestCode, resultCode, data);
+        mImagePicker.handleActivityResult(requestCode, resultCode, data);
     }
 }

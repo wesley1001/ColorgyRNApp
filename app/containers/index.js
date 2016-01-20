@@ -12,6 +12,10 @@ import DevModeContainer from './DevModeContainer';
 import TableContainer from './table';
 import BoardContainer from './board';
 import MoreContainer from './MoreContainer';
+import ChatContainer from './chat';
+import FriendsContainer from './friends';
+import Messenger from './messenger'
+
 
 import { doDeviceInfo } from '../actions/deviceInfoActions';
 import { selectTab } from '../actions/appTabActions';
@@ -38,6 +42,10 @@ var App = React.createClass({
     ga.sendScreenView('Start');
   },
 
+  getInitialState: function() {
+    return{ onChat: false }
+  },
+
   render: function() {
     var { overlayElement } = this.props;
 
@@ -56,6 +64,8 @@ var App = React.createClass({
           } else if (!this.props.organizationCode) {
             return(<OrgSelectContainer />);
 
+          } else if(this.state.onChat){
+            return(<Messenger style={{ flex: 1 }} />);
           } else {
             return(
               <ScrollableTab
@@ -71,6 +81,12 @@ var App = React.createClass({
                 </View>
                 <View tabLabel="活動牆" style={{ flex: 1 }}>
                   <BoardContainer />
+                </View>
+                <View tabLabel="模糊聊" style={{ flex: 1 }}>
+                  <ChatContainer />
+                </View>
+                <View tabLabel="好朋友" style={{ flex: 1 }}>
+                  <FriendsContainer />
                 </View>
                 <View tabLabel="更多" style={{ flex: 1 }}>
                   <MoreContainer />

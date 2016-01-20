@@ -28,3 +28,6 @@ project(':react-native-android-statusbar').projectDir = new File(settingsDir, '.
 
 include ':reactwheelview', ':app'
 project(':reactwheelview').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wheel')
+
+include ':react-native-image-picker'
+project(':react-native-image-picker').projectDir = new File(settingsDir, '../node_modules/react-native-image-picker/android')

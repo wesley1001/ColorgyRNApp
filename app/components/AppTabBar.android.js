@@ -80,11 +80,25 @@ var AppTabBar = React.createClass({
           icon = require('../assets/images/tab_icon_board.png');
         }
         break;
-      case 2:
+      case 4:
         if (isTabActive) {
           icon = require('../assets/images/tab_icon_more_active.png');
         } else {
           icon = require('../assets/images/tab_icon_more.png');
+        }
+        break;
+      case 2:
+        if (isTabActive) {
+          icon = require('../assets/images/tab_icon_chat_active.png');
+        } else {
+          icon = require('../assets/images/tab_icon_chat.png');
+        }
+        break;
+      case 3:
+        if (isTabActive) {
+          icon = require('../assets/images/tab_icon_friend_active.png');
+        } else {
+          icon = require('../assets/images/tab_icon_friend.png');
         }
         break;
     }

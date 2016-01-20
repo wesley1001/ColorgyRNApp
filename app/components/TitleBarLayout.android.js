@@ -9,6 +9,7 @@ import TitleBar from './TitleBar';
 
 let TitleBarLayout = React.createClass({
   propTypes: {
+    textColor: PropTypes.string,
     title: PropTypes.string,
     color: PropTypes.string,
     actions: PropTypes.array,
@@ -37,6 +38,7 @@ let TitleBarLayout = React.createClass({
           <TitleBar
             title={this.props.title}
             actions={this.props.actions}
+            textColor={this.props.textColor}
           >
           </TitleBar>
         </View>

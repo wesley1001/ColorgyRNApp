@@ -65,8 +65,8 @@ android {
 
     defaultConfig {
         applicationId "io.colorgy.rnapp"
-        versionCode 4
-        versionName "0.0.4"
+        versionCode 5
+        versionName "0.0.5"
         minSdkVersion 16
         targetSdkVersion 22
         ndk {

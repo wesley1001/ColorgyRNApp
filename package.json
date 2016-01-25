@@ -7,11 +7,11 @@
   },
   "dependencies": {
     "color": "^0.10.1",
-    "react-native": "^0.17.0",
+    "react-native": "^0.18.0",
     "react-native-android-design-support": "0.0.5",
     "react-native-android-statusbar": "^0.1.2",
     "react-native-device-info": "^0.7.0",
-    "react-native-facebook-login": "^1.0.2",
+    "react-native-facebook-login": "^1.0.3",
     "react-native-gcm-android": "^0.1.9",
     "react-native-google-analytics": "^1.0.0",
     "react-native-google-analytics-native": "^0.0.3",

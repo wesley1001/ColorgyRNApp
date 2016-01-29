@@ -12,6 +12,9 @@ import DevModeContainer from './DevModeContainer';
 import TableContainer from './table';
 import BoardContainer from './board';
 import MoreContainer from './MoreContainer';
+import ChatContainer from './chat';
+import FriendsContainer from './friends';
+import Messenger from './messenger';
 
 import { doDeviceInfo } from '../actions/deviceInfoActions';
 import { selectTab } from '../actions/appTabActions';
@@ -20,6 +23,8 @@ import { enterDevMode } from '../actions/devModeActions';
 import { doBackPress } from '../actions/appActions';
 
 import ga from '../utils/ga';
+import chatAPI from '../utils/chatAPI';
+import colorgyAPI from '../utils/colorgyAPI';
 
 var App = React.createClass({
   componentWillMount: function() {
@@ -48,6 +53,16 @@ var App = React.createClass({
   componentDidMount: function() {
     ga.setUserID(this.props.uuid);
     ga.sendScreenView('Start');
+    colorgyAPI.getAccessToken().then((accessToken) => {
+      chatAPI.check_user_available(accessToken,this.props.uuid)
+      .then((response)=>{
+        console.log(response);
+      })
+    });
+  },
+
+  getInitialState: function() {
+    return{ }
   },
 
   render: function() {
@@ -80,6 +95,12 @@ var App = React.createClass({
               >
                 <View tabLabel="我的課表" style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
                   <TableContainer />
+                </View>
+                <View tabLabel="模糊聊" style={{ flex: 1 }}>
+                  <ChatContainer />
+                </View>
+                <View tabLabel="好朋友" style={{ flex: 1 }}>
+                  <FriendsContainer />
                 </View>
                 <View tabLabel="更多" style={{ flex: 1 }}>
                   <MoreContainer />

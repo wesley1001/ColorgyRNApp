@@ -13,6 +13,7 @@ let TitleBar = React.createClass({
   propTypes: {
     // The title text on this title bar
     title: PropTypes.string,
+    textColor:PropTypes.string,
     actions: PropTypes.array,
     onActionSelected: PropTypes.func,
     translateTitle: PropTypes.bool,
@@ -79,7 +80,7 @@ let TitleBar = React.createClass({
             }]
           }]}
         >
-          <Text style={styles.titleText}>
+          <Text style={[styles.titleText, this.props.textColor && { color:this.props.textColor }]}>
             {this.props.title}
           </Text>
         </Animated.View>

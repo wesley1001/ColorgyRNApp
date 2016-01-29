@@ -80,6 +80,9 @@ android {
     }
 }
 
+repositories {
+    maven { url "https://jitpack.io" }
+}
 
 dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
@@ -97,4 +100,6 @@ dependencies {
     compile project(':react-native-android-statusbar')
     compile project(':reactwheelview')
     compile project(':react-native-image-picker')
+    compile project(':react-native-dialogs')
+    compile project(':react-native-fs')
 }

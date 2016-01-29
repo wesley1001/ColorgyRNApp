@@ -31,3 +31,9 @@ project(':reactwheelview').projectDir = new File(rootProject.projectDir, '../nod
 
 include ':react-native-image-picker'
 project(':react-native-image-picker').projectDir = new File(settingsDir, '../node_modules/react-native-image-picker/android')
+
+include ':app', ':react-native-dialogs'
+project(':react-native-dialogs').projectDir = file('../node_modules/react-native-dialogs/android')
+
+include ':react-native-fs'
+project(':react-native-fs').projectDir = new File(settingsDir, '../node_modules/react-native-fs/android')

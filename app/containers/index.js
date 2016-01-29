@@ -14,7 +14,7 @@ import BoardContainer from './board';
 import MoreContainer from './MoreContainer';
 import ChatContainer from './chat';
 import FriendsContainer from './friends';
-import Messenger from './messenger'
+import Messenger from './messenger';
 
 
 import { doDeviceInfo } from '../actions/deviceInfoActions';
@@ -24,6 +24,8 @@ import { enterDevMode } from '../actions/devModeActions';
 import { doBackPress } from '../actions/appActions';
 
 import ga from '../utils/ga';
+import chatAPI from '../utils/chatAPI';
+import colorgyAPI from '../utils/colorgyAPI';
 
 var App = React.createClass({
   componentWillMount: function() {
@@ -40,10 +42,16 @@ var App = React.createClass({
   componentDidMount: function() {
     ga.setUserID(this.props.uuid);
     ga.sendScreenView('Start');
+    colorgyAPI.getAccessToken().then((accessToken) => {
+      chatAPI.check_user_available(accessToken,this.props.uuid)
+      .then((response)=>{
+        console.log(response);
+      })
+    });
   },
 
   getInitialState: function() {
-    return{ onChat: false }
+    return{ }
   },
 
   render: function() {
@@ -63,9 +71,7 @@ var App = React.createClass({
 
           } else if (!this.props.organizationCode) {
             return(<OrgSelectContainer />);
-
-          } else if(this.state.onChat){
-            return(<Messenger style={{ flex: 1 }} />);
+          
           } else {
             return(
               <ScrollableTab
@@ -76,14 +82,14 @@ var App = React.createClass({
                 edgeHitWidth={-1}
                 renderTabBar={!this.props.hideAppTabBar}
               >
+                 <View tabLabel="模糊聊" style={{ flex: 1 }}>
+                  <ChatContainer />
+                </View>
                 <View tabLabel="我的課表" style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
                   <TableContainer />
                 </View>
                 <View tabLabel="活動牆" style={{ flex: 1 }}>
                   <BoardContainer />
-                </View>
-                <View tabLabel="模糊聊" style={{ flex: 1 }}>
-                  <ChatContainer />
                 </View>
                 <View tabLabel="好朋友" style={{ flex: 1 }}>
                   <FriendsContainer />

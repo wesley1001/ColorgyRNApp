@@ -6,6 +6,7 @@ import android.view.KeyEvent;
 import android.content.Intent;
 import android.content.Intent; 
 import com.imagepicker.ImagePickerPackage; 
+import com.rnfs.RNFSPackage;
 
 import com.facebook.react.LifecycleState;
 import com.facebook.react.ReactInstanceManager;
@@ -23,6 +24,8 @@ import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativeandroiddesignsupport.DesignSupportPackage;
 import me.neo.react.StatusBarPackage;
 import com.heng.wheel.WheelPackage;  
+import android.support.v4.app.FragmentActivity;
+import com.aakashns.reactnativedialogs.ReactNativeDialogsPackage;
 
 public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
 
@@ -56,6 +59,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .addPackage(new DesignSupportPackage(this))
                 .addPackage(new StatusBarPackage(this))
                 .addPackage(new WheelPackage())
+                .addPackage(new RNFSPackage())
                 .addPackage(new AppNativePackage(this))
                 .addPackage(mImagePicker)
                 .setUseDeveloperSupport(BuildConfig.DEBUG)

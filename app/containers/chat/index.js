@@ -10,6 +10,8 @@ import React, {
   Image,
   Alert,
   PixelRatio,
+  PanResponder,
+  TouchableNativeFeedback,
 } from 'react-native';
 import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -17,6 +19,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Text from '../../components/Text';
 import TitleBarLayout from '../../components/TitleBarLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
+import { hideAppTabBar, showAppTabBar } from '../../actions/appTabActions';
+
 
 import ga from '../../utils/ga';
 
@@ -31,10 +35,9 @@ var WelcomeView = React.createClass({
   render() {
     return(
       <View style={styles.allCenter}>
-        <Image
-          style={{width:268/2.2,height:259/2.2}}
-          source={require('./../../assets/images/mohoochat_icon.png')} />
-        
+          <Image
+            style={{width:268/2.2,height:259/2.2}}
+            source={require('./../../assets/images/mohoochat_icon.png')} />
         <Text style={{marginBottom:20}}>歡迎光臨模糊聊</Text>
         <Text style={{marginBottom:20}}>所有的頭貼都被模糊，只有越來越清晰</Text>
         <TouchableHighlight onPress={this.props.pickPhotoOrTakeAPhoto}>
@@ -186,14 +189,133 @@ var StrangerList = React.createClass({
 });
 
 var CroppingImage = React.createClass({
+  getInitialState(){
+    return{
+      h_w:(Dimensions.get('window').height-Dimensions.get('window').width)/2,
+      original:{top:(Dimensions.get('window').height-Dimensions.get('window').width)/2,left:0},
+      originalPosition: {top:(Dimensions.get('window').height-Dimensions.get('window').width)/2,left:0},
+      window_width:Dimensions.get('window').width,
+      imagesWidth:Dimensions.get('window').width,
+      rule:1,
+      cropping_data:{x:0,y:0},
+      image_data:{}
+    }
+  },
+  componentDidMount(){
+    this.measureImage();
+  },
+  componentWillMount: function() {
+    this._panResponder = PanResponder.create({
+      // Ask to be the responder:
+      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => true,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+
+      onPanResponderGrant: (evt, gestureState) => {
+        // The guesture has started. Show visual feedback so the user knows
+        // what is happening!
+
+        // gestureState.{x,y}0 will be set to zero now
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        // The most recent move distance is gestureState.move{X,Y}
+        if (this.state.rule>1) {
+          this.measureImage();
+          if (this.state.originalPosition.left+gestureState.vx*10>0 || this.state.originalPosition.left+gestureState.vx*10 + this.state.image_data.width< this.state.window_width) {
+            var  new_left = this.state.originalPosition.left;
+          }else{
+            var  new_left = this.state.originalPosition.left+gestureState.vx*10;
+          }
+
+          if ((this.state.originalPosition.top+gestureState.vy*10)-(Dimensions.get('window').height-Dimensions.get('window').width)/2>0 || (this.state.originalPosition.top+gestureState.vy*10)+this.state.image_data.width < Dimensions.get('window').width + (Dimensions.get('window').height-Dimensions.get('window').width)/2 ) {
+            var new_top = this.state.originalPosition.top;
+          }else{
+            var new_top = this.state.originalPosition.top+gestureState.vy*10;
+          }
+          this.setState({originalPosition:{top:new_top,left:new_left}});    
+          console.log(this.state.originalPosition);
+        };
+        // The accumulated gesture distance since becoming responder is
+        // gestureState.d{x,y}
+      },
+      onPanResponderTerminationRequest: (evt, gestureState) => true,
+      onPanResponderRelease: (evt, gestureState) => {
+        // The user has released all touches while this view is the
+        // responder. This typically means a gesture has succeeded
+        if (this.state.rule>1) {
+          this.setState({cropping_data:{x:this.state.original.top-this.state.originalPosition.top, y:this.state.original.left-this.state.originalPosition.left,rule:this.state.rule}});
+        };
+      },
+      onPanResponderTerminate: (evt, gestureState) => {
+        // Another component has become the responder, so this gesture
+        // should be cancelled
+      },
+      onShouldBlockNativeResponder: (evt, gestureState) => {
+        // Returns whether this component should block native components from becoming the JS
+        // responder. Returns true by default. Is currently only supported on android.
+        return true;
+      },
+    });
+  },
+  measureImage(mode) {
+    this.refs.image.measure(this.logImageLayout);
+  },
+
+  logImageLayout(ox, oy, width, height, px, py) {
+    this.setState({image_data:{width:width,px:px,py}});
+    console.log(this.state.image_data);
+  },
+  onImageLayout: function (e) {
+    var layout = e.nativeEvent.layout;
+    // var aspectRatio = this.props.originalWidth / this.props.originalHeight;
+    // var measuredHeight = layout.width / aspectRatio;
+    // var currentHeight = layout.height;
+    console.log("layout",layout);
+  },
   render(){
     return(
       <View style={[{backgroundColor:'rgb(30,30,30)'},styles.allCenter]}>
-        <Image
-          style={{width:Dimensions.get('window').width,height:Dimensions.get('window').width}}
-          source={{uri:this.props.source_url}} />
+          <Image
+            style={{width:this.state.imagesWidth,height:this.state.imagesWidth,position:'absolute',top:this.state.originalPosition.top,left:this.state.originalPosition.left}}
+            source={{uri:this.props.source_url}} 
+            ref='image'
+            resizeMode="cover"
+            onLayout={this.onImageLayout}
+            />
+          <View style={{width:Dimensions.get('window').width,height:(Dimensions.get('window').height - Dimensions.get('window').width)/2,position:'absolute', backgroundColor:'rgba(0,0,0,.3)',left:0,top:0}}></View>
+          <View {...this._panResponder.panHandlers} style={{width:Dimensions.get('window').width,height:Dimensions.get('window').width,position:'absolute',top:(Dimensions.get('window').height - Dimensions.get('window').width)/2,left:0,backgroundColor:'rgba(0,0,0,0)',borderColor:'blue',borderWidth:1}}></View>
+          <View style={{width:Dimensions.get('window').width,height:(Dimensions.get('window').height - Dimensions.get('window').width)/2,position:'absolute', backgroundColor:'rgba(0,0,0,.3)',left:0,top:Dimensions.get('window').width+(Dimensions.get('window').height - Dimensions.get('window').width)/2}}></View>
+          <TouchableNativeFeedback onPress={this.bigger}>
+            <View style={{position:'absolute', top:10,left:10}}><Text style={{color:'white',fontSize:20}}>放大</Text></View>
+          </TouchableNativeFeedback>
+          <TouchableNativeFeedback onPress={this.smaller}>
+            <View style={{position:'absolute', top:10,right:10}}><Text style={{color:'white',fontSize:20}}>縮小</Text></View>
+          </TouchableNativeFeedback>
+          <TouchableNativeFeedback onPress={()=>this.submit(this.state.cropping_data)}>
+            <View style={{position:'absolute', top:Dimensions.get('window').width+(Dimensions.get('window').height - Dimensions.get('window').width)/2+20,right:40}}><Text style={{color:'white',fontSize:20}}>確定</Text></View>
+          </TouchableNativeFeedback>
+          <TouchableNativeFeedback onPress={this.back}>
+            <View style={{position:'absolute', top:Dimensions.get('window').width+(Dimensions.get('window').height - Dimensions.get('window').width)/2+20,left:40}}><Text style={{color:'white',fontSize:20}}>重選</Text></View>
+          </TouchableNativeFeedback>
       </View>
     )
+  },
+  back(){
+    this.props.rechoose();
+  },
+  submit(){
+    this.props.submit();
+  },
+  bigger(){
+    this.setState({imagesWidth:this.state.imagesWidth*1.1,rule:this.state.rule*1.1})
+  },
+  smaller(){
+    if (this.state.rule>1) {
+      this.setState({imagesWidth:this.state.imagesWidth/1.1,rule:this.state.rule/1.1});
+      this.measureImage()
+      this.setState({originalPosition:this.state.original})
+    };
   }
 });
 
@@ -202,11 +324,12 @@ var Chat = React.createClass({
   getInitialState() {
     return{
       title:'模糊聊',
-      havePhoto:false,
+      havePhoto:true,
       havePhotoCrop:false,
       haveNamed:false,
       haveAnsweredToday:false,
-      source_url:'',
+      source_url:'content://media/external/images/media/70',
+      cropping_data:{}
     }
   },
 
@@ -214,6 +337,7 @@ var Chat = React.createClass({
   },
 
   componentDidMount() {
+    this.hideAppTabBarOrShow();
   },
 
   componentWillReceiveProps(nextProps) {
@@ -222,11 +346,19 @@ var Chat = React.createClass({
   _reportRouteUpdate() {
   },
 
+  hideAppTabBarOrShow(){
+    if (!this.state.havePhotoCrop && this.state.havePhoto) {
+      this.props.dispatch(hideAppTabBar());
+    }else{
+      this.props.dispatch(showAppTabBar());
+    }
+  },
+
   render() {
     if (!this.state.havePhoto) {
       var ReturnView = <WelcomeView pickPhotoOrTakeAPhoto={this.pickPhotoOrTakeAPhoto}/>;
     }else if (!this.state.havePhotoCrop){
-      var ReturnView = <CroppingImage source_url={this.state.source_url}/>
+      var ReturnView = <CroppingImage source_url={this.state.source_url} submit={this.submit_crop} rechoose={this.rechoose_crop}/>
     }else if(!this.state.haveNamed){
       var ReturnView = <PostNameView postName={this.postName}/>;
     }else if (!this.state.haveAnsweredToday) {
@@ -242,6 +374,14 @@ var Chat = React.createClass({
         {ReturnView}
       </View>
     );
+  },
+  submit_crop(data){
+    this.setState({havePhotoCrop:true,cropping_data:data});
+    this.hideAppTabBarOrShow();
+  },
+  rechoose_crop(){
+    this.setState({havePhoto:false,source_url:''});
+    this.hideAppTabBarOrShow();
   },
   cancelProfileFirstLook(){
     this.setState({ProfileFirstLook:false});
@@ -291,11 +431,12 @@ var Chat = React.createClass({
         var source_base = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
         // uri (on android)
         var source = {uri: response.uri, isStatic: true};
-
+        console.log(source.uri);
         this.setState({
           source_url: source.uri,
           havePhoto: true,
         });
+        this.hideAppTabBarOrShow();
       }
     });
   },

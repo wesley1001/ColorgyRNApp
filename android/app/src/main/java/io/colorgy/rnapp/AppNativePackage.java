@@ -26,6 +26,8 @@ public class AppNativePackage implements ReactPackage {
         List<NativeModule> modules = new ArrayList<>();
 
         modules.add(new SystemWindowModule(reactContext, mActivity));
+        modules.add(new OpenURLModule(reactContext, mActivity));
+
         return modules;
     }
 

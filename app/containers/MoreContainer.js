@@ -6,7 +6,9 @@ import React, {
   TouchableOpacity,
   ProgressBarAndroid,
   TouchableWithoutFeedback,
-  Alert
+  Alert,
+  Linking,
+  NativeModules
 } from 'react-native';
 import { connect } from 'react-redux/native';
 
@@ -26,6 +28,15 @@ var MoreContainer = React.createClass({
     return {
       fbLoading: false
     };
+  },
+
+  _openAboutURL() {
+    if (NativeModules.OpenURLAndroid) {
+      NativeModules.OpenURLAndroid.openURL('https://www.facebook.com/Colorgy-1529686803975150/', (e)=> {
+        console.error(e);
+      }, () => {
+      });
+    }
   },
 
   _showLogoutAlert() {
@@ -64,8 +75,7 @@ var MoreContainer = React.createClass({
           />
           <ListItem
             text="關於我們"
-            disabled={true}
-            onDisabledPress={() => notify('此功能尚未啟用')}
+            onPress={this._openAboutURL}
           />
           <ListItem
             text="登出"

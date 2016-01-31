@@ -13,6 +13,7 @@ import EditCourseContainer from './EditCourseContainer';
 import AddCourseContainer from './AddCourseContainer';
 import CreateCourseContainer from './CreateCourseContainer';
 import UserPageContainer from '../UserPageContainer';
+import FeedbackContainer from '../FeedbackContainer';
 
 import { doLoadCourseDatabase, doSyncUserCourses } from '../../actions/tableActions';
 
@@ -100,6 +101,11 @@ var Table = React.createClass({
               case 'user':
                 return (
                   <UserPageContainer userId={route.id} navigator={navigator} />
+                );
+                break;
+              case 'feedback':
+                return (
+                  <FeedbackContainer navigator={navigator} />
                 );
                 break;
             }

@@ -11,7 +11,7 @@ import OrgSelectContainer from './OrgSelectContainer';
 import DevModeContainer from './DevModeContainer';
 import TableContainer from './table';
 import BoardContainer from './board';
-import MoreContainer from './MoreContainer';
+import MoreContainer from './more';
 import ChatContainer from './chat';
 import FriendsContainer from './friends';
 import Messenger from './messenger';

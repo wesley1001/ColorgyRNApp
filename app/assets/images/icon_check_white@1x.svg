@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_check_white@1x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Common-Icons" sketch:type="MSArtboardGroup" transform="translate(-48.000000, -192.000000)" fill="#FFFFFF">
+            <g id="icon_check_white" sketch:type="MSLayerGroup" transform="translate(48.000000, 192.000000)">
+                <path d="M8.46153846,16.2307692 L3.61538462,11.3846154 L2,13 L8.46153846,19.4615385 L22.3076923,5.61538462 L20.6923077,4 L8.46153846,16.2307692 Z" id="check" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

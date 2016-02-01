@@ -8,6 +8,7 @@ import Text from '../../components/Text';
 import TitleBarLayout from '../../components/TitleBarLayout';
 
 import MoreMenuContainer from './MoreMenuContainer';
+import PrivacySettingsContainer from './PrivacySettingsContainer';
 import FeedbackContainer from '../FeedbackContainer';
 
 import ga from '../../utils/ga';
@@ -57,6 +58,11 @@ var MoreContainer = React.createClass({
             case 'index':
               return (
                 <MoreMenuContainer navigator={navigator} />
+              );
+              break;
+            case 'privacySettings':
+              return (
+                <PrivacySettingsContainer navigator={navigator} />
               );
               break;
             case 'feedback':

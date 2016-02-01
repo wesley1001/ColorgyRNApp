@@ -14,6 +14,7 @@ import { connect } from 'react-redux/native';
 
 import Text from '../../components/Text';
 import TitleBarLayout from '../../components/TitleBarLayout';
+import ListTitle from '../../components/ListTitle';
 import ListItem from '../../components/ListItem';
 
 import colorgyAPI from '../../utils/colorgyAPI';
@@ -68,6 +69,10 @@ var MoreContainer = React.createClass({
               />
             </TouchableWithoutFeedback>
           </View>
+          <ListItem
+            text="隱私權設定"
+            onPress={() => { this.props.navigator.push({ name: 'privacySettings' }); }}
+          />
           <ListItem
             text="問題回報"
             onPress={() => { this.props.navigator.push({ name: 'feedback' }); }}

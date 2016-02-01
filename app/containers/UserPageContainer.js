@@ -54,9 +54,16 @@ var UserPageContainer = React.createClass({
     }).then((json) => {
       var user = json;
       this.setState({ user });
+    });
 
-    }).catch((e) => {
-      this.setState({ loading: LOADING_STATE.ERROR });
+    var fetchUserSettings = colorgyAPI.fetch(`/v1/user_table_settings/${this._getUserId()}.json`).then((response) => {
+      if (parseInt(response.status / 100) !== 2) {
+        throw response.status;
+      }
+
+      return response.json();
+    }).then((json) => {
+      this.setState({ userSettings: { table: json } });
     });
 
     var fetchCourse = new Promise((resolve, reject) => {
@@ -124,13 +131,10 @@ var UserPageContainer = React.createClass({
           resolve();
         }
 
-      }).catch((e) => {
-        console.error(e);
-        reject(e);
       });
     });
 
-    Promise.all([fetchData, fetchCourse]).then(() => {
+    Promise.all([fetchData, fetchUserSettings, fetchCourse]).then(() => {
       this.setState({ loading: LOADING_STATE.DONE });
       var loadingTime = (new Date()).getTime() - this.state.loadingStartedAt;
       ga.sendTiming('PageLoad', loadingTime, 'UserPageLoad', 'page-load');
@@ -152,6 +156,7 @@ var UserPageContainer = React.createClass({
     return (
       <UserPage
         user={this._getUser()}
+        userSettings={this.state.userSettings}
         userCourses={this.state.courses}
         periodData={this.state.periodData}
         translucentStatusBar={this.props.translucentStatusBar}

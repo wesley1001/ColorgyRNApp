@@ -21,7 +21,7 @@ let UserPage = React.createClass({
 
   render() {
     // Data
-    var { user, userCourses, periodData } = this.props;
+    var { user, userSettings, userCourses, periodData } = this.props;
     // UI Props
     var { translucentStatusBar, statusBarHeight, windowWidth } = this.props;
     // UI State
@@ -103,7 +103,7 @@ let UserPage = React.createClass({
                         <View tabLabel="課表">
                           <View style={styles.card}>
                             {(() => {
-                              if (userCourses && periodData) {
+                              if (userCourses && periodData && userSettings && userSettings.table && userSettings.table.courses_table_visibility) {
                                 return (
                                   <CourseTable
                                     width={windowWidth - 32 - 4}
@@ -114,14 +114,21 @@ let UserPage = React.createClass({
                                     onCoursePress={handleCoursePress}
                                   />
                                 );
+                              } else {
+                                return (
+                                  <View style={{ paddingVertical: 64, paddingHorizontal: 32, alignSelf: 'center' }}>
+                                    <Text>無資料</Text>
+                                  </View>
+                                );
                               }
                             })()}
                           </View>
                         </View>
                         <View tabLabel="基本資料">
                           <View style={styles.card}>
-                            <Text>{user.cover_photo_url}</Text>
-                            <Text style={{ fontSize: 24 }}>{JSON.stringify(user, null, 2)}</Text>
+                            <View style={{ paddingVertical: 64, paddingHorizontal: 32, alignSelf: 'center' }}>
+                              <Text>無資料</Text>
+                            </View>
                           </View>
                         </View>
                       </ScrollableTab>
@@ -246,7 +253,8 @@ var styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     margin: 16,
     marginTop: 12,
-    elevation: 3
+    elevation: 3,
+    justifyContent: 'center'
   }
 });
 

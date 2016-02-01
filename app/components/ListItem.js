@@ -3,6 +3,7 @@ import React, {
   PropTypes,
   View,
   Image,
+  Switch,
   TouchableNativeFeedback,
   TouchableWithoutFeedback,
   TouchableHighlight
@@ -22,6 +23,8 @@ let ListItem = React.createClass({
     borderTop: PropTypes.bool,
     borderBottom: PropTypes.bool,
     switch: PropTypes.bool,
+    switched: PropTypes.bool,
+    initialSwitched: PropTypes.bool,
     checkbox: PropTypes.bool,
     checked: PropTypes.bool,
     initialChecked: PropTypes.bool
@@ -36,7 +39,8 @@ let ListItem = React.createClass({
 
   getInitialState() {
     return {
-      checked: this.props.initialChecked
+      checked: this.props.initialChecked,
+      switched: this.props.initialSwitched
     };
   },
 
@@ -48,6 +52,14 @@ let ListItem = React.createClass({
     }
   },
 
+  _getSwitchedState() {
+    if (this.props.switched === undefined) {
+      return this.state.switched;
+    } else {
+      return this.props.switched;
+    }
+  },
+
   _handlePress() {
     if (!this.props.disabled) {
       if (this.props.onPress) this.props.onPress();
@@ -56,6 +68,11 @@ let ListItem = React.createClass({
         if (this.state.checked) this.setState({ checked: false });
         else this.setState({ checked: true });
       }
+
+      if (this.props.switch) {
+        if (this.state.switched) this.setState({ switched: false });
+        else this.setState({ switched: true });
+      }
     } else {
       if (this.props.onDisabledPress) this.props.onDisabledPress();
     }
@@ -63,6 +80,7 @@ let ListItem = React.createClass({
 
   render() {
     const checked = this._getCheckedState();
+    const switched = this._getSwitchedState();
 
     if (this.props.disabled) {
       return (
@@ -122,6 +140,19 @@ let ListItem = React.createClass({
                 );
               }
             })()}
+            {(() => {
+              if (this.props.switch) {
+                return (
+                  <View style={styles.checkboxContainer}>
+                    <Switch
+                      style={{ width: 50 }}
+                      value={switched}
+                      onValueChange={this._handlePress}
+                    />
+                  </View>
+                );
+              }
+            })()}
           </View>
         </TouchableNativeFeedback>
       );
@@ -148,9 +179,9 @@ let styles = StyleSheet.create({
     textAlign: 'left'
   },
   checkboxContainer: {
-    width: 24,
+    width: 50,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'flex-end'
   },
   checkbox: {
     borderRadius: 3,

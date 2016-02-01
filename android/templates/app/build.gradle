@@ -138,5 +138,6 @@ dependencies {
     compile project(':react-native-vector-icons')
     compile project(':react-native-android-design-support')
     compile project(':react-native-android-statusbar')
+    compile project(':react-native-image-picker')
     compile project(':reactwheelview')
 }

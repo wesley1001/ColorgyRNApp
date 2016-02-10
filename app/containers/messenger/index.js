@@ -20,13 +20,13 @@ import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import Dialog from '../../components/Dialog';
 import { setOverlayElement } from '../../actions/appActions';
 import { hideAppTabBar, showAppTabBar } from '../../actions/appTabActions';
+import GiftedMessenger from '../../components/react-native-gifted-messenger';
 
 import ga from '../../utils/ga';
 import chatAPI from '../../utils/chatAPI';
 
 var UIImagePickerManager = require('NativeModules').UIImagePickerManager;
 
-var GiftedMessenger = require('react-native-gifted-messenger');
 
 var Messenger = React.createClass({
   getInitialState(){
@@ -34,20 +34,26 @@ var Messenger = React.createClass({
       menuOpen:false,
       messages:[],
       chatroomId:'',
-      messageList:[],
+      messageList:this.props.messageList,
       socketId:'',
-      io:{}
+      io:{},
+      show_dialog:false,
+      friend_data:{
+        id:this.props.chatRoomData.id,
+        alias:this.props.chatRoomData.name,
+        image:this.props.chatRoomData.image,
+      }
     }
   },
   getDefaultProps: function() {
     return {
       chatRoomData:{
-        photoAvilible:true,
-        dater:{
-          username:'隔壁小妹',
-          photo:{uri: 'http://www.saveimg.com/images/2014/03/30/161222jnnr5rkf8k67z76rUYKmD.jpg'},
-          blur:80,
-        }
+        "chatId1": "56b5b009cb7fb0f41698d923",
+        "aliasId1": "EddieWeng",
+        "imageId1": "https://s3-ap-northeast-1.amazonaws.com/colorgy-core/users/avatars/blur_2x/52fbffbe32c2e41ae102a4ef008e8ee7ad763b92.?1454171143",
+        "chatId2": "56af0ebb4bd9c5f12d613d7c",
+        "aliasId2": "Dannnny",
+        "imageId2": "https://s3-ap-northeast-1.amazonaws.com/colorgy-core/users/avatars/blur_2x/4f47f6cbe1c94061d682cf72be94893ba917ec6a.?1454294064",
       },
       userId:"56a470cfb94e4a5a7f5394b4",
       friendId:"56a470aab94e4a5a7f5394b3",
@@ -134,12 +140,12 @@ var Messenger = React.createClass({
   handleReceive(message,firstLoad) {
     if (message.userId != this.props.userId || firstLoad || message.type == 'image') {
       var msg = { 
-        image: this.props.chatRoomData.dater.photo,
+        image: this.state.friend_data.image,
         date: new Date(2015, 0, 16, 19, 0),
         position:'left',
         type: 'chat',
         text: '',
-        name: this.props.chatRoomData.dater.username,
+        name: this.state.friend_data.alias,
       };
       msg.date = message.createdAt;
       if (message.type == 'text' || message.type == "textMessage") {
@@ -161,17 +167,18 @@ var Messenger = React.createClass({
   componentWillUnmount(){
     this.props.dispatch(showAppTabBar());
   },
+  updateAvatar(data){
+
+  },
   componentDidMount(){
     BackAndroid.addEventListener('hardwareBackPress', function() {
       this.props.navigator.pop();
       this.props.dispatch(showAppTabBar());
     }.bind(this));
-    var access_token;
-    ToastAndroid.show('正在為您載入訊息',ToastAndroid.SHORT)
     chatAPI.connectToServer()
     .then((socket)=>{
         this.setState({io:socket});
-        chatAPI.connectToChatRoom(this.state.io,"56a470cfb94e4a5a7f5394b4",this.props.friendId,this.props.uuid,this.props.accessToken)
+        chatAPI.connectToChatRoom(this.state.io,this.props.chatData.id,this.props.friendId,this.props.uuid,this.props.accessToken)
         .then((response)=>{
           console.log(response);
           if (response.statusCode == 200) {
@@ -187,7 +194,11 @@ var Messenger = React.createClass({
             }
             this.setState({chatroomId:info.chatroomId,messageList:info.messageList,socketId:info.socketId});
             this.state.io.on('chatroom',function(msg){
-              this.handleReceive(msg.data);
+              if (msg.data.type != 'avatar') {
+                this.handleReceive(msg.data);
+              }else{
+                this.updateAvatar(msg.data);
+              }
             }.bind(this))
           };
         })
@@ -209,13 +220,26 @@ var Messenger = React.createClass({
     )
   },
   pureface(){
-    this.setState({menuOpen:!this.state.menuOpen})
+    this.setState({menuOpen:!this.state.menuOpen});
   },
   leave(){
-    this.setState({menuOpen:!this.state.menuOpen})
+    chatAPI.chatroom_leave_chatroom(this.props.accessToken,this.props.uuid,this.props.chatData.id,this.state.chatroomId)
+    .then((response)=>{
+      console.log(response);
+      this.setState({menuOpen:!this.state.menuOpen});
+      this.props.navigator.pop();
+      this.props.data_refresh();
+    })
   },
   block(){
-    this.setState({menuOpen:!this.state.menuOpen})
+    this.setState({menuOpen:!this.state.menuOpen});
+    chatAPI.users_block_user(this.props.accessToken,this.props.uuid,this.props.chatData.id,this.state.friendId)
+    .then((response)=>{
+      if (response) {
+        this.props.data_refresh();
+      }
+    });
+    this.props.navigator.push({id:'report',friendId:this.props.friendId});
   },
   _handleBack(){
     this.props.dispatch(showAppTabBar());
@@ -228,73 +252,91 @@ var Messenger = React.createClass({
       var leftIcon = require('../../assets/images/icon_chat_down.png')
     }
     return (
-      <TitleBarLayout
-        enableOffsetTop={this.props.translucentStatusBar}
-        offsetTop={this.props.statusBarHeight}
-        style={[this.props.style,{paddingTop:0,backgroundColor:'white'}]}
-        title={this.props.chatRoomData.dater.username}
-        textColor={"#000"}
-        color={"#FFF"}
-        actions={[
-          { title: '返回', icon: require('../../assets/images/back_orange.png'), onPress: this._handleBack, show: 'always' },
-          { title: '更多', icon: leftIcon, onPress: this.handleMenu, show: 'always' }
-        ]}
-      >
       <View>
-        <GiftedMessenger
-          ref={(c) => this._GiftedMessenger = c}
-
-          messages={this.getMessages()}
-          handleSend={this.handleSend}
-          maxHeight={Dimensions.get('window').height - 85} // 64 for the navBar
-          photoAvilible={this.props.chatRoomData.photoAvilible}
-          showImagePicker={this.showImagePicker}
-          styles={{
-            bubbleLeft: {
-              backgroundColor: null,
-              marginRight: 70,
-              borderWidth:3/ PixelRatio.get(),
-              borderColor:'black',
-              borderRadius:5,
-            },
-            bubbleRight: {
-              backgroundColor: '#F89680',
-              marginLeft: 70,
-              borderRadius:5,
-            },
-          }}
-        />
-        {this.state.menuOpen?
-          <View style={{flexDirection:'row',position:'absolute',height:60,width:Dimensions.get('window').width,backgroundColor:'rgba(0,0,0,.5)',top:0,left:0}}>
-            <TouchableNativeFeedback onPress={()=>this.handleAlert('素顏','表示你已經信任對方，若他也如此兩人將同時頭貼清晰至100 ％～\n(免驚，此動作對方將不會收到通知)',[{text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},{text: '確定', onPress: this.pureface},])}><View style={{flexDirection:'column',justifyContent:'center',flex:1,alignItems:'center'}}>
-              <Image
-                style={{width:20,height:20}}
-                source={require('./../../assets/images/icon_chat_pureface.png')} />
-              <Text style={{color:'white',marginTop:5}}>素顏</Text>
-            </View></TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={()=>this.handleAlert('pureface')}><View style={{flexDirection:'column',justifyContent:'center',flex:1,alignItems:'center'}}>
-              <Image
-                style={{width:20,height:20}}
-                source={require('./../../assets/images/icon_chat_rename.png')} />
-              <Text style={{color:'white',marginTop:5}}>幫取名</Text>
-            </View></TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={()=>this.handleAlert('離開對方','不再收到對方訊息，聊天記錄也將消失，但有緣還會在模糊牆相遇～',[{text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},{text: '確定', onPress: this.leave},])}><View style={{flexDirection:'column',justifyContent:'center',flex:1,alignItems:'center'}}>
-              <Image
-                style={{width:20,height:20}}
-                source={require('./../../assets/images/icon_chat_leave.png')} />
-              <Text style={{color:'white',marginTop:5}}>離開</Text>
-            </View></TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={()=>this.handleAlert('你確定要封鎖對方？','封鎖後將不再遇到對方，所有聊天記錄也將擁有刪除。',[{text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},{text: '確定', onPress: this.block},])}><View style={{flexDirection:'column',justifyContent:'center',flex:1,alignItems:'center'}}>
-              <Image
-                style={{width:20,height:20}}
-                source={require('./../../assets/images/icon_chat_block.png')} />
-              <Text style={{color:'white',marginTop:5}}>封鎖</Text>
-            </View></TouchableNativeFeedback>
+        <TitleBarLayout
+          enableOffsetTop={this.props.translucentStatusBar}
+          offsetTop={this.props.statusBarHeight}
+          style={[this.props.style,{paddingTop:0,backgroundColor:'white'}]}
+          title={this.state.friend_data.alias}
+          textColor={"#000"}
+          color={"#FFF"}
+          actions={[
+            { title: '返回', icon: require('../../assets/images/back_orange.png'), onPress: this._handleBack, show: 'always' },
+            { title: '更多', icon: leftIcon, onPress: this.handleMenu, show: 'always' }
+          ]}
+        >
+        <View>
+          <GiftedMessenger
+            ref={(c) => this._GiftedMessenger = c}
+            autoFocus={false}
+            messages={this.getMessages()}
+            handleSend={this.handleSend}
+            maxHeight={Dimensions.get('window').height - 85} // 64 for the navBar
+            photoAvilible={true}
+            showImagePicker={this.showImagePicker}
+            styles={{
+              bubbleLeft: {
+                backgroundColor: null,
+                marginRight: 70,
+                borderWidth:3/ PixelRatio.get(),
+                borderColor:'black',
+                borderRadius:5,
+              },
+              bubbleRight: {
+                backgroundColor: '#F89680',
+                marginLeft: 70,
+                borderRadius:5,
+              },
+            }}
+          />
+          {this.state.menuOpen?
+            <View style={{flexDirection:'row',position:'absolute',height:60,width:Dimensions.get('window').width,backgroundColor:'rgba(0,0,0,.5)',top:0,left:0}}>
+              <TouchableNativeFeedback onPress={()=>this.handleRename()}><View style={{flexDirection:'column',justifyContent:'center',flex:1,alignItems:'center'}}>
+                <Image
+                  style={{width:20,height:20}}
+                  source={require('./../../assets/images/icon_chat_rename.png')} />
+                <Text style={{color:'white',marginTop:5}}>幫取名</Text>
+              </View></TouchableNativeFeedback>
+              <TouchableNativeFeedback onPress={()=>this.handleAlert('離開對方','不再收到對方訊息，聊天記錄也將消失，但有緣還會在模糊牆相遇～',[{text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},{text: '確定', onPress: this.leave},])}><View style={{flexDirection:'column',justifyContent:'center',flex:1,alignItems:'center'}}>
+                <Image
+                  style={{width:20,height:20}}
+                  source={require('./../../assets/images/icon_chat_leave.png')} />
+                <Text style={{color:'white',marginTop:5}}>離開</Text>
+              </View></TouchableNativeFeedback>
+              <TouchableNativeFeedback onPress={()=>this.handleAlert('你確定要封鎖對方？','封鎖後將不再遇到對方，所有聊天記錄也將擁有刪除。',[{text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},{text: '確定', onPress: this.block},])}><View style={{flexDirection:'column',justifyContent:'center',flex:1,alignItems:'center'}}>
+                <Image
+                  style={{width:20,height:20}}
+                  source={require('./../../assets/images/icon_chat_block.png')} />
+                <Text style={{color:'white',marginTop:5}}>封鎖</Text>
+              </View></TouchableNativeFeedback>
+            </View>
+          :null}
           </View>
-        :null}
+        </TitleBarLayout>
+        {this.state.show_dialog?<Dialog
+          title={'編輯暱稱'}
+          content={'此修改暱稱只有你看得到'}
+          options={[{text:'取消',method:this.cancel_dialog},{text:'確定',color:'#F89680',method:this.submit_nickname}]}/>:null}
       </View>
-      </TitleBarLayout>
     );
+  },
+  handleRename(){
+    this.setState({show_dialog:true});
+  },
+  cancel_dialog(){
+    this.setState({show_dialog:false});
+  },
+  submit_nickname(name){
+    chatAPI.chatroom_update_target_alias(this.props.accessToken,this.props.uuid,this.props.chatData.id,this.state.chatroomId,name)
+    .then((response)=>{
+      console.log(response);
+      ToastAndroid.show('已為您更新名稱',ToastAndroid.SHORT);
+      var temp = this.state.friend_data;
+      temp.alias = name;
+      this.setState({show_dialog:false,alias:temp});
+      this.props.data_refresh();
+    });
+    this.setState({menuOpen:!this.state.menuOpen})
   },
 });
 

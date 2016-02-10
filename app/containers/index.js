@@ -1,4 +1,4 @@
-import React, { Platform, View, Text } from 'react-native';
+import React, { Platform, View, Text, AsyncStorage } from 'react-native';
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
 
@@ -39,21 +39,71 @@ var App = React.createClass({
     }
   },
 
+  async _loadInitialState() {
+    try {
+      var value = await AsyncStorage.getItem('chat_data_id');
+      if (value !== null){
+        this.setState({chatId:value});
+        console.log('Recovered selection from disk: ' + value);
+      } else {
+        console.log('Initialized with no selection on disk.');
+      }
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
+  },
+
+  async _saveChatId(id) {
+    try {
+      await AsyncStorage.setItem("chat_data_id", id);
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
+  },
+
   componentDidMount: function() {
     ga.setUserID(this.props.uuid);
     ga.sendScreenView('Start');
+    this._loadInitialState().done();
+    // 載入app即進行的動作for聊天室
     colorgyAPI.getAccessToken().then((accessToken) => {
+      this.setState({accessToken:accessToken});
       chatAPI.check_user_available(accessToken,this.props.uuid)
       .then((response)=>{
-        console.log(response);
+        if (response) {
+          this.setState({chatId:response});
+          this._saveChatId(response).done();
+          chatAPI.check_answered_latest(accessToken,this.props.uuid,response)
+            .then((response)=>{
+              console.log("check_answered_latest",response);
+              if(JSON.parse(response._bodyInit).result == "not answered"){
+                this.setState({haveAnswerToday:false})
+              }else{
+                this.setState({haveAnswerToday:true})
+              }
+            })
+        }
+      });
+      chatAPI.get_user_data(accessToken,this.props.uuid)
+      .then((response)=>{
+        if (response) {
+          var data = JSON.parse(response).result;
+          console.log("data",data);
+          this.setState({chat_user_data:data});
+        };
       })
     });
   },
 
   getInitialState: function() {
-    return{ }
+    return{ chatId: 'loading',chat_user_data:{},accessToken:'',haveAnswerToday:false }
   },
-
+  answerToday(){
+    this.setState({haveAnswerToday:true});
+  },
+  refresh_data(){
+    this.componentDidMount();
+  },
   render: function() {
     var { overlayElement } = this.props;
 
@@ -82,17 +132,17 @@ var App = React.createClass({
                 edgeHitWidth={-1}
                 renderTabBar={!this.props.hideAppTabBar}
               >
-                 <View tabLabel="模糊聊" style={{ flex: 1 }}>
-                  <ChatContainer />
-                </View>
                 <View tabLabel="我的課表" style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
                   <TableContainer />
                 </View>
                 <View tabLabel="活動牆" style={{ flex: 1 }}>
                   <BoardContainer />
                 </View>
+                <View tabLabel="模糊聊" style={{ flex: 1 }}>
+                  <ChatContainer refresh_data={this.refresh_data} answerToday={this.answerToday} haveAnswerToday={this.state.haveAnswerToday} uuid={this.props.uuid} accessToken={this.state.accessToken} chatData={{id:this.state.chatId,data:this.state.chat_user_data}} />
+                </View>
                 <View tabLabel="好朋友" style={{ flex: 1 }}>
-                  <FriendsContainer />
+                  <FriendsContainer uuid={this.props.uuid} accessToken={this.state.accessToken} chatData={{id:this.state.chatId,data:this.state.chat_user_data}}/>
                 </View>
                 <View tabLabel="更多" style={{ flex: 1 }}>
                   <MoreContainer />

@@ -20,6 +20,12 @@ export const courseDatabaseLoadFailed = createAction('COURSE_DATABASE_LOAD_FAILE
  */
 export const doLoadCourseDatabase = (orgCode) => (dispatch) => {
   dispatch(courseDatabaseLoading({ progress: null }));
+
+  if (orgCode === 'null') {
+    dispatch(courseDatabaseLoad({ updatedTime: { 'null': (new Date()).getTime() } }));
+    return;
+  }
+
   courseDatabase.getDataUpdatedTime(orgCode).then((updatedTime) => {
 
     // The database has been updated before

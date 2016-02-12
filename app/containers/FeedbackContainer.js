@@ -153,56 +153,62 @@ var FeedbackContainer = React.createClass({
       <TitleBarLayout
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={this.props.statusBarHeight}
-        title="Feedback"
+        title={this.props.title || 'Feedback'}
         actions={[
           { title: '返回', icon: require('../assets/images/icon_clear_white.png'), onPress: this.handleBack, show: 'always' },
           { title: '送出', icon: require('../assets/images/icon_send_white.png'), onPress: this._handleSend, show: 'always' },
         ]}
       >
         <ScrollView>
-          <ListTitle text="遇到的問題 (必選)" />
-          <ListItem
-            checkbox={true}
-            text="找不到我的學校"
-            checked={this.state.feedbackTypes.indexOf('找不到我的學校') >= 0}
-            onPress={() => this._handlePressFeedbackType('找不到我的學校')}
-          />
-          <ListItem
-            checkbox={true}
-            text="找不到我的系所"
-            checked={this.state.feedbackTypes.indexOf('找不到我的系所') >= 0}
-            onPress={() => this._handlePressFeedbackType('找不到我的系所')}
-            borderTop={false}
-          />
-          <ListItem
-            checkbox={true}
-            text="我的課找不到"
-            checked={this.state.feedbackTypes.indexOf('我的課找不到') >= 0}
-            onPress={() => this._handlePressFeedbackType('我的課找不到')}
-            borderTop={false}
-          />
-          <ListItem
-            checkbox={true}
-            text="課程資訊錯誤"
-            checked={this.state.feedbackTypes.indexOf('課程資訊錯誤') >= 0}
-            onPress={() => this._handlePressFeedbackType('課程資訊錯誤')}
-            borderTop={false}
-          />
-          <ListItem
-            checkbox={true}
-            text="其他"
-            checked={this.state.feedbackTypes.indexOf('其他') >= 0}
-            onPress={() => this._handlePressFeedbackType('其他')}
-            borderTop={false}
-            borderBottom={true}
-          />
-          <ListTitle text={`問題描述 (選填)`} />
+          {(() => {
+            if (!this.props.feedbackTypes) retrun (
+              <View>
+                <ListTitle text="遇到的問題 (必選)" />
+                <ListItem
+                  checkbox={true}
+                  text="找不到我的學校"
+                  checked={this.state.feedbackTypes.indexOf('找不到我的學校') >= 0}
+                  onPress={() => this._handlePressFeedbackType('找不到我的學校')}
+                />
+                <ListItem
+                  checkbox={true}
+                  text="找不到我的系所"
+                  checked={this.state.feedbackTypes.indexOf('找不到我的系所') >= 0}
+                  onPress={() => this._handlePressFeedbackType('找不到我的系所')}
+                  borderTop={false}
+                />
+                <ListItem
+                  checkbox={true}
+                  text="我的課找不到"
+                  checked={this.state.feedbackTypes.indexOf('我的課找不到') >= 0}
+                  onPress={() => this._handlePressFeedbackType('我的課找不到')}
+                  borderTop={false}
+                />
+                <ListItem
+                  checkbox={true}
+                  text="課程資訊錯誤"
+                  checked={this.state.feedbackTypes.indexOf('課程資訊錯誤') >= 0}
+                  onPress={() => this._handlePressFeedbackType('課程資訊錯誤')}
+                  borderTop={false}
+                />
+                <ListItem
+                  checkbox={true}
+                  text="其他"
+                  checked={this.state.feedbackTypes.indexOf('其他') >= 0}
+                  onPress={() => this._handlePressFeedbackType('其他')}
+                  borderTop={false}
+                  borderBottom={true}
+                />
+              </View>
+            );
+          })()}
+          <ListTitle text={`${this.props.feedbackName || '問題描述'} (選填)`} />
           <ListItem
             disabled={true}
             borderBottom={true}
           >
             <TextInput
-              placeholder={`簡述一下發生了什麼事......`}
+              placeholder={this.props.feedbackPlaceholder || `簡述一下發生了什麼事......`}
               onChangeText={(t) => this.setState({ feedbackDescription: t })}
               value={this.state.feedbackDescription}
               multiline={true}
@@ -233,6 +239,14 @@ var FeedbackContainer = React.createClass({
             />
           </ListItem>
           <ListTitle text="" />
+          {(() => {
+            if (this.props.hint) return (
+              <View style={{ paddingHorizontal: 16, marginTop: -24 }}>
+                <Text>{this.props.hint}</Text>
+                <ListTitle text="" />
+              </View>
+            );
+          })()}
         </ScrollView>
       </TitleBarLayout>
     );

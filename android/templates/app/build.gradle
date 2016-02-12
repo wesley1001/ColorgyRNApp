@@ -85,10 +85,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file(ANDROID_APP_RELEASE_STORE_FILE)
-            storePassword ANDROID_APP_RELEASE_STORE_PASSWORD
-            keyAlias ANDROID_APP_RELEASE_KEY_ALIAS
-            keyPassword ANDROID_APP_RELEASE_KEY_PASSWORD
+            storeFile file("{{config.androidReleaseKeystoreFile}}")
+            storePassword "{{config.androidReleaseKeystorePassword}}"
+            keyAlias "{{config.androidReleaseKeyAlias}}"
+            keyPassword "{{config.androidReleaseKeyPassword}}"
         }
     }
     splits {

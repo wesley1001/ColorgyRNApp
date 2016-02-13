@@ -28,6 +28,7 @@ project.xcworkspace
 .gradle
 local.properties
 *.iml
+*.keystore
 
 # node.js
 #
@@ -37,3 +38,6 @@ npm-debug.log
 config.js
 /google-services.json
 android/app/build.gradle
+android/app/gradle
+android/app/gradlew.bat
+android/app/gradlew

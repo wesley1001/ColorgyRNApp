@@ -48,7 +48,10 @@ courseDatabase.updateData = (orgCode, courseYear = colorgyAPI.getCurrentYear(), 
       var request = colorgyAPI.fetch(url).then((response) => {
 
         // If the organization has no course data
-        if (response.status !== 200) {
+        if (response.status === 404) {
+          iterateDoneCallback();
+          return [];
+        } else if (response.status !== 200) {
           throw response.status;
         }
 
@@ -70,6 +73,8 @@ courseDatabase.updateData = (orgCode, courseYear = colorgyAPI.getCurrentYear(), 
           } else {
             iterateDoneCallback();
           }
+        } else {
+          iterateDoneCallback();
         }
 
         return response.json();
@@ -175,7 +180,8 @@ courseDatabase.updateData = (orgCode, courseYear = colorgyAPI.getCurrentYear(), 
         ) VALUES ${insertSQLValues.join(', ')}`;
 
         return new Promise((resolve, reject) => {
-          courseDatabase.executeSql(insertSQL)
+          if (insertSQLValues.length < 1) resolve();
+          else courseDatabase.executeSql(insertSQL)
             .then( () => {
               remainingPages--;
               let progress = (totalPages - remainingPages) / totalPages;
@@ -208,6 +214,7 @@ courseDatabase.updateData = (orgCode, courseYear = colorgyAPI.getCurrentYear(), 
         requestAndSaveCourses(`/${orgCode.toLowerCase()}/courses?filter[year]=${courseYear}&filter[term]=${courseTerm}&per_page=500`, resolve);
       }).catch((e) => {
         console.error(`courseDatabase: updateData(): Error on clearing database`, e);
+        reject(e);
       });
     });
 
@@ -378,48 +385,6 @@ courseDatabase.getPeriodData = (orgCode, options = {}) => {
   var { returnObject } = options;
 
   return new Promise( (resolve, reject) => {
-    if (orgCode === 'null') {
-      if (returnObject) {
-        resolve({
-          '1': { order: '1', code: '1' },
-          '2': { order: '2', code: '2' },
-          '3': { order: '3', code: '3' },
-          '4': { order: '4', code: '4' },
-          '5': { order: '5', code: '5' },
-          '6': { order: '6', code: '6' },
-          '7': { order: '7', code: '7' },
-          '8': { order: '8', code: '8' },
-          '9': { order: '9', code: '9' },
-          '10': { order: '10', code: '10' },
-          '11': { order: '11', code: '11' },
-          '12': { order: '12', code: '12' },
-          '13': { order: '13', code: '13' },
-          '14': { order: '14', code: '14' },
-          '15': { order: '15', code: '15' },
-          '16': { order: '16', code: '16' }
-        });
-      } else {
-        resolve([
-          { order: '1', code: '1' },
-          { order: '2', code: '2' },
-          { order: '3', code: '3' },
-          { order: '4', code: '4' },
-          { order: '5', code: '5' },
-          { order: '6', code: '6' },
-          { order: '7', code: '7' },
-          { order: '8', code: '8' },
-          { order: '9', code: '9' },
-          { order: '10', code: '10' },
-          { order: '11', code: '11' },
-          { order: '12', code: '12' },
-          { order: '13', code: '13' },
-          { order: '14', code: '14' },
-          { order: '15', code: '15' },
-          { order: '16', code: '16' }
-        ]);
-      }
-      return;
-    }
     courseDatabase.executeSql(`
       SELECT * FROM period_data
         WHERE organization_code = ${sqlValue(orgCode)}
@@ -432,6 +397,25 @@ courseDatabase.getPeriodData = (orgCode, options = {}) => {
             let row = r.results.rows.item(i);
             periodData[row.order] = row;
           }
+        } else {
+          resolve({
+            '1': { order: '1', code: '1' },
+            '2': { order: '2', code: '2' },
+            '3': { order: '3', code: '3' },
+            '4': { order: '4', code: '4' },
+            '5': { order: '5', code: '5' },
+            '6': { order: '6', code: '6' },
+            '7': { order: '7', code: '7' },
+            '8': { order: '8', code: '8' },
+            '9': { order: '9', code: '9' },
+            '10': { order: '10', code: '10' },
+            '11': { order: '11', code: '11' },
+            '12': { order: '12', code: '12' },
+            '13': { order: '13', code: '13' },
+            '14': { order: '14', code: '14' },
+            '15': { order: '15', code: '15' },
+            '16': { order: '16', code: '16' }
+          });
         }
 
       } else {
@@ -442,6 +426,25 @@ courseDatabase.getPeriodData = (orgCode, options = {}) => {
             let row = r.results.rows.item(i);
             periodData.push(row);
           }
+        } else {
+          resolve([
+            { order: '1', code: '1' },
+            { order: '2', code: '2' },
+            { order: '3', code: '3' },
+            { order: '4', code: '4' },
+            { order: '5', code: '5' },
+            { order: '6', code: '6' },
+            { order: '7', code: '7' },
+            { order: '8', code: '8' },
+            { order: '9', code: '9' },
+            { order: '10', code: '10' },
+            { order: '11', code: '11' },
+            { order: '12', code: '12' },
+            { order: '13', code: '13' },
+            { order: '14', code: '14' },
+            { order: '15', code: '15' },
+            { order: '16', code: '16' }
+          ]);
         }
       }
 

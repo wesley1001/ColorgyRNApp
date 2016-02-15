@@ -26,7 +26,8 @@ import me.neo.react.StatusBarPackage;
 import com.heng.wheel.WheelPackage;  
 import android.support.v4.app.FragmentActivity;
 import com.aakashns.reactnativedialogs.ReactNativeDialogsPackage;
-import com.reactImageWand.*;  
+import com.reactImageWand.RNImageWandPackage;
+
 
 public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
 
@@ -62,8 +63,8 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .addPackage(new WheelPackage())
                 .addPackage(new RNFSPackage())
                 .addPackage(new AppNativePackage(this))
-                .addPackage(mImagePicker)
                 .addPackage(new RNImageWandPackage())
+                .addPackage(mImagePicker)
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();

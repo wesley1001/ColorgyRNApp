@@ -44,7 +44,19 @@ let Status = React.createClass({
       var img = require('../assets/images/success.png');
     }else if (this.props.img == 'uploading') {
       var img = require('../assets/images/uploading.png');
-    };
+    }else if (this.props.img == 'status_go_get_email') {
+      var img = require('../assets/images/status_go_get_email.gif');
+    }else if (this.props.img == "status_send_success") {
+      var img = require('../assets/images/status_send_success.gif');
+    }else if (this.props.img == 'status_success') {
+      var img = require('../assets/images/status_success.gif')
+    }else if (this.props.img == 'status_uploading_success') {
+      var img = require('../assets/images/status_uploading_success.gif')
+    }else if (this.props.img == 'status_uploading') {
+      var img = require('../assets/images/status_uploading.gif')
+    }else if (this.props.img == 'status_verifying') {
+      var img = require('../assets/images/status_verifying.gif')
+    }
     return (
       <View style={[styles.view,{backgroundColor: this.props.backgroundColor || 'rgba(0,0,0,.7)'}]}>
         <View style={[{alignItems:'center'},styleBottom]}>

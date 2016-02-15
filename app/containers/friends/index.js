@@ -13,6 +13,7 @@ import React, {
   TextInput,
   Dimensions,
   TouchableWithoutFeedback,
+  Alert
 } from 'react-native';
 import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -73,11 +74,11 @@ var Hellos = React.createClass({
   response(hiId,res){
     chatAPI.hi_response(this.props.accessToken,this.props.uuid,this.props.chatData.id,hiId,res)
     .then((response)=>{
-      console.log(response);
-      ToastAndroid.show('已回應',ToastAndroid.SHORT);
-      this.props.navigator.pop();
       this.props.data_refresh();
     })
+    console.log(response);
+    ToastAndroid.show('已回應',ToastAndroid.SHORT);
+    this.props.navigator.pop();
   },
   render() {
     return (
@@ -191,7 +192,19 @@ var Friends = React.createClass({
   handleSearch(){
     this.setState({search_show:true});
   },
-
+  longPress(chatroomId){
+    Alert.alert(
+      '你確定要刪除對話？',
+      '聊天紀錄將被直接刪除，但對方還是可以密你呦～',
+      [
+        {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: '刪除', onPress: () => this.delete_chatroom(chatroomId)},
+      ]
+    )
+  },
+  delete_chatroom(chatroomId){
+    chatAPI.users_remove_chatroom(this.props.accessToken,this.props.uuid,this.props.chatData.id,chatroomId);
+  },
   render() {
     var friendList = this.state.strangerList;
     if (this.state.search_word.length>0) {
@@ -228,7 +241,7 @@ var Friends = React.createClass({
           <ScrollView style={{flex:7,marginTop:6/PixelRatio.get()}}>
             {friendList.map(function(friend, index){
               return(
-                <TouchableNativeFeedback key={index} onPress={()=>this.goChat(friend.id,friend.messageList,friend)}>
+                <TouchableNativeFeedback key={index} onPress={()=>this.goChat(friend.friendId,friend.messageList,friend)} onLongPress={()=>this.longPress(friend.id)}>
                   <View style={{paddingTop:10,paddingBottom:10,height:100,backgroundColor:'white',flexDirection:'row',marginBottom:6/PixelRatio.get()}}>
                     <View style={[styles.allCenter,{flex:1}]}>
                         <Image
@@ -237,16 +250,16 @@ var Friends = React.createClass({
                     </View>
                     <View style={{flex:3,paddingLeft:5}}>
                       <View style={{justifyContent:'center',flex:1}}>
-                        <Text style={{fontSize:18,}}>{friend.name}</Text>
+                        <Text style={{fontSize:20,}}>{friend.name}</Text>
                       </View>
-                      <View style={{flex:1,flexDirection:'row'}}>
+                      <View style={{flex:1,flexDirection:'row',position:'relative',top:5}}>
                         <Image
-                          style={{width:16,height:16,marginRight:5}}
+                          style={{width:12,height:12,position:'relative',top:5,marginRight:5}}
                           source={require('../../assets/images/icon_friend_message.png')} />
                         <Text style={{fontSize:13,color:"#F89680"}}>{friend.lastAnswer}</Text>
                       </View>
                       <View style={{justifyContent:'center',flex:1}}>
-                        <Text style={{fontSize:15,}}>{friend.lastSpeaker}</Text>
+                        <Text style={{fontSize:16,}}>{friend.lastContent}</Text>
                       </View>
                     </View>
                     <View style={{flex:1}}>
@@ -275,7 +288,8 @@ var Friends = React.createClass({
     this.props.navigator.push({id:'hello'});
   },
   goChat(friendId,messageList,chatroom_Data){
-    this.props.navigator.push({chatroom_Data:chatroom_Data,id:'messenger',data:{friendId:friendId,messageList:messageList}});
+    console.log('go chat with:',chatroom_Data);
+    this.props.navigator.push({id:'messenger',data:{data:chatroom_Data,friendId:friendId,messageList:messageList,image:chatroom_Data.image}});
   }
 });
 
@@ -375,11 +389,12 @@ var Navi = React.createClass({
           <Messenger
             navigator={_navigator}
             uuid={this.props.uuid}
-            chatRoomData={route.chatroom_Data}
+            friendImage={route.data.image}
             friendId={route.data.friendId}
             messageList={route.data.messageList}
             accessToken={this.props.accessToken}
             chatData={this.props.chatData}
+            chatRoomData={route.data.data}
             data_refresh={this.data_refresh}/>
         )
     }

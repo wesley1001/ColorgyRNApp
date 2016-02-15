@@ -28,6 +28,7 @@ import Dialog from '../../components/Dialog'
 import Status from '../../components/Status'
 import chatAPI from '../../utils/chatAPI';
 import colorgyAPI from '../../utils/colorgyAPI';
+var ImageWand = require('react-native-imagewand');
 
 import Report from './../report';
 
@@ -41,6 +42,8 @@ var WelcomeView = React.createClass({
       letSVerify:false,
       haveSend:false,
       verifing:false,
+      SendAlert:false,
+      verifingSuccess:false
     }
   },
   async _loadInitialState() {
@@ -84,23 +87,39 @@ var WelcomeView = React.createClass({
         {this.state.letSVerify?<Dialog 
           title="驗證學校信箱"
           content="發送後趕快去收信吧～"
-          options={[null,{text:'發送',method:this.state.send,color:'#F89680'}]}/>:null}
-        {this.state.haveSend?<Status img="go_get_mail" 
+          options={[null,{text:'發送',method:this.send,color:'#F89680'}]}/>:null}
+        {this.state.SendAlert?<Status img="status_send_success"/>:null}
+        {this.state.haveSend?<Status img="status_go_get_email" 
                 button={{text:"收到驗證信了",method:this.iGotMail}}
                 secondaryButton={{text:'還是沒收到信？',method:this.humanVerify}}/>:null}
-        {this.state.verifing?<Status img="have_get_mail"/>:null}
+        {this.state.verifing?<Status img="status_verifying"/>:null}
+        {this.state.verifingSuccess?<Status img="status_success"/>:null}
       </View>
     )
   },
   send(email){
     this.props.send(email);
-    this.setState({haveSend:true,letSVerify:false});
-    this._chat_state_haveSend().done();
+    this.setState({letSVerify:false,SendAlert:true});
+    setTimeout(function() {
+      this._chat_state_haveSend().done();
+      this.setState({SendAlert:false,haveSend:true});
+    }.bind(this),1000)
     // 寄認證信
   },
   iGotMail(){
     this.setState({verifing:true,haveSend:false});
     // 串認證信
+    setTimeout(function() {
+      if (Math.random()>0.5) {
+        this.setState({verifing:false,verifingSuccess:true});
+        setTimeout(function() {
+
+        }.bind(this),500)
+      }else{
+        this.setState({verifing:false});
+        Alert.alert('驗證失敗Ｑ＿Ｑ','也許是你沒有按驗證信又或是你的網路不是很正常～')
+      }
+    }.bind(this),5000)
   },
   humanVerify(){
     Alert.alert(
@@ -313,7 +332,7 @@ var ProfileFirstLook = React.createClass({
                 <Image
                   style={{width:Dimensions.get('window').width/10*9,height:Dimensions.get('window').width/10*9/607*80,position:'relative',top:Dimensions.get('window').width/5*4,padding:5}}
                   source={require('../../assets/images/chat_dialog_big.png')}>
-                    <Text style={{textAlign:'center',color:'white',fontSize:16,}}>{this.props.data.lastAnswer}</Text>
+                    <Text style={{textAlign:'center',color:'white',fontSize:16,marginTop:7}}>{this.props.data.lastAnswer}</Text>
                 </Image>
               </Image>
               <View style={{}}>
@@ -348,7 +367,7 @@ var ProfileFirstLook = React.createClass({
            </View>
          </ScrollView>
         <TouchableNativeFeedback onPress={this.report_view_toggle}>
-          <View style={{position:'absolute', top:15, right:15}}>
+          <View style={{position:'absolute', top:15, paddingLeft:15, paddingRight:15, right:0}}>
             <Image
               style={{width:6/3*2,height:28/3*2}}
               source={require('../../assets/images/chat_more_orange.png')} />
@@ -371,7 +390,7 @@ var ProfileFirstLook = React.createClass({
         {this.state.report_view?
           <View style={{position:'absolute',top:0,bottom:0,left:0,right:0}}>
             <TouchableNativeFeedback onPress={this.report_view_toggle}><View style={{backgroundColor:'rgba(0,0,0,0)',position:'absolute',top:0,bottom:0,left:0,right:0}}></View></TouchableNativeFeedback>
-            <View style={{borderRadius:5,backgroundColor:'#979797',width:100,position:'absolute',right:20,top:40}}>
+            <View style={{borderRadius:5,backgroundColor:'#979797',width:80,position:'absolute',right:20,top:40}}>
               <TouchableNativeFeedback onPress={this.block}>
                 <View style={{padding:10,borderBottomColor:'#FFF',borderBottomWidth:1}}><Text style={{color:'#FFF',textAlign:'center'}}>封鎖對方</Text></View>
               </TouchableNativeFeedback>
@@ -385,7 +404,7 @@ var ProfileFirstLook = React.createClass({
           title="打招呼"
           content="簡短的問候你的未來知心～"
           word_limit={10}
-          options={[null,{text:'發送',method:this.hello,color:'#F89680'}]}/>:null}
+          options={[null,{text:'送出',method:this.hello,color:'#F89680'}]}/>:null}
       </View>
     )
   },
@@ -402,7 +421,6 @@ var ProfileFirstLook = React.createClass({
   hello(text){
     this.props.say_hello(this.props.data.id,text);
     this.setState({dialog:false});
-    this.props.navigator.pop();
     ToastAndroid.show('已送出招呼語',ToastAndroid.SHORT);
   }
 });
@@ -462,46 +480,46 @@ var SelfEdit = React.createClass({
                 style={{borderWidth:6,borderColor:"#FFF",margin:15,width:Dimensions.get('window').width/2,height:Dimensions.get('window').width/2,borderRadius:Dimensions.get('window').width/4}}
                 source={{uri: this.props.chatData.data.avatar_url}} />
             </View>
-            <View style={{padding:20}}>
+            <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >暱稱</Text>
               <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('name',text)}
                 value={this.state.data.name}/>
             </View>
-            <View style={{padding:20}}>
+            <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >星座</Text>
               <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('horoscope',text)}
                 value={this.state.data.about.horoscope}/>
             </View>
-            <View style={{padding:20}}>
+            <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >學校</Text>
               <Text style={{paddingLeft:5}}>{this.state.data.about.school}</Text>
             </View>
-            <View style={{padding:20}}>
+            <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >居住地</Text>
               <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('habitancy',text)}
                 value={this.state.data.about.habitancy}/>
             </View>
-            <View style={{padding:20}}>
+            <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >想聊的話題</Text>
               <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('conversation',text)}
                 value={this.state.data.about.conversation}/>
             </View>
-            <View style={{padding:20}}>
+            <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >現在熱衷的事情</Text>
               <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('passion',text)}
                 value={this.state.data.about.passion}/>
             </View>
-            <View style={{padding:20}}>
+            <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >專精的事情</Text>
               <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
@@ -525,6 +543,9 @@ var StrangerList = React.createClass({
       strangerList: [],
       page:0,
     }
+  },
+  submit(text){
+    this.props.send_answer(text);
   },
   componentDidMount(){
     console.log("get_available_target on strangerList");
@@ -624,6 +645,11 @@ var StrangerList = React.createClass({
             }
           }.bind(this))}
         </ScrollView>
+        {this.props.haveAnswerToday?null:<Dialog 
+          title="本日清晰問"
+          content={this.props.problem_today}
+          word_limit={20}
+          options={[null,{text:'提交',method:this.submit,color:'#F89680'}]}/>}
       </View>
     )
   },
@@ -767,9 +793,9 @@ var CroppingImage = React.createClass({
   render(){
     return(
       <View style={[{backgroundColor:'rgb(30,30,30)'},styles.allCenter]}>
-          <Image
+          <ImageWand
             style={{width:this.state.imagesWidth,height:this.state.imagesWidth,position:'absolute',top:this.state.originalPosition.top,left:this.state.originalPosition.left}}
-            source={{uri:this.props.source_url}} 
+            source={this.props.source_url} 
             ref='image'
             resizeMode="cover"
             onLayout={this.onImageLayout}
@@ -839,6 +865,9 @@ var MainView = React.createClass({
             showAppTabBar={this.props.showAppTabBar}
             hideAppTabBar={this.props.hideAppTabBar}
             get_available_target={this.props.get_available_target}
+            problem_today={this.props.problem_today}
+            send_answer={this.props.send_answer}
+            haveAnswerToday={this.props.haveAnswerToday}
             refresh_data={this.props.refresh_data} />
         );
       case 'report':
@@ -981,9 +1010,9 @@ var Chat = React.createClass({
   render() {
     if (this.props.chatData.id == 'loading') {
       var ReturnView = <WelcomeView send={this.sendVerifyMail}/>;
-    }else if (this.state.havePhoto) {
+    }else if (!this.state.havePhoto) {
       var ReturnView = <UploadImageView onImage={this.state.onImage} default_imgSrc={this.props.chatData.data.avatar_url} pickPhotoOrTakeAPhoto={this.pickPhotoOrTakeAPhoto}/>;
-    }else if (this.state.havePhotoCrop){
+    }else if (!this.state.havePhotoCrop){
       var ReturnView = <CroppingImage source_url={this.state.source_url} submit={this.submit_crop} rechoose={this.rechoose_crop}/>
     }else if(this.props.chatData.data.name == ''){
       var ReturnView = <PostNameView postName={this.postName}/>;
@@ -992,6 +1021,9 @@ var Chat = React.createClass({
     }else{
       var ReturnView = <MainView 
         uuid={this.props.uuid}
+        send_answer={this.postAnswer}
+        problem_today={this.state.question_today.question}
+        haveAnswerToday={this.props.haveAnswerToday}
         refresh_data={this.props.refresh_data}
         get_available_target={this.get_available_target}
         hidePaddingTop={this.hidePaddingTop}
@@ -1051,7 +1083,7 @@ var Chat = React.createClass({
       this.props.answerToday();
       this._lastest_answer_store();
       // 紀錄已完成資料填寫
-      // this._chat_state_haveSignUp().done()
+      this._chat_state_haveSignUp().done()
     }
   },
   pickPhotoOrTakeAPhoto(){

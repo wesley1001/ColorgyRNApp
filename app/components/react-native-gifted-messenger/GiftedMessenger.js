@@ -200,7 +200,9 @@ var GiftedMessenger = React.createClass({
               onPress={() => this.props.onImagePress(rowData, rowID)}
               style={this.styles.imagePosition}
             >
-              <Image source={rowData.image} style={[this.styles.imagePosition, this.styles.image, (rowData.position === 'left' ? this.styles.imageLeft : this.styles.imageRight)]}/>
+              <View>
+                <Image source={rowData.image} style={[this.styles.imagePosition, this.styles.image, (rowData.position === 'left' ? this.styles.imageLeft : this.styles.imageRight)]}/>
+              </View>
             </TouchableNativeFeedback>
           );
         } else {

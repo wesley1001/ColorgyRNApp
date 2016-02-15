@@ -42,7 +42,9 @@ var Messenger = React.createClass({
         id:this.props.chatRoomData.id,
         alias:this.props.chatRoomData.name,
         image:this.props.chatRoomData.image,
-      }
+      },
+      showBigHead:false,
+      chatProgress:0,
     }
   },
   getDefaultProps: function() {
@@ -66,13 +68,10 @@ var Messenger = React.createClass({
   },
   showImagePicker:function(){
     var options = {
-    title: 'Select Avatar', // specify null or empty string to remove the title
-    cancelButtonTitle: 'Cancel',
-    takePhotoButtonTitle: 'Take Photo...', // specify null or empty string to remove this button
-    chooseFromLibraryButtonTitle: 'Choose from Library...', // specify null or empty string to remove this button
-    customButtons: {
-      'Choose Photo from Facebook': 'fb', // [Button Text] : [String returned upon selection]
-    },
+    title: '傳送照片', // specify null or empty string to remove the title
+    cancelButtonTitle: '取消',
+    takePhotoButtonTitle: '照張相', // specify null or empty string to remove this button
+    chooseFromLibraryButtonTitle: '選取相片', // specify null or empty string to remove this button
     cameraType: 'back', // 'front' or 'back'
     mediaType: 'photo', // 'photo' or 'video'
     videoQuality: 'high', // 'low', 'medium', or 'high'
@@ -109,38 +108,42 @@ var Messenger = React.createClass({
       // uri (on android)
       const source3 = {uri: response.uri, isStatic: true};
       ToastAndroid.show('為您上傳圖片中',ToastAndroid.SHORT);
-        fetch('https://api.imgur.com/3/image',{
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Client-ID c0db4598b10411c',
-                },
-                method: 'POST',
-                body:JSON.stringify({
-                    type:'base64',
-                    name: 'meetchat.jpg',
-                    title: 'meeetchattt',
-                    caption: 'meeetchattt',
-                    image: response.data
-                })
-        })
-        .then((response) => response.text())
-        .then((responseText) => {
-          ToastAndroid.show('上傳完成',ToastAndroid.SHORT);
-          var data = JSON.parse(responseText);
-          console.log(data);
-          var content = {imgSrc: data.data.link};
-          chatAPI.sendMessage(this.state.io,this.state.chatroomId,this.props.userId,this.state.socketId, "image", content);
-          var msg = {type:'image',content:content,userId:this.props.userId,date:new Date()};
-        })
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', "http://chat.colorgy.io/upload/upload_chat_image");
+      xhr.onload = () => {
+        console.log("responseText",responseText);
+        if (xhr.status !== 201) {
+          Alert.alert( 
+            'Upload failed',
+            'Expected HTTP 200 OK response, got ' + xhr.status + "/" + xhr.responseText
+          );
+          return;
+        }
+
+        if (!xhr.responseText) {
+          Alert.alert(
+            'Upload failed',
+            'No response payload.'
+          );
+          return;
+        }
+      };
+      var formdata = new FormData();
+      var file = {
+        uri: source3.uri,
+        type: 'image/jpeg',
+        name: 'photo.jpg',
+      };
+      body.append('file', file);
+      xhr.send(formdata);
     }
   });
-
   },
   handleReceive(message,firstLoad) {
-    if (message.userId != this.props.userId || firstLoad || message.type == 'image') {
+    this.update_chatProgress(message.chatProgress)
+    if (message.userId != this.props.chatData.id || firstLoad || message.type == 'image') {
       var msg = { 
-        image: this.state.friend_data.image,
+        image: {uri:this.props.friendImage},
         date: new Date(2015, 0, 16, 19, 0),
         position:'left',
         type: 'chat',
@@ -154,7 +157,7 @@ var Messenger = React.createClass({
         msg.type = message.type;
         msg.content = message.content.imgSrc;
       }
-      if (message.userId == this.props.userId) {
+      if (message.userId == this.props.chatData.id) {
         msg.position = 'right';
         msg.image = null;
       };
@@ -168,12 +171,30 @@ var Messenger = React.createClass({
     this.props.dispatch(showAppTabBar());
   },
   updateAvatar(data){
-
+     if(this.state.friend_data.id == data.userId1){
+      var img = data.imageId1;
+     }else{
+      var img = data.imageId2;
+     }
+     var temp = this.state.friend_data;
+     temp.image = img;
+     this.setState({friend_data:temp});
+  },
+  update_chatProgress(value){
+    if (parseInt(value)>100) {
+      var temp = 100
+    }else{
+      var temp = parseInt(value);
+    }
+    this.setState({chatProgress:value})
   },
   componentDidMount(){
     BackAndroid.addEventListener('hardwareBackPress', function() {
-      this.props.navigator.pop();
-      this.props.dispatch(showAppTabBar());
+      if (this.state.showBigHead) {
+        this.setState({showBigHead:false});
+      }else{
+        this._handleBack();
+      }
     }.bind(this));
     chatAPI.connectToServer()
     .then((socket)=>{
@@ -183,17 +204,14 @@ var Messenger = React.createClass({
           console.log(response);
           if (response.statusCode == 200) {
             var info = response.body.result;
-            if (info.messageList.length>20) {
-              for (var i = 21; i > 0; i--) {
-                this.handleReceive(info.messageList[info.messageList.length-1])
-              };
-            }else{
-              for (var i = 0; i < info.messageList.length ; i++) {
-                this.handleReceive(info.messageList[i],true);
-              };
+            console.log(info);
+            this.update_chatProgress(info.chatProgress);
+            for (var i = info.messageList.length - 1; i >= 0; i--) {
+              this.handleReceive(info.messageList[i],true);
             }
             this.setState({chatroomId:info.chatroomId,messageList:info.messageList,socketId:info.socketId});
             this.state.io.on('chatroom',function(msg){
+              console.log(msg);
               if (msg.data.type != 'avatar') {
                 this.handleReceive(msg.data);
               }else{
@@ -207,7 +225,7 @@ var Messenger = React.createClass({
   handleSend(message = {}, rowID = null) {
     console.log(message);
     this.setState({messages:this.state.messages.concat([message])});
-    chatAPI.sendMessage(this.state.io,this.state.chatroomId,this.props.userId,this.state.socketId, "text", {text:message.text});
+    chatAPI.sendMessage(this.state.io,this.state.chatroomId,this.props.chatData.id,this.state.socketId, "text", {text:message.text});
   },
   handleMenu(){
     this.setState({menuOpen:!this.state.menuOpen})
@@ -244,6 +262,11 @@ var Messenger = React.createClass({
   _handleBack(){
     this.props.dispatch(showAppTabBar());
     this.props.navigator.pop();
+    this.state.io.disconnect();
+    this.props.data_refresh();
+  },
+  showBigHead(){
+    this.setState({showBigHead:!this.state.showBigHead});
   },
   render() {
     if (this.state.menuOpen) {
@@ -274,6 +297,7 @@ var Messenger = React.createClass({
             maxHeight={Dimensions.get('window').height - 85} // 64 for the navBar
             photoAvilible={true}
             showImagePicker={this.showImagePicker}
+            onImagePress={this.showBigHead}
             styles={{
               bubbleLeft: {
                 backgroundColor: null,
@@ -313,6 +337,26 @@ var Messenger = React.createClass({
           :null}
           </View>
         </TitleBarLayout>
+        {this.state.showBigHead?
+          <View style={{flexDirection:'column',justifyContent:'center',alignItems:'center',position:'absolute',top:0,left:0,height:Dimensions.get('window').height,width:Dimensions.get('window').width,backgroundColor:'rgba(0,0,0,.5)'}}>
+            <Image
+                style={{borderWidth:6,borderColor:"#FFF",width:Dimensions.get('window').width/3*2,height:Dimensions.get('window').width/3*2,borderRadius:Dimensions.get('window').width/3}}
+                source={{uri: this.state.friend_data.image}}>
+            </Image>
+            <View style={{left:Dimensions.get('window').width/3-30,top:-30,position:'relative',paddingTop:5,paddingBottom:5,paddingLeft:20,paddingRight:20,borderRadius:15,backgroundColor:"#F89680"}}>
+              <Text style={{textAlign:'center',color:'white'}}>{this.state.chatProgress}%</Text>
+            </View>
+            <Text style={{fontSize:20,color:'white'}}>{this.state.friend_data.alias}</Text>
+            <Text style={{fontSize:12,color:'white'}}>{this.props.chatRoomData.lastAnswer}</Text>
+            <TouchableNativeFeedback onPress={this.showBigHead}>
+              <View style={{position:'absolute',top:40,right:20}}>
+                <Image
+                  style={{width:20,height:20}}
+                  source={require('../../assets/images/delete_messenger.png')} />
+              </View>
+            </TouchableNativeFeedback>
+          </View>
+        :null}
         {this.state.show_dialog?<Dialog
           title={'編輯暱稱'}
           content={'此修改暱稱只有你看得到'}

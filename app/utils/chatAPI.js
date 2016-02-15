@@ -1,4 +1,4 @@
-import React,{AsyncStorage} from 'react-native';
+import React,{AsyncStorage,Alert,ToastAndroid} from 'react-native';
 window.navigator.userAgent='colorgy';
 var io = require('./../../node_modules/socket.io-client/socket.io.js');
 import colorgyAPI from './colorgyAPI';
@@ -16,6 +16,7 @@ function clean_storage () {
       AsyncStorage.removeItem('lastest_answer').done();
     }catch(e){
     	console.log("clean_storage_fail:",e);
+    	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
     }
 }
 
@@ -66,6 +67,32 @@ function connectToServer(){
 	});
 };
 
+function users_remove_chatroom(accessToken,uuid,userId,chatroomId) {
+	return new Promise(function(resolve,reject){
+		console.log('============= /users/remove_chatroom =============')
+	  fetch(socketServer + '/users/remove_chatroom', {
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify({
+		    uuid:uuid,
+		    accessToken:access_token,
+		    chatroomId:chatroomId,
+		    userId:userId
+		  })
+		})
+		.then(function(data) {
+			resolve(data);
+	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+	    resolve(false);
+	    console.log("error",error);
+	  })
+  });
+}
+
 function get_user_data(access_token,uuid){
 	return new Promise(function(resolve,reject){
 		console.log('============= get_user_data =============')
@@ -83,7 +110,8 @@ function get_user_data(access_token,uuid){
 		.then(function(data) {
 			resolve(data._bodyText);
 	  }).catch(function(error) {
-	    resolve(false)
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+	    resolve(false);
 	    console.log("error",error)
 	  })
   });
@@ -108,7 +136,8 @@ function chatroom_leave_chatroom(uuid,accessToken,userId,chatroomId) {
 		.then(function(data) {
 			resolve(data);
 	  }).catch(function(error) {
-	    resolve(false)
+	    ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+	    resolve(false);
 	    console.log("error",error)
 	  })
   });
@@ -135,8 +164,9 @@ function get_history_target(access_token,uuid,userId,gender,page){
 			console.log('get_history_target=>>',data);
 			resolve(data);
 	  }).catch(function(error) {
-	    resolve(false)
-	    console.log("error",error)
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+	    resolve(false);
+	    console.log("error",error);
 	  })
   });
 }
@@ -149,8 +179,9 @@ function get_question(){
 			.then(function(data) {
 				resolve(JSON.parse(data._bodyInit));
 		  }).catch(function(error) {
-		    resolve(false)
-		    console.log("error",error)
+		  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+		    resolve(false);
+		    console.log("error",error);
 		  })
   });
 }
@@ -182,8 +213,9 @@ function check_user_available(access_token,uuid){
 	    	resolve(userId);
 	    }
 	  }).catch(function(error) {
-	    resolve(false)
-	    console.log("error",error)
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+	    resolve(false);
+	    console.log("error",error);
 	  })
   });
 };
@@ -213,8 +245,9 @@ function update_from_core(access_token,uuid){
 	    	resolve(userId);
 	    }
 	  }).catch(function(error) {
-	    resolve(false)
-	    console.log("error",error)
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+	    resolve(false);
+	    console.log("error",error);
 	  })
   });
 };
@@ -238,6 +271,7 @@ function hi_check_hi (accessToken,uuid,userId,targetId) {
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 		    resolve(false)
 		    console.log("error",error)
 	  })
@@ -264,6 +298,7 @@ function hi_say_hi (accessToken,uuid,userId,targetId,message) {
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 		    resolve(false)
 		    console.log("error",error)
 	  })
@@ -291,6 +326,7 @@ function get_available_target(accessToken,uuid,userId,gender,page){
 				console.log("============= get_available_target==>",data);
 	    	resolve(data);
 	  }).catch(function(error) {
+	  		ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 		    resolve(false)
 		    console.log("error",error)
 	  })
@@ -315,6 +351,31 @@ function hi_get_list (accessToken,uuid,userId) {
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  		ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+		    resolve(false)
+		    console.log("error",error)
+	  })
+	})
+}
+
+function send_email_verify(accessToken,email) {
+	return new Promise(function (resolve, reject) {
+		console.log('=============/v1/me/emails.json=========');
+		fetch("https://colorgy.io/api/docs/v1/me/emails.json", {
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify({
+		  	accessToken:accessToken,
+		  	email:email,
+		  })
+		})
+		.then(function(data) {
+	    	resolve(data);
+	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 		    resolve(false)
 		    console.log("error",error)
 	  })
@@ -346,6 +407,7 @@ function hi_response (accessToken,uuid,userId,hiId,response) {
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 		    resolve(false)
 		    console.log("error",error)
 	  })
@@ -371,6 +433,7 @@ function update_about(accessToken,uuid,userId,about){
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 	    resolve(false)
 	    console.log("error",error)
 	  })
@@ -398,6 +461,7 @@ function update_name(accessToken,uuid,userId,name){
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 	    resolve(false)
 	    console.log("error",error)
 	  })
@@ -420,6 +484,7 @@ function get_other_user_data(userId){
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 	    resolve(false)
 	    console.log("error",error)
 	  })
@@ -446,6 +511,7 @@ function answer_question(accessToken,uuid,userId,date,answer){
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 	    resolve(false)
 	    console.log("error",error)
 	  })
@@ -470,6 +536,7 @@ function check_answered_latest(accessToken,uuid,userId){
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 	    resolve(false)
 	    console.log("error",error)
 	  })
@@ -495,6 +562,7 @@ function users_block_user(accessToken,uuid,userId,targetId){
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 	    resolve(false)
 	    console.log("error",error)
 	  })
@@ -522,6 +590,7 @@ function chatroom_update_target_alias(accessToken,uuid,userId,chatroomId,alias){
 				console.log('chatroom_update_target_alias=>>',data);
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 	    resolve(false)
 	    console.log("error",error)
 	  })
@@ -549,6 +618,7 @@ function report_report_user(accessToken,uuid,userId,targetId,type,reason){
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 	    resolve(false)
 	    console.log("error",error)
 	  })
@@ -571,6 +641,7 @@ function check_name_exists(name){
 		.then(function(data) {
 	    	resolve(data);
 	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 	    resolve(false)
 	    console.log("error",error)
 	  })
@@ -605,6 +676,8 @@ socket = {
   chatroom_update_target_alias:chatroom_update_target_alias,
   clean_storage:clean_storage,
   chatroom_leave_chatroom:chatroom_leave_chatroom,
+  users_remove_chatroom:users_remove_chatroom,
+  send_email_verify:send_email_verify,
 };
 
 if (window) window.socket = socket;

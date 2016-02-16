@@ -105,7 +105,7 @@ var OrgSelectContainer = React.createClass({
     this.setState({ fetchDepFaild: false, fetchDepStartedAt: (new Date()).getTime() });
 
     organizationDatabase.getDepartments(orgCode).then((data) => {
-      var depOptions = data.map((dep) => ({ name: `${dep.name} (${dep.code})`, value: dep.code }));
+      var depOptions = data.map((dep) => ({ name: `${dep.name}`, value: dep.code }));
       var dataObj = data.reduce(function(object, data, i) {
         object[data['code']] = data;
         return object;

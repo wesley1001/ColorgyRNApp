@@ -22,6 +22,7 @@ import notify from '../../utils/notify';
 
 import { doClearAccessToken } from '../../actions/colorgyAPIActions';
 import { doEnterDevModePress } from '../../actions/devModeActions';
+import { doUpdateMe } from '../../actions/colorgyAPIActions';
 
 var MoreContainer = React.createClass({
 
@@ -47,11 +48,37 @@ var MoreContainer = React.createClass({
     ]);
   },
 
+  _showClearOrgAlert() {
+    Alert.alert('確認清除資料', '確定要重選學校嗎？您原本設定的學校、系所、入學年度將被清除！', [
+       { text: '取消' },
+       { text: '確定清除', onPress: this._clearOrg }
+    ]);
+  },
+
+  _clearOrg() {
+    this.props.dispatch(doUpdateMe({ unconfirmedOrganizationCode: null, unconfirmedDepartmentCode: null, unconfirmedStartedYear: null }));
+    this.setState({ orgClearing: true });
+  },
+
   _handleLogout() {
     this.props.dispatch(doClearAccessToken());
   },
 
   render: function() {
+    if (this.state.orgClearing) {
+      return (
+        <TitleBarLayout
+          enableOffsetTop={this.props.translucentStatusBar}
+          offsetTop={this.props.statusBarHeight}
+          title="更多"
+        >
+         <Text> </Text>
+         <Text> </Text>
+         <Text>正在清除您的學校......</Text>
+        </TitleBarLayout>
+      );
+    }
+
     return (
       <TitleBarLayout
         enableOffsetTop={this.props.translucentStatusBar}
@@ -73,6 +100,16 @@ var MoreContainer = React.createClass({
             text="隱私權設定"
             onPress={() => { this.props.navigator.push({ name: 'privacySettings' }); }}
           />
+          {(() => {
+            if (!this.props.userOrg) {
+              return (
+                <ListItem
+                  text="重新選擇學校、系所、入學年度"
+                  onPress={this._showClearOrgAlert}
+                />
+              );
+            }
+          })()}
           <ListItem
             text="問題回報"
             onPress={() => { this.props.navigator.push({ name: 'feedback' }); }}
@@ -133,6 +170,7 @@ var styles = StyleSheet.create({
 });
 
 export default connect((state) => ({
+  userOrg: state.colorgyAPI && state.colorgyAPI.me && state.colorgyAPI.me.organizationCode,
   translucentStatusBar: state.deviceInfo.translucentStatusBar,
   statusBarHeight: state.deviceInfo.statusBarHeight
 }))(MoreContainer);

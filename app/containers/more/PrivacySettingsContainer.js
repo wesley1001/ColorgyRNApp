@@ -57,7 +57,7 @@ var PrivacySettingsContainer = React.createClass({
           return r.json();
         }
       }).then((json) => {
-        this.setState({ userCoursesTableVisibility: json[0] && json[0].courses_table_visibility });
+        this.setState({ userCoursesTableVisibility: json[0] ? json[0].courses_table_visibility : true });
       })
     ];
 

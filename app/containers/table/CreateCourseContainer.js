@@ -117,7 +117,7 @@ var CreateCourseContainer = React.createClass({
       for (let i=courseTime.periodStart; i<=courseTime.periodEnd; i++) {
         course[`day_${courseTimeIndex}`] = courseTime.day;
         course[`period_${courseTimeIndex}`] = i;
-        course[`loaction_${courseTimeIndex}`] = courseTime.location;
+        course[`location_${courseTimeIndex}`] = courseTime.location;
         courseTimeIndex++;
       }
     });

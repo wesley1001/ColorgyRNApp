@@ -57,11 +57,13 @@ var UserPageContainer = React.createClass({
     });
 
     var fetchUserSettings = colorgyAPI.fetch(`/v1/user_table_settings/${this._getUserId()}.json`).then((response) => {
-      if (parseInt(response.status / 100) !== 2) {
-        throw response.status;
-      }
+      if (parseInt(response.status) === 404) {
 
-      return response.json();
+      } else if (parseInt(response.status / 100) !== 2) {
+        throw response.status;
+      } else {
+        return response.json();
+      }
     }).then((json) => {
       this.setState({ userSettings: { table: json } });
     });
@@ -140,6 +142,7 @@ var UserPageContainer = React.createClass({
       ga.sendTiming('PageLoad', loadingTime, 'UserPageLoad', 'page-load');
 
     }).catch((e) => {
+      console.error(e);
       this.setState({ loading: LOADING_STATE.ERROR });
     });
   },

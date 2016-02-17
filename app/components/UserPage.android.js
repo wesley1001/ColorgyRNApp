@@ -103,7 +103,7 @@ let UserPage = React.createClass({
                         <View tabLabel="課表">
                           <View style={styles.card}>
                             {(() => {
-                              if (userCourses && periodData && userSettings && userSettings.table && userSettings.table.courses_table_visibility) {
+                              if (true) {
                                 return (
                                   <CourseTable
                                     width={windowWidth - 32 - 4}

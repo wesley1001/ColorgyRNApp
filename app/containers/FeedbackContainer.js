@@ -161,7 +161,7 @@ var FeedbackContainer = React.createClass({
       >
         <ScrollView>
           {(() => {
-            if (!this.props.feedbackTypes) retrun (
+            if (!this.props.feedbackTypes) return (
               <View>
                 <ListTitle text="遇到的問題 (必選)" />
                 <ListItem

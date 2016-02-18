@@ -2,11 +2,14 @@ import React, {
   InteractionManager,
   StyleSheet,
   View,
-  ScrollView
+  ScrollView,
+  TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from 'underscore';
+import moment from 'moment';
+require('moment/locale/zh-tw');
 
 import THEME from '../../constants/THEME';
 
@@ -19,7 +22,8 @@ import GhostButton from '../../components/GhostButton';
 import {
   doSyncUserCourses,
   doLoadTableCourses,
-  doRemoveCourse
+  doRemoveCourse,
+  doForceUpdateCourseDatabase
 } from '../../actions/tableActions';
 
 var TableContainer = React.createClass({
@@ -117,6 +121,17 @@ var TableContainer = React.createClass({
               />
             );
           })}
+          <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 16, paddingHorizontal: 12 }}>
+            <Text>資料最後更新：{moment(this.props.courseDatabaseUpdatedTime[this.props.organizationCode]).locale('zh-tw').fromNow()} (</Text>
+            <TouchableOpacity onPress={() => this.props.dispatch(doForceUpdateCourseDatabase(this.props.organizationCode))}>
+              <View style={{ backgroundColor: 'transparent', borderBottomWidth: 1, borderBottomColor: '#F89680' }}>
+                <Text style={{ color: '#F89680' }}>
+                  立即更新
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <Text>)</Text>
+          </View>
         </ScrollView>
       </TitleBarLayout>
     );
@@ -134,6 +149,8 @@ export default connect((state) => ({
   tableStatus: state.table.tableStatus,
   userId: state.colorgyAPI.me && state.colorgyAPI.me.id,
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
+  courseDatabaseUpdatedTime: state.table.courseDatabaseUpdatedTime,
+  courseDatabaseLoadingProgress: state.table.courseDatabaseLoadingProgress,
   courses: state.table.tableCourses,
   windowHeight: state.deviceInfo.windowHeight,
   networkConnectivity: state.deviceInfo.networkConnectivity,

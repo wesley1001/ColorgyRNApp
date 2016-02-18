@@ -60,6 +60,19 @@ export default handleActions({
       ...state
     };
   },
+  COURSE_DATABASE_UPDATE_TIME_CLEAR: (state, action) => {
+    var courseDatabaseUpdatedTime = {
+      ...state.courseDatabaseUpdatedTime
+    }
+
+    courseDatabaseUpdatedTime[action.payload] = null;
+
+    return {
+      ...state,
+      courseDatabaseUpdatedTime: courseDatabaseUpdatedTime
+    };
+
+  },
 
   // Table loading actions
   LOAD_TABLE_COURSES: (state, action) => {

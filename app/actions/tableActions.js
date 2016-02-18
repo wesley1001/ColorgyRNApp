@@ -92,6 +92,13 @@ export const doUpdateCourseDatabase = (orgCode) => (dispatch) => {
   });
 };
 
+export const doClearCourseDatabaseUpdateTime = createAction('COURSE_DATABASE_UPDATE_TIME_CLEAR');
+
+export const doForceUpdateCourseDatabase = (orgCode) => (dispatch) => {
+  dispatch(doClearCourseDatabaseUpdateTime(orgCode));
+  dispatch(doUpdateCourseDatabase(orgCode));
+};
+
 export const loadTableCourse = createAction('LOAD_TABLE_COURSES');
 export const tableCourseLoaded = createAction('TABLE_COURSES_LOADED');
 export const loadTableCourseFailed = createAction('LOAD_TABLE_COURSES_FAILED');

@@ -44,7 +44,7 @@ var TableContainer = React.createClass({
           <TitleBarLayout
             enableOffsetTop={this.props.translucentStatusBar}
             offsetTop={this.props.statusBarHeight}
-            title="Table"
+            title="我的課表"
             rightAction={
               <TitleBarActionIcon onPress={this._handleEdit}>
                 <Icon name="mode-edit" size={24} color="#FFFFFF" />
@@ -68,7 +68,7 @@ var TableContainer = React.createClass({
             enableOffsetTop={this.props.translucentStatusBar}
             offsetTop={this.props.statusBarHeight}
             style={this.props.style}
-            title="Table"
+            title="我的課表"
             actions={[
               null,
               { title: '管理課程', icon: require('../../assets/images/icon_edit_white.png'), onPress: this._handleEdit, show: 'always' }

@@ -95,6 +95,7 @@ var AddCourseContainer = React.createClass({
         <View style={styles.searchBar}>
           <TextInput
             placeholder="搜尋課名、老師姓名或課程代碼"
+            autoFocus={true}
             underlineColorAndroid="transparent"
             underlineColor="transparent"
             onChangeText={this._handleSearch}

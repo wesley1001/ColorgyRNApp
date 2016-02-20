@@ -23,6 +23,9 @@ import THEME from '../constants/THEME';
 
 import Text from './Text';
 import TableCreateCoursePageLayoutAndroid from './TableCreateCoursePageLayoutAndroid';
+import TitleBarLayout from './TitleBarLayout';
+import ListItem from './ListItem';
+import ListTitle from './ListTitle';
 import TextInput from './TextInput';
 import Button from './Button';
 import GhostButton from './GhostButton';
@@ -260,25 +263,46 @@ let TableCreateCoursePage = React.createClass({
     var toolbarPaddingTop = translucentStatusBar ? statusBarHeight : 0;
 
     return (
-      <TableCreateCoursePageLayoutAndroid
-        style={{ flex: 1, backgroundColor: THEME.THEME_BACKGROUND_COLOR }}
-        toolbarTitle={ (courseName && courseName.length > 0) ? courseName : '新課程' }
-        toolbarTitleColor="#FFFFFFFF"
-        toolbarExpandedTitleColor="#FFFFFF00"
-        toolbarHeight={PixelRatio.getPixelSizeForLayoutSize(THEME.ANDROID_TITLE_BAR_HEIGHT + toolbarPaddingTop)}
-        toolbarPaddingTop={PixelRatio.getPixelSizeForLayoutSize(toolbarPaddingTop)}
-        contentScrimColor={THEME.DARK_GREY}
-        onPrimaryInputTextChange={handleCourseNameChange}
-        onSecondaryInputTextChange={handleCourseLecturerChange}
-        primaryInputInitialValue={courseName}
-        secondaryInputInitialValue={courseLecturer}
-        primaryInputLabel="新課程名稱"
-        secondaryInputLabel="教師名稱"
+      <TitleBarLayout
+        enableOffsetTop={this.props.translucentStatusBar}
+        offsetTop={this.props.statusBarHeight}
+        title="自訂新課程"
+        actions={[
+          { title: '返回', icon: require('../assets/images/icon_arrow_back_white.png'), onPress: handleBack, show: 'always' },
+          { title: '加選課程', icon: require('../assets/images/icon_add_white.png'), onPress: handleSave, show: 'always' }
+        ]}
       >
-        <NestedScrollViewAndroid
-          style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: 256 + 8, backgroundColor: THEME.THEME_BACKGROUND_COLOR }}
-        >
+        <ScrollView>
+          <ListTitle text="課程名稱／老師" />
+          <ListItem
+            disabled={true}
+          >
+            <TextInput
+              placeholder="輸入課程名稱"
+              onChangeText={handleCourseNameChange}
+              value={courseName}
+              style={{
+                flex: 1,
+                height: 52
+              }}
+              underlineColorAndroid="transparent"
+            />
+          </ListItem>
+          <ListItem
+            disabled={true}
+            borderBottom={true}
+          >
+            <TextInput
+              placeholder="輸入老師名稱"
+              onChangeText={handleCourseLecturerChange}
+              value={courseLecturer}
+              style={{
+                flex: 1,
+                height: 52
+              }}
+              underlineColorAndroid="transparent"
+            />
+          </ListItem>
           {(() => {
             return courseTimes.map((courseTime, i, courseTimes) => {
               var timeName = '上課時段';
@@ -287,18 +311,10 @@ let TableCreateCoursePage = React.createClass({
               }
               return (
                 <View key={i}>
-                  <Text
-                    style={{
-                      marginTop: 8,
-                      marginLeft: 16,
-                      fontSize: 12
-                    }}
-                  >
-                    {timeName}
-                  </Text>
+                  <ListTitle text={timeName} />
                   <View
                     style={{
-                      marginVertical: 8,
+                      // marginVertical: 8,
                       flexDirection: 'row',
                       alignItems: 'center',
                       backgroundColor: '#FFFFFF',
@@ -374,20 +390,9 @@ let TableCreateCoursePage = React.createClass({
               onPress={handleAddCourseTime}
               style={styles.addCourseTimeButton}
             />
-            <Button
-              value="儲存"
-              type="small"
-              color={THEME.LIGHT_GREY}
-              onPress={handleSave}
-              style={styles.saveButton}
-            />
           </View>
-        </NestedScrollViewAndroid>
-        <ToolbarAndroid
-          navIcon={require('../assets/images/icon_arrow_back_white.png')}
-          actions={[{ title: '取消並返回' }]}
-        />
-      </TableCreateCoursePageLayoutAndroid>
+        </ScrollView>
+      </TitleBarLayout>
     );
   }
 });

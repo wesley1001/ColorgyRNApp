@@ -75,7 +75,7 @@ var PrivacySettingsContainer = React.createClass({
     this.setState({ userCoursesTableVisibility });
 
     colorgyAPI.fetch(`/v1/me/user_table_settings/${this.props.userID}.json`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify({ user_table_settings: {
         courses_table_visibility: userCoursesTableVisibility
       } }),
@@ -84,7 +84,7 @@ var PrivacySettingsContainer = React.createClass({
         'Content-Type': 'application/json'
       }
     }).then((r) => {
-      if (r.status !== 200) {
+      if (r.status !== 200 && r.status !== 201) {
         throw r;
       } else {
         return r.json();

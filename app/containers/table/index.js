@@ -1,6 +1,7 @@
 import React, {
   Navigator,
-  ProgressBarAndroid
+  ProgressBarAndroid,
+  BackAndroid
 } from 'react-native';
 import { connect } from 'react-redux/native';
 
@@ -39,7 +40,11 @@ var Table = React.createClass({
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.navigateBackCount !== this.props.navigateBackCount) {
-      this.navigator.pop();
+      if (!this.navigator.state.routeStack || this.navigator.state.routeStack.length <= 1) {
+        BackAndroid.exitApp();
+      } else {
+        this.navigator.pop();
+      }
     } else if (nextProps.tabRePressCount !== this.props.tabRePressCount) {
       if (this.navigator) this.navigator.popToTop();
     }

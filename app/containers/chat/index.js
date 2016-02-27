@@ -15,7 +15,9 @@ import React, {
   AsyncStorage,
   LayoutAnimation,
   Navigator,
+  RefreshControl,
   ToastAndroid,
+  PullToRefreshViewAndroid
 } from 'react-native';
 import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -28,6 +30,7 @@ import Dialog from '../../components/Dialog'
 import Status from '../../components/Status'
 import chatAPI from '../../utils/chatAPI';
 import colorgyAPI from '../../utils/colorgyAPI';
+
 var ImageWand = require('react-native-imagewand');
 
 import Report from './../report';
@@ -36,6 +39,7 @@ import ga from '../../utils/ga';
 
 var UIImagePickerManager = require('NativeModules').UIImagePickerManager;
 
+var source_for_update;
 var WelcomeView = React.createClass({
   getInitialState(){
     return{
@@ -60,13 +64,28 @@ var WelcomeView = React.createClass({
   },
   async _chat_state_haveSend() {
     try {
-      await AsyncStorage.setItem("chat_state_haveSend", true);
+      await AsyncStorage.setItem("chat_state_haveSend", "true");
     } catch (error) {
       console.log('AsyncStorage error: ' + error.message);
     }
   },
   verify(){
-    this.setState({letSVerify:true});
+    fetch('https://colorgy.io:443/api/v1/me.json?fields=organization_code&&access_token='+this.props.accessToken)
+    .then(function(data) {
+      if(JSON.parse(data._bodyInit).organization_code && JSON.parse(data._bodyInit).organization_code!='' && JSON.parse(data._bodyInit).organization_code!= undefined){
+        var v = true;
+      }else{
+        var v = false;
+      }
+      if (v) {
+        this.setState({verifing:false,verifingSuccess:true});
+        setTimeout(function() {
+          this.ok()
+        }.bind(this),200)
+      }else{
+        this.setState({letSVerify:true});
+      }
+    }.bind(this))
   },
   componentDidMount() {
     this._loadInitialState().done();
@@ -105,21 +124,35 @@ var WelcomeView = React.createClass({
       this.setState({SendAlert:false,haveSend:true});
     }.bind(this),1000)
     // 寄認證信
+    fetch('https://colorgy.io/api/v1/me/emails.json?access_token='+this.props.accessToken,{
+      'user_email[email]':email
+    }).then(function(data) {
+      console.log(data);
+    })
   },
   iGotMail(){
     this.setState({verifing:true,haveSend:false});
     // 串認證信
-    setTimeout(function() {
-      if (Math.random()>0.5) {
+    fetch('https://colorgy.io:443/api/v1/me.json?fields=organization_code&&access_token='+this.props.accessToken)
+    .then(function(data) {
+      if(JSON.parse(data._bodyInit).organization_code && JSON.parse(data._bodyInit).organization_code!='' && JSON.parse(data._bodyInit).organization_code!= undefined){
+        var v = true;
+      }else{
+        var v = false;
+      }
+      if (v) {
         this.setState({verifing:false,verifingSuccess:true});
         setTimeout(function() {
-
-        }.bind(this),500)
+          this.ok()
+        }.bind(this),200)
       }else{
         this.setState({verifing:false});
         Alert.alert('驗證失敗Ｑ＿Ｑ','也許是你沒有按驗證信又或是你的網路不是很正常～')
       }
-    }.bind(this),5000)
+    }.bind(this))
+  },
+  ok(){
+    this.props.ok();
   },
   humanVerify(){
     Alert.alert(
@@ -139,39 +172,37 @@ var UploadImageView = React.createClass({
       avatarSource:'',
     }
   },
+  componentDidMount(){
+    this.props.showAppTabBar();
+  },
   render() {
     return(
       <View style={styles.allCenter}>
-          <Image
+          <ImageWand
+            blur={4}
             style={{width:259/2,height:259/2,marginBottom:10,borderRadius:259/4,borderWidth:5,borderColor:'white'}}
-            source={{uri:this.props.default_imgSrc}} />
+            src={this.props.default_imgSrc || "http://des13.cc/star/media/k2/items/cache/d6e7bc44feb1613d041d5385e5745b10_XL.jpg"}
+          />
         <Text style={{marginBottom:5,fontSize:18}}>展開ㄧ段冒險</Text>
         <Text style={{marginBottom:20,fontSize:12}}>頭貼經過模糊處理，唯有越聊越清晰～</Text>
-        {!this.props.onImage?
-          <TouchableNativeFeedback onPress={this.props.pickPhotoOrTakeAPhoto}>
-            <View style={styles.mainBtn}>
-              <Text style={styles.mainBtnText}>上傳頭貼</Text>
-            </View>
-          </TouchableNativeFeedback>
-        :
           <View style={{flexDirection:'row'}}>
             <TouchableNativeFeedback onPress={this.props.pickPhotoOrTakeAPhoto}>
               <View style={[styles.mainBtn_dis,{margin:10}]}>
-                <Text style={styles.mainBtnText_dis}>重新選取</Text>
+                <Text style={styles.mainBtnText_dis}>上傳頭貼</Text>
               </View>
             </TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={this.props.upload}>
+            <TouchableNativeFeedback onPress={this.ok}>
               <View style={[styles.mainBtn,{margin:10}]}>
-                <Text style={styles.mainBtnText}>確認使用</Text>
+                <Text style={styles.mainBtnText}>使用此頭貼</Text>
               </View>
             </TouchableNativeFeedback>
           </View>
-        }
       </View>
     )
   },
-  upload(){
-
+  ok(){
+    this.props.okImage();
+    this.props._chat_state_haveUploadImage();
   },
 });
 
@@ -286,6 +317,7 @@ var ProfileFirstLook = React.createClass({
       dialog:false,
       been:false,
       report_view:false,
+      readyToBang:false,
     }
   },
   componentDidMount(){
@@ -299,9 +331,13 @@ var ProfileFirstLook = React.createClass({
     }.bind(this));
     chatAPI.hi_check_hi(this.props.accessToken,this.props.uuid,this.props.chatData.id,this.props.data.id)
     .then((response)=>{
+      console.log(response);
       if (JSON.parse(response._bodyInit).result == 'already said hi') {
         this.setState({been:true});
       };
+      if (JSON.parse(response._bodyInit).result == "target already said hi") {
+        this.setState({readyToBang:true});
+      }
     })
   },
   back(){
@@ -422,6 +458,10 @@ var ProfileFirstLook = React.createClass({
     this.props.say_hello(this.props.data.id,text);
     this.setState({dialog:false});
     ToastAndroid.show('已送出招呼語',ToastAndroid.SHORT);
+    if (this.state.readyToBang) {
+      Alert.alert('恭喜你們跟對方互相打招呼啦','趕快開始跟對方聊天吧！');
+    }
+    this.setState({been:true});
   }
 });
 
@@ -542,6 +582,8 @@ var StrangerList = React.createClass({
       filter: 'all',
       strangerList: [],
       page:0,
+      isRefreshing:false,
+      like_me_list:[],
     }
   },
   submit(text){
@@ -550,10 +592,22 @@ var StrangerList = React.createClass({
   componentDidMount(){
     console.log("get_available_target on strangerList");
     this.get_available_target('unspecified',0);
+    this.get_like_me_list();
   },
   edit_self(){
     this.props.navigator.push({id:'self_edit',refresh_data:this.props.refresh_data});
     this.props.hideAppTabBar();
+  },
+  refresh_data(){
+    this.setState({isRefreshing: true});
+    if (this.state.filter == 'all') {
+      this.get_available_target('unspecified',0);
+    }else{
+      this.get_available_target(this.state.filter,0);
+    }
+    setTimeout(function() {
+      this.setState({isRefreshing: false});
+    }.bind(this),500)
   },
   render(){
     return(
@@ -583,7 +637,18 @@ var StrangerList = React.createClass({
             </View>
           </TouchableNativeFeedback>
         </View>
-        <ScrollView style={{flex:1}} onLayout={this.handleOnLayout} onContentSizeChange={this.handleSizeChange} onScroll={this.handleScroll}>
+        <PullToRefreshViewAndroid
+        style={{flex: 1}}
+        refreshing={this.state.isRefreshing}
+        onRefresh={this.refresh_data}
+        colors={['#FFF', '#FFF', '#FFF']}
+        progressBackgroundColor={'#F89680'}
+        >
+        <ScrollView
+          style={{flex:1}} 
+          onLayout={this.handleOnLayout} 
+          onContentSizeChange={this.handleSizeChange} 
+          onScroll={this.handleScroll}>
           {this.state.strangerList.map(function(st,index) {
             if (this.state.strangerList.length == 1) {
               return(
@@ -645,6 +710,7 @@ var StrangerList = React.createClass({
             }
           }.bind(this))}
         </ScrollView>
+        </PullToRefreshViewAndroid>
         {this.props.haveAnswerToday?null:<Dialog 
           title="本日清晰問"
           content={this.props.problem_today}
@@ -662,9 +728,27 @@ var StrangerList = React.createClass({
         page)
       .then((response)=>{
         var newList = JSON.parse(response._bodyInit).result;
+        for (var i = newList.length - 1; i >= 0; i--) {
+          if( this.state.like_me_list.indexOf(newList[i].id)>=0){
+            var temp = newList[i]
+            newList.splice(i,1);
+            newList.unshift(temp);
+          }
+        }
         this.setState({strangerList:newList});
         console.log('update ---> strangerList',this.state.strangerList);
       })
+  },
+  get_like_me_list(){
+    console.log("=========get_like_me_list==========")
+    chatAPI.hi_get_my_list(
+      this.props.accessToken,
+      this.props.uuid,
+      this.props.chatData.id
+    )
+    .then((response)=>{
+      this.setState({like_me_list:JSON.parse(response._bodyInit).result})
+    })
   },
   changeFilter(type){
     this.setState({strangerList:[],page:0});
@@ -690,6 +774,13 @@ var StrangerList = React.createClass({
       this.state.page+1)
     .then((response)=>{
       var newList = JSON.parse(response._bodyInit).result;
+      for (var i = newList.length - 1; i >= 0; i--) {
+        if( this.state.like_me_list.indexOf(newList[i].id)>=0){
+          var temp = newList[i]
+          newList.splice(i,1);
+          newList.unshift(temp);
+        }
+      }
       this.setState({strangerList:this.state.strangerList.concat(newList),page:this.state.page+1});
       console.log('update ---> strangerList',this.state.strangerList);
     })
@@ -713,15 +804,21 @@ var CroppingImage = React.createClass({
       originalPosition: {top:(Dimensions.get('window').height-Dimensions.get('window').width)/2,left:0},
       window_width:Dimensions.get('window').width,
       imagesWidth:Dimensions.get('window').width,
+      imagesHeight:Dimensions.get('window').width,
       rule:1,
       cropping_data:{x:0,y:0},
-      image_data:{}
+      image_data:{},
+      original_size:{}
     }
   },
   componentDidMount(){
     this.measureImage();
   },
+  componentWillUnmount(){
+    this.props.showAppTabBar();
+  },
   componentWillMount: function() {
+    this.props.hideAppTabBar()
     this._panResponder = PanResponder.create({
       // Ask to be the responder:
       onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -737,7 +834,7 @@ var CroppingImage = React.createClass({
       },
       onPanResponderMove: (evt, gestureState) => {
         // The most recent move distance is gestureState.move{X,Y}
-        if (this.state.rule>1) {
+        if (this.state.rule>=1) {
           this.measureImage();
           if (this.state.originalPosition.left+gestureState.vx*10>0 || this.state.originalPosition.left+gestureState.vx*10 + this.state.image_data.width< this.state.window_width) {
             var  new_left = this.state.originalPosition.left;
@@ -760,7 +857,7 @@ var CroppingImage = React.createClass({
       onPanResponderRelease: (evt, gestureState) => {
         // The user has released all touches while this view is the
         // responder. This typically means a gesture has succeeded
-        if (this.state.rule>1) {
+        if (this.state.rule>=1) {
           this.setState({cropping_data:{x:this.state.original.top-this.state.originalPosition.top, y:this.state.original.left-this.state.originalPosition.left,rule:this.state.rule}});
         };
       },
@@ -776,7 +873,7 @@ var CroppingImage = React.createClass({
     });
   },
   measureImage(mode) {
-    this.refs.image.measure(this.logImageLayout);
+    // this.refs.image.measure(this.logImageLayout);
   },
 
   logImageLayout(ox, oy, width, height, px, py) {
@@ -790,16 +887,28 @@ var CroppingImage = React.createClass({
     // var currentHeight = layout.height;
     console.log("layout",layout);
   },
+  _imageInfo: function(event){
+    console.log(event.width, event.height);
+    var original_size = {width:event.width,height:event.height};
+    this.setState({original_size:original_size});
+    var bi = event.height/event.width;
+    var width = this.state.imagesWidth;
+    var height = width*bi;
+    this.setState({imagesHeight:height});
+    while(this.state.imagesHeight<Dimensions.get('window').width){
+      this.bigger()
+    }
+  },
   render(){
     return(
       <View style={[{backgroundColor:'rgb(30,30,30)'},styles.allCenter]}>
           <ImageWand
-            style={{width:this.state.imagesWidth,height:this.state.imagesWidth,position:'absolute',top:this.state.originalPosition.top,left:this.state.originalPosition.left}}
-            source={this.props.source_url} 
+            style={{width:this.state.imagesWidth,height:this.state.imagesHeight,position:'absolute',top:this.state.originalPosition.top,left:this.state.originalPosition.left}}
+            src={this.props.source_url} 
             ref='image'
-            resizeMode="cover"
-            onLayout={this.onImageLayout}
-            />
+            shouldNotifyLoadEvents={true}
+            onImageInfo={this._imageInfo}
+          />
           <View style={{width:Dimensions.get('window').width,height:(Dimensions.get('window').height - Dimensions.get('window').width)/2,position:'absolute', backgroundColor:'rgba(0,0,0,.3)',left:0,top:0}}></View>
           <View {...this._panResponder.panHandlers} style={{width:Dimensions.get('window').width,height:Dimensions.get('window').width,position:'absolute',top:(Dimensions.get('window').height - Dimensions.get('window').width)/2,left:0,backgroundColor:'rgba(0,0,0,0)',borderColor:'blue',borderWidth:1}}></View>
           <View style={{width:Dimensions.get('window').width,height:(Dimensions.get('window').height - Dimensions.get('window').width)/2,position:'absolute', backgroundColor:'rgba(0,0,0,.3)',left:0,top:Dimensions.get('window').width+(Dimensions.get('window').height - Dimensions.get('window').width)/2}}></View>
@@ -809,7 +918,7 @@ var CroppingImage = React.createClass({
           <TouchableNativeFeedback onPress={this.smaller}>
             <View style={{position:'absolute', top:10,right:10}}><Text style={{color:'white',fontSize:20}}>縮小</Text></View>
           </TouchableNativeFeedback>
-          <TouchableNativeFeedback onPress={()=>this.submit(this.state.cropping_data)}>
+          <TouchableNativeFeedback onPress={()=>this.submit(this.state.original_size,this.props.source_base64,this.state.cropping_data)}>
             <View style={{position:'absolute', top:Dimensions.get('window').width+(Dimensions.get('window').height - Dimensions.get('window').width)/2+20,right:40}}><Text style={{color:'white',fontSize:20}}>確定</Text></View>
           </TouchableNativeFeedback>
           <TouchableNativeFeedback onPress={this.back}>
@@ -821,15 +930,15 @@ var CroppingImage = React.createClass({
   back(){
     this.props.rechoose();
   },
-  submit(){
-    this.props.submit();
+  submit(original_size,path,data){
+    this.props.submit(original_size,path,data);
   },
   bigger(){
-    this.setState({imagesWidth:this.state.imagesWidth*1.1,rule:this.state.rule*1.1})
+    this.setState({imagesWidth:this.state.imagesWidth*1.1,imagesHeight:this.state.imagesHeight*1.1,rule:this.state.rule*1.1})
   },
   smaller(){
     if (this.state.rule>1) {
-      this.setState({imagesWidth:this.state.imagesWidth/1.1,rule:this.state.rule/1.1});
+      this.setState({imagesWidth:this.state.imagesWidth/1.1,imagesHeight:this.state.imagesHeight/1.1,rule:this.state.rule/1.1});
       this.measureImage()
       this.setState({originalPosition:this.state.original})
     };
@@ -932,6 +1041,10 @@ var Chat = React.createClass({
       haveSend:false,
       ProfileFirstLook:false,
       paddingTopHide:false,
+      haveUploadImage:false,
+      haveVerify:false,
+      source_base64:'',
+      newImage:undefined
     }
   },
 
@@ -945,9 +1058,21 @@ var Chat = React.createClass({
       }
       var chat_state_haveSend = await AsyncStorage.getItem('chat_state_haveSend');
       if (chat_state_haveSend !== null) {
-        this.setState({haveSend: false});
+        this.setState({haveSend: true});
       }else{
         this.setState({haveSend: false});
+      }
+      var chat_state_haveUploadImage = await AsyncStorage.getItem('chat_state_haveUploadImage');
+      if (chat_state_haveUploadImage !== null) {
+        this.setState({haveUploadImage: true});
+      }else{
+        this.setState({haveUploadImage: false});
+      }
+      var chat_state_haveVerify = await AsyncStorage.getItem('chat_state_haveVerify');
+      if (chat_state_haveVerify !== null) {
+        this.setState({haveVerify: true});
+      }else{
+        this.setState({haveVerify: false});
       }
       var lastest_answer = await AsyncStorage.getItem('lastest_answer');
       if (lastest_answer !== null) {
@@ -965,7 +1090,23 @@ var Chat = React.createClass({
 
   async _chat_state_haveSignUp() {
     try {
-      await AsyncStorage.setItem("chat_state_haveSignUp", true);
+      await AsyncStorage.setItem("chat_state_haveSignUp", 'true');
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
+  },
+
+  async _chat_state_haveUploadImage() {
+    try {
+      await AsyncStorage.setItem("chat_state_haveUploadImage", 'true');
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
+  },
+
+  async _chat_state_haveVerify() {
+    try {
+      await AsyncStorage.setItem("chat_state_haveVerify", 'true');
     } catch (error) {
       console.log('AsyncStorage error: ' + error.message);
     }
@@ -1007,13 +1148,23 @@ var Chat = React.createClass({
       this.props.dispatch(showAppTabBar());
     }
   },
+  okImage(){
+    this.setState({haveUploadImage:true});
+  },
+  okVerify(){
+    Alert.alert('驗證成功');
+    this._chat_state_haveVerify();
+    this.setState({haveVerify:true});
+  },
   render() {
-    if (this.props.chatData.id == 'loading') {
-      var ReturnView = <WelcomeView send={this.sendVerifyMail}/>;
-    }else if (!this.state.havePhoto) {
-      var ReturnView = <UploadImageView onImage={this.state.onImage} default_imgSrc={this.props.chatData.data.avatar_url} pickPhotoOrTakeAPhoto={this.pickPhotoOrTakeAPhoto}/>;
-    }else if (!this.state.havePhotoCrop){
-      var ReturnView = <CroppingImage source_url={this.state.source_url} submit={this.submit_crop} rechoose={this.rechoose_crop}/>
+    if (!this.state.haveVerify) {
+      var ReturnView = <WelcomeView ok={this.okVerify} send={this.sendVerifyMail} accessToken={this.props.accessToken}/>;
+    }else if (!this.state.havePhoto && !this.state.haveUploadImage) {
+    // }else if (!this.state.havePhoto) {
+      var ReturnView = <UploadImageView showAppTabBar={this.showAppTabBar} okImage={this.okImage} _chat_state_haveUploadImage={this._chat_state_haveUploadImage}  onImage={this.state.onImage} default_imgSrc={this.state.newImage || this.props.chatData.data.avatar_url} pickPhotoOrTakeAPhoto={this.pickPhotoOrTakeAPhoto}/>;
+    }else if (!this.state.havePhotoCrop && !this.state.haveUploadImage){
+    // }else if (!this.state.havePhotoCrop){
+      var ReturnView = <CroppingImage hideAppTabBar={this.hideAppTabBar} showAppTabBar={this.showAppTabBar} source_base64={this.state.source_base64} cropping_data={this.state.cropping_data} source_url={this.state.source_url} submit={this.submit_crop} rechoose={this.rechoose_crop}/>
     }else if(this.props.chatData.data.name == ''){
       var ReturnView = <PostNameView postName={this.postName}/>;
     }else if ((!this.props.haveAnswerToday) && this.state.onLogSignUp) {
@@ -1047,16 +1198,64 @@ var Chat = React.createClass({
   showPaddingTop(){
     this.setState({paddingTopHide:false});
   },
-  submit_crop(data){
-    this.setState({havePhotoCrop:true,cropping_data:data});
-    this.hideAppTabBarOrShow();
-  },
-  sendVerifyMail(email){
-    // 紀錄已寄信
-    // await AsyncStorage.setItem("chat_state_haveSend", selectedValue);
+  submit_crop(original_size,path,data){
+    console.log("cropping_data==>",data);
+    var data = data;
+    if (!data.rule) {
+      data.rule = 1;
+    }
+    var window_width = Dimensions.get('window').width;
+    var moveLeftCount_bi = data.y/window_width*data.rule;
+    var moveTopCount_bi = data.x/window_width*original_size.height/original_size.width*data.rule;
+    var crop_ori_bi = 1/data.rule;
+    console.log(window_width,moveLeftCount_bi,moveTopCount_bi,crop_ori_bi)
+    var x = original_size.width*moveLeftCount_bi;
+    var y = original_size.width*moveTopCount_bi;
+    var w = original_size.width*crop_ori_bi;
+    var h = original_size.width*crop_ori_bi;
+    // 上傳相片
+    console.log(source_for_update);
+    var data = {
+      'user[avatar]':source_for_update,
+      'user[avatar_crop_x]':String(x),
+      'user[avatar_crop_y]':String(y),
+      'user[avatar_crop_w]':String(w),
+      'user[avatar_crop_h]':String(h)
+    };
+    fetch("https://colorgy.io/api/v1/me.json?access_token="+this.props.accessToken,data,{
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'patch',
+    })
+    .then((response)=>{
+      var data = JSON.parse(response._bodyInit);
+      console.log(data);
+      this.setState({newImage:data.avatar_url});
+      console.log({
+        uuid:this.props.uuid,
+        accessToken:this.props.accessToken
+      })
+      fetch("http://chat.colorgy.io/users/update_from_core",    {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uuid:this.props.uuid,
+          accessToken:this.props.accessToken
+        })
+      })
+      .then((response)=>{
+      })
+    })
+    // 確定一下
+    this.setState({havePhotoCrop:true,cropping_data:data,havePhoto:false});
   },
   rechoose_crop(){
-    this.setState({havePhoto:false,source_url:''});
+    this.setState({havePhoto:false,source_url:'',source_base64:''});
     this.hideAppTabBarOrShow();
   },
   say_hello(target,msg){
@@ -1083,20 +1282,20 @@ var Chat = React.createClass({
       this.props.answerToday();
       this._lastest_answer_store();
       // 紀錄已完成資料填寫
-      this._chat_state_haveSignUp().done()
+      this._chat_state_haveSignUp().done();
     }
   },
   pickPhotoOrTakeAPhoto(){
     var options = {
       title: '選擇活動', // specify null or empty string to remove the title
-      cancelButtonTitle: '使用FB大頭貼',
+      cancelButtonTitle: '取消',
       takePhotoButtonTitle: '拍攝照片', // specify null or empty string to remove this button
       chooseFromLibraryButtonTitle: '上傳相簿照片', // specify null or empty string to remove this button
       cameraType: 'back', // 'front' or 'back'
       mediaType: 'photo', // 'photo' or 'video'
       videoQuality: 'high', // 'low', 'medium', or 'high'
-      maxWidth: 1500, // photos only
-      maxHeight: 1500, // photos only
+      maxWidth: 3000, // photos only
+      maxHeight: 3000, // photos only
       quality: 1, // photos only
       allowsEditing: false, // Built in iOS functionality to resize/reposition the image
       noData: false, // photos only - disables the base64 `data` field from being generated (greatly improves performance on large photos)
@@ -1123,16 +1322,19 @@ var Chat = React.createClass({
         var source_base = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
         // uri (on android)
         var source = {uri: response.uri, isStatic: true};
-        console.log(source.uri);
+        console.log(source_base.uri);
+        source_for_update = source_base.uri;
         this.setState({
           source_url: source.uri,
+          source_base64:source_base.uri,
           havePhoto: true,
         });
-        this.hideAppTabBarOrShow();
+        console.log("this.state.source_base64 == source_base.uri?==>",this.state.source_base64 == source_base.uri)
       }
     });
   },
 });
+
 
 var styles = StyleSheet.create({
   topTab:{

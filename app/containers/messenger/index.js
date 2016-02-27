@@ -45,6 +45,7 @@ var Messenger = React.createClass({
       },
       showBigHead:false,
       chatProgress:0,
+      totalMessageLength:0,
     }
   },
   getDefaultProps: function() {
@@ -57,14 +58,47 @@ var Messenger = React.createClass({
         "aliasId2": "Dannnny",
         "imageId2": "https://s3-ap-northeast-1.amazonaws.com/colorgy-core/users/avatars/blur_2x/4f47f6cbe1c94061d682cf72be94893ba917ec6a.?1454294064",
       },
+      friendId:"wqewqwqw",
       userId:"56a470cfb94e4a5a7f5394b4",
-      friendId:"56a470aab94e4a5a7f5394b3",
+      chatroomId:"56a470aab94e4a5a7f5394b3",
       uuid:"68efe6c7-66b8-43bd-8046-ca228a65767e",
       accessToken:"384d7fcde66ae1e8ba1c84f73e5ba90b485ef7ca7e9b8677319559e4ac10bfc40aa1df819078b00d3fe2698d5fb3d81e78e7341686ce3088181db30fe55626ad"
     };
   },
   getMessages() {
     return this.state.messages;
+  },
+  getMoreMessages(){
+    var offset = this.state.totalMessageLength - this.state.messages.length - 26;
+    var doOrNot = true;
+    var getTotal = 25;
+    if (offset >= 0) {
+      offset = offset
+    }else if (offset < 0 && offset > -25) {
+      getTotal = getTotal + offset;
+      offset = 0;
+    }else{
+      doOrNot = false;
+    }
+    console.log(offset,getTotal);
+    if (doOrNot) {
+      chatAPI.chatroom_more_message(this.props.accessToken,this.props.uuid,this.props.chatData.id,this.props.chatroomId,offset)
+      .then((response) => response.text())
+      .then((responseText) => {
+        var data = JSON.parse(responseText)
+        console.log(data);
+        var new_messages = [];
+        var i = 0;
+        var itv = setInterval(function(){
+          console.log('receive msg index:',i,"to the begining");
+          this.handleReceive(data.messageList[i],false,true);
+          i = i+1;
+          if (i+1 == getTotal) {
+            clearInterval(itv);
+          }
+        }.bind(this),1)
+      })
+    }
   },
   showImagePicker:function(){
     var options = {
@@ -111,13 +145,12 @@ var Messenger = React.createClass({
       var xhr = new XMLHttpRequest();
       xhr.open('POST', "http://chat.colorgy.io/upload/upload_chat_image");
       xhr.onload = () => {
-        console.log("responseText",responseText);
-        if (xhr.status !== 201) {
-          Alert.alert( 
-            'Upload failed',
-            'Expected HTTP 200 OK response, got ' + xhr.status + "/" + xhr.responseText
-          );
-          return;
+        if (xhr.status == 200) {
+          var url = JSON.parse(xhr.responseText).result;
+          ToastAndroid.show('上傳完成',ToastAndroid.SHORT);
+          var content = {imgSrc: url};
+          chatAPI.sendMessage(this.state.io,this.state.chatroomId,this.props.chatData.id,this.state.socketId, "image", content);
+          var msg = {type:'image',content:content,userId:this.props.userId,date:new Date()};
         }
 
         if (!xhr.responseText) {
@@ -134,14 +167,18 @@ var Messenger = React.createClass({
         type: 'image/jpeg',
         name: 'photo.jpg',
       };
-      body.append('file', file);
+      formdata.append('file', file);
       xhr.send(formdata);
     }
   });
   },
-  handleReceive(message,firstLoad) {
+  handleReceive(message,firstLoad,getMore) {
     this.update_chatProgress(message.chatProgress)
-    if (message.userId != this.props.chatData.id || firstLoad || message.type == 'image') {
+    if (!firstLoad && !getMore) {
+      this.setState({totalMessageLength:this.state.totalMessageLength+1});
+      console.log(this.state.totalMessageLength);
+    }
+    if (message.userId != this.props.chatData.id || firstLoad || message.type == 'image' || getMore) {
       var msg = { 
         image: {uri:this.props.friendImage},
         date: new Date(2015, 0, 16, 19, 0),
@@ -161,7 +198,13 @@ var Messenger = React.createClass({
         msg.position = 'right';
         msg.image = null;
       };
-      this.setState({messages:this.state.messages.concat(msg)});
+      if (getMore) {
+        var tp = [];
+        tp.push(msg);
+        this.setState({messages:tp.concat(this.state.messages)});
+      }else{
+        this.setState({messages:this.state.messages.concat(msg)});
+      }
     };
   },
   componentWillMount(){
@@ -199,13 +242,14 @@ var Messenger = React.createClass({
     chatAPI.connectToServer()
     .then((socket)=>{
         this.setState({io:socket});
-        chatAPI.connectToChatRoom(this.state.io,this.props.chatData.id,this.props.friendId,this.props.uuid,this.props.accessToken)
+        chatAPI.connectToChatRoom(this.state.io,this.props.chatData.id,this.props.chatroomId,this.props.uuid,this.props.accessToken)
         .then((response)=>{
           console.log(response);
           if (response.statusCode == 200) {
             var info = response.body.result;
             console.log(info);
             this.update_chatProgress(info.chatProgress);
+            this.setState({totalMessageLength:parseInt(info.totalMessageLength)});
             for (var i = info.messageList.length - 1; i >= 0; i--) {
               this.handleReceive(info.messageList[i],true);
             }
@@ -268,6 +312,9 @@ var Messenger = React.createClass({
   showBigHead(){
     this.setState({showBigHead:!this.state.showBigHead});
   },
+  handleScroll(event){
+    console.log(event);
+  },
   render() {
     if (this.state.menuOpen) {
       var leftIcon = require('../../assets/images/icon_chat_up.png')
@@ -290,6 +337,8 @@ var Messenger = React.createClass({
         >
         <View>
           <GiftedMessenger
+            getMoreMessages={this.getMoreMessages}
+            handleScroll={this.handleScroll}
             ref={(c) => this._GiftedMessenger = c}
             autoFocus={false}
             messages={this.getMessages()}

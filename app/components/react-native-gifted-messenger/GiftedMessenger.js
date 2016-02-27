@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react-native');
+var ImageWand = require('react-native-imagewand');
 
 var {
   Text,
@@ -12,7 +13,8 @@ var {
   Image,
   TouchableNativeFeedback,
   Platform,
-  PixelRatio
+  PixelRatio,
+  Alert
 } = React;
 
 var moment = require('moment');
@@ -21,6 +23,28 @@ var extend = require('extend');
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 var GiftedSpinner = require('react-native-gifted-spinner');
 var Button = require('react-native-button');
+
+var ImageResizing = React.createClass({
+  getInitialState(){
+    return{
+      width:200,
+      height:200,
+    }
+  },
+  render(){
+    return(
+      <ImageWand
+        style={{flex: 1,height: this.state.height,width:this.state.width}}
+        src={this.props.uri}
+        shouldNotifyLoadEvents={true}
+        onImageInfo={this._imageInfo}/>
+    )
+  },
+  _imageInfo(event){
+    var bi = event.height/event.width
+    this.setState({height:bi*200});
+  }
+})
 
 var GiftedMessenger = React.createClass({
   
@@ -280,7 +304,7 @@ var GiftedMessenger = React.createClass({
 
   renderImageContent:function(url){
     return(
-      <Image style={{flex: 1,height: 200,width:200}} resizeMode={'contain'} source={{uri:url}}/>
+      <ImageResizing uri={url}/>
     )
   },
   renderRow(rowData = {}, sectionID = null, rowID = null) {
@@ -293,7 +317,7 @@ var GiftedMessenger = React.createClass({
       <View>
       {this.renderDate(rowData, rowID)}
       {rowData.position === 'left' ? this.renderName(rowData, rowID) : null}
-      <View style={this.styles.rowContainer}>
+      <View style={rowData.position === 'right' ?[this.styles.rowContainer,{alignSelf:'flex-end'}]:[this.styles.rowContainer,{alignSelf:'flex-start'}]}>
         {rowData.position === 'left' ? this.renderImage(rowData, rowID) : null}
         {rowData.position === 'right' ? this.renderErrorButton(rowData, rowID) : null}
         <View style={[(rowData.type == 'image' ? { borderRadius: 0,paddingLeft: 2,paddingRight: 2,paddingBottom: 2,paddingTop: 2,} : this.styles.bubble ), (rowData.position === 'left' ? this.styles.bubbleLeft : this.styles.bubbleRight), (rowData.status === 'ErrorButton' ? this.styles.bubbleError : null)]}>
@@ -482,7 +506,12 @@ var GiftedMessenger = React.createClass({
       }
     }
   },
-  
+  handleScroll: function(event: Object) {
+   if (event.nativeEvent.contentOffset.y == event.nativeEvent.contentSize.height - event.nativeEvent.layoutMeasurement.height) {
+    this.props.getMoreMessages();
+    console.log('update');
+   };
+  },
   renderAnimatedView() {
     if (this.props.inverted === true) {
       return (
@@ -496,10 +525,11 @@ var GiftedMessenger = React.createClass({
             ref='listView'
             dataSource={this.state.dataSource}
             renderRow={this.renderRow}
+            onScroll={this.handleScroll}
             renderFooter={this.renderLoadEarlierMessages}
             style={this.styles.listView}
     
-            renderScrollComponent={props => <InvertibleScrollView {...props} inverted />}
+            renderScrollComponent={props => <InvertibleScrollView {...props} handleScroll={this.props.handleScroll} inverted />}
     
             // not working android RN 0.14.2
             onKeyboardWillShow={this.onKeyboardWillShow}

@@ -14,15 +14,16 @@ function clean_storage () {
       AsyncStorage.removeItem('chat_state_haveSend').done();
       AsyncStorage.removeItem('chat_data_id').done();
       AsyncStorage.removeItem('lastest_answer').done();
+      AsyncStorage.removeItem('chat_state_haveUploadImage').done();
     }catch(e){
     	console.log("clean_storage_fail:",e);
     	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
     }
 }
 
-function connectToChatRoom (soc,userId,friendId,uuid,accessToken) {
+function connectToChatRoom (soc,userId,chatroomId,uuid,accessToken) {
 	return new Promise(function(resolve, reject){
-		var _postData = {userId:userId,friendId:friendId,uuid:uuid,accessToken:accessToken};
+		var _postData = {userId:userId,chatroomId:chatroomId,uuid:uuid,accessToken:accessToken};
 		console.log('============= connect to chat room =============',_postData)
 		soc.emit(
 		    'post', 
@@ -56,6 +57,33 @@ function sendMessage (soc,chatroomId, userId, socketId, type, content){
 					url:'/chatroom/send_message'
 			}
 		)
+}
+
+function chatroom_more_message(access_token,uuid,userId,chatroomId,offset){
+		return new Promise(function(resolve,reject){
+		console.log('============= chatroom_more_message =============')
+	  fetch(socketServer + '/chatroom/more_message', {
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify({
+		    uuid:uuid,
+		    accessToken:access_token,
+		    chatroomId:chatroomId,
+		    userId:userId,
+		    offset:offset,
+		  })
+		})
+		.then(function(data) {
+			resolve(data);
+	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+	    resolve(false);
+	    console.log("error",error);
+	  })
+  });
 }
 
 function connectToServer(){
@@ -251,6 +279,30 @@ function update_from_core(access_token,uuid){
 	  })
   });
 };
+
+function hi_get_my_list(accessToken,uuid,userId) {
+	return new Promise(function(resolve, reject) {
+		fetch(socketServer+'/hi/get_my_list',{
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify({
+		  	accessToken:accessToken,
+		  	uuid:uuid,
+		  	userId:userId,
+		  })
+		})
+		.then(function(data) {
+	    	resolve(data);
+	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+		    resolve(false)
+		    console.log("error",error)
+	  })
+	})
+}
 
 function hi_check_hi (accessToken,uuid,userId,targetId) {
 	return new Promise(function (resolve, reject) {
@@ -678,6 +730,8 @@ socket = {
   chatroom_leave_chatroom:chatroom_leave_chatroom,
   users_remove_chatroom:users_remove_chatroom,
   send_email_verify:send_email_verify,
+  hi_get_my_list:hi_get_my_list,
+  chatroom_more_message:chatroom_more_message,
 };
 
 if (window) window.socket = socket;

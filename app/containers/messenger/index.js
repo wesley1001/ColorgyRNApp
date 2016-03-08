@@ -26,7 +26,7 @@ import ga from '../../utils/ga';
 import chatAPI from '../../utils/chatAPI';
 
 var UIImagePickerManager = require('NativeModules').UIImagePickerManager;
-var ImageWand = require('react-native-imagewand');
+var ImageWand = require('../components/react-native-imagewand');
 
 var ImageResizing = React.createClass({
   getInitialState(){

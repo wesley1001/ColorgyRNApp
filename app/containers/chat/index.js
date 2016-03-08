@@ -31,7 +31,7 @@ import Status from '../../components/Status'
 import chatAPI from '../../utils/chatAPI';
 import colorgyAPI from '../../utils/colorgyAPI';
 
-var ImageWand = require('react-native-imagewand');
+var ImageWand = require('../components/react-native-imagewand');
 
 import Report from './../report';
 

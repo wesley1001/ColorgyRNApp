@@ -11,25 +11,42 @@ import React, {
   BackAndroid,
   TouchableNativeFeedback,
   TextInput,
+  Dimensions,
+  TouchableWithoutFeedback,
+  Alert,
+  PullToRefreshViewAndroid
 } from 'react-native';
 import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Messenger from './../messenger';
+import Report from './../report'
+
 import Text from '../../components/Text';
 import TitleBarLayout from '../../components/TitleBarLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
+import Dialog from '../../components/Dialog';
 
+import chatAPI from '../../utils/chatAPI';
 import ga from '../../utils/ga';
 
 var Hellos = React.createClass({
-
+  getInitialState(){
+    return{
+      show_little_Tabs: [],
+      isRefreshing:false,
+    }
+  },
   componentWillMount() {
   },
 
   componentDidMount() {
     BackAndroid.addEventListener('hardwareBackPress', function() {
-      this.props.navigator.pop();
+      if (this.state.show_little_Tabs.length>=1) {
+        this.setState({show_little_Tabs:[]});
+      }else{
+        this.props.navigator.pop();
+      }
     }.bind(this));
   },
 
@@ -38,60 +55,127 @@ var Hellos = React.createClass({
 
   _reportRouteUpdate() {
   },
-
+  _handleBack(){
+    this.props.navigator.pop();
+  },
+  more(key){
+    if(this.state.show_little_Tabs.indexOf(key)>=0){
+      this.hideMore();
+    }else{
+      this.setState({
+        show_little_Tabs: [key]
+      })
+    }
+  },
+  hideMore(){
+    var temp = [];
+    this.setState({
+      show_little_Tabs: temp
+    })
+  },
+  response(hiId,res){
+    chatAPI.hi_response(this.props.accessToken,this.props.uuid,this.props.chatData.id,hiId,res)
+    .then((response)=>{
+      this.props.data_refresh();
+    })
+    ToastAndroid.show('已回應',ToastAndroid.SHORT);
+    this.props.navigator.pop();
+  },
+  refresh_data(){
+    this.setState({isRefreshing: true});
+    this.props.data_refresh();
+    setTimeout(function() {
+      this.setState({isRefreshing: false});
+    }.bind(this),500)
+  },
   render() {
     return (
-      <TitleBarLayout
-        enableOffsetTop={this.props.translucentStatusBar}
-        offsetTop={this.props.statusBarHeight}
-        style={[this.props.style,{paddingTop:25,backgroundColor:'white'}]}
-        title="打招呼"
-        textColor={"#000"}
-        color={"#FFF"}
-        leftAction={
-          <TitleBarActionIcon onPress={this._handleBack}>
-            <Icon name="arrow-back" size={24} color="#FFFFFF" />
-          </TitleBarActionIcon>
-        }
-      >
-        <ScrollView style={{flex:1,marginTop:6/PixelRatio.get()}}>
-          <View>
-            <View style={{paddingTop:10,paddingBottom:10,height:100,backgroundColor:'white',flexDirection:'row',marginBottom:6/PixelRatio.get()}}>
-              <View style={[styles.allCenter,{flex:1}]}>
-                  <Image
-                    style={{width:60,height:60,borderRadius:60/2}}
-                    source={{uri: 'http://www.saveimg.com/images/2014/04/06/15320942105762524820291295669347nxkjMS.jpg'}} />
-              </View>
-              <View style={{flex:3,paddingLeft:5}}>
-                <View style={{justifyContent:'center',flex:1}}>
-                  <Text style={{fontSize:18,}}>超級大魟魚</Text>
-                </View>
-                <View style={{justifyContent:'center',flex:1}}>
-                  <Text style={{fontSize:13,color:"#F89680"}}>我最喜歡就是浪漫電影我最喜歡</Text>
-                </View>
-                <View style={{justifyContent:'center',flex:1}}>
-                  <Text style={{fontSize:15,}}>大魟魚...什麼名字啊？？</Text>
-                </View>
-              </View>
-              <View style={{flex:1}}>
-                <Text style={{marginTop:10}}>。</Text>
-              </View>
-            </View>
-            <View style={{flexDirection:'row',marginTop:2/PixelRatio.get()}}>
-              <View style={[styles.allCenter,{flex:1,margin:1/PixelRatio.get(),backgroundColor:'white',height:45}]}>
-                <Image
-                  style={{width:30,height:30}}
-                  source={{uri: 'data:image/png;base64,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'}} />
-              </View>
-              <View style={[styles.allCenter,{flex:1,margin:1/PixelRatio.get(),backgroundColor:'white',height:45}]}>
-                <Image
-                  style={{width:30,height:30}}
-                  source={{uri: 'data:image/png;base64,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'}} />
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      </TitleBarLayout>
+      <View>
+        <TitleBarLayout
+          enableOffsetTop={this.props.translucentStatusBar}
+          offsetTop={this.props.statusBarHeight}
+          style={[this.props.style,{paddingTop:25,backgroundColor:'white'}]}
+          title="打招呼"
+          textColor={"#000"}
+          color={"#FFF"}
+          actions={[{ title: '返回', icon: require('../../assets/images/back_orange.png'), onPress: this._handleBack, show: 'always' },]}
+        >
+        <PullToRefreshViewAndroid
+        style={{flex: 1}}
+        refreshing={this.state.isRefreshing}
+        onRefresh={this.refresh_data}
+        colors={['#FFF', '#FFF', '#FFF']}
+        progressBackgroundColor={'#F89680'}
+        >
+          <ScrollView style={{flex:1,marginTop:6/PixelRatio.get()}}>
+              {this.props.hellos.map(function(hello,index){
+                if (this.state.show_little_Tabs.indexOf(index)>=0) {
+                  var show_little_Tabs = true;
+                }else{
+                  var show_little_Tabs = false;
+                }
+                return(
+                  <View key={index}>
+                    <View style={{paddingTop:10,paddingBottom:10,height:100,backgroundColor:'white',flexDirection:'row',marginBottom:6/PixelRatio.get()}}>
+                      <View style={[styles.allCenter,{flex:1}]}>
+                          <Image
+                            style={{width:60,height:60,borderRadius:60/2}}
+                            source={{uri: hello.image}}
+                          />
+                      </View>
+                      <View style={{flex:3,paddingLeft:5}}>
+                        <View style={{justifyContent:'center',flex:1}}>
+                          <Text style={{fontSize:18,}}>{hello.name}</Text>
+                        </View>
+                        <View style={{justifyContent:'center',flex:1}}>
+                          <Text style={{fontSize:13,color:"#F89680"}}>{hello.lastAnswer}</Text>
+                        </View>
+                        <View style={{justifyContent:'center',flex:1}}>
+                          <Text style={{fontSize:15,}}>{hello.message}</Text>
+                        </View>
+                      </View>
+                      <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end'}}>
+                        {show_little_Tabs?<View style={{height:80,backgroundColor:'#979797',borderRadius:5}}>
+                          <TouchableNativeFeedback>
+                            <View style={{height:40,marginRight:10,marginLeft:10,flexDirection:'column',justifyContent:'center'}}>
+                              <Text style={{color:'white'}}>檢舉對方</Text>
+                            </View>
+                          </TouchableNativeFeedback>
+                          <TouchableNativeFeedback>
+                            <View style={{height:40,marginRight:10,marginLeft:10,flexDirection:'column',justifyContent:'center'}}>
+                              <Text style={{color:'white'}}>封鎖對方</Text>
+                            </View>
+                          </TouchableNativeFeedback>
+                        </View>:null}
+                        <TouchableNativeFeedback onPress={()=>this.more(index)}>
+                          <View style={{padding:15}}>
+                            <Image
+                              style={{width:5.76/1.2,height:28.8/1.2}}
+                              source={require('../../assets/images/icon_friend_more.png')} />
+                          </View>
+                        </TouchableNativeFeedback>
+                      </View>
+                    </View>
+                    <View style={{flexDirection:'row',marginTop:2/PixelRatio.get()}}>
+                      <TouchableNativeFeedback onPress={()=>this.response(hello.id,false,index)}><View style={[styles.allCenter,{flex:1,margin:1/PixelRatio.get(),backgroundColor:'white',height:45}]}>
+                        <Image
+                          style={{width:20,height:20}}
+                          source={require('../../assets/images/icon_friend_close.png')}
+                          />
+                      </View></TouchableNativeFeedback>
+                      <TouchableNativeFeedback onPress={()=>this.response(hello.id,true,index)}><View style={[styles.allCenter,{flex:1,margin:1/PixelRatio.get(),backgroundColor:'white',height:45}]}>
+                        <Image
+                          style={{width:39.88/1.5,height:28.8/1.5}}
+                          source={require('../../assets/images/icon_friend_ok.png')}/>
+                      </View></TouchableNativeFeedback>
+                    </View>
+                  </View>
+                )
+              }.bind(this))}
+            </ScrollView>
+          </PullToRefreshViewAndroid>
+        </TitleBarLayout>
+      </View>
     );
   }
 });
@@ -101,7 +185,8 @@ var Friends = React.createClass({
     return{
       search_show:false,
       search_word:'',
-      exampleList:[{name:'超級大缸魚',imgSrc:'http://www.saveimg.com/images/2014/04/06/15320942105762524820291295669347nxkjMS.jpg',time:'2小時',answer:'我最喜荒浪㤶店癮惹',lastTalk:'你上次說那什麼來著？'},{name:'超級大紅魚',imgSrc:'http://www.saveimg.com/images/2014/04/06/15320942105762524820291295669347nxkjMS.jpg',time:'2小時',answer:'我最喜荒浪㤶店癮惹',lastTalk:'你上次說那什麼來著？'},{name:'Rocker',imgSrc:'http://www.saveimg.com/images/2014/04/06/15320942105762524820291295669347nxkjMS.jpg',time:'2小時',answer:'我最喜荒浪㤶店癮惹',lastTalk:'你上次說那什麼來著？'},{name:'超級大缸魚',imgSrc:'http://www.saveimg.com/images/2014/04/06/15320942105762524820291295669347nxkjMS.jpg',time:'2小時',answer:'我最喜荒浪㤶店癮惹',lastTalk:'你上次說那什麼來著？'},{name:'超級大紅魚',imgSrc:'http://www.saveimg.com/images/2014/04/06/15320942105762524820291295669347nxkjMS.jpg',time:'2小時',answer:'我最喜荒浪㤶店癮惹',lastTalk:'你上次說那什麼來著？'},{name:'Rocker',imgSrc:'http://www.saveimg.com/images/2014/04/06/15320942105762524820291295669347nxkjMS.jpg',time:'2小時',answer:'我最喜荒浪㤶店癮惹',lastTalk:'你上次說那什麼來著？'}]
+      strangerList:this.props.strangerList,
+      isRefreshing:false,
     }
   },
 
@@ -110,11 +195,12 @@ var Friends = React.createClass({
 
   componentDidMount() {
     BackAndroid.addEventListener('hardwareBackPress', function() {
-      this.setState({search_show:false,search_word:''});
+        this.setState({search_show:false,search_word:''});
     }.bind(this));
   },
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps() {
+    this.setState({strangerList:this.props.strangerList});
   },
 
   _reportRouteUpdate() {
@@ -123,13 +209,37 @@ var Friends = React.createClass({
   handleSearch(){
     this.setState({search_show:true});
   },
-
+  longPress(chatroomId){
+    Alert.alert(
+      '你確定要刪除對話？',
+      '聊天紀錄將被直接刪除，但對方還是可以密你呦～',
+      [
+        {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: '刪除', onPress: () => this.delete_chatroom(chatroomId)},
+      ]
+    )
+  },
+  delete_chatroom(chatroomId){
+    chatAPI.users_remove_chatroom(this.props.accessToken,this.props.uuid,this.props.chatData.id,chatroomId);
+  },
+  refresh_data(){
+    this.setState({isRefreshing: true});
+    this.props.data_refresh();
+    setTimeout(function() {
+      this.setState({isRefreshing: false});
+    }.bind(this),500)
+  },
   render() {
-    var friendList = this.state.exampleList;
+    var friendList = this.state.strangerList;
+    if (this.props.hellos && this.props.hellos.length) {
+      var helloCount = this.props.hellos.length
+    }else{
+      var helloCount = 0;
+    }
     if (this.state.search_word.length>0) {
       var friendTemp = [];
       for (var i = friendList.length - 1; i >= 0; i--) {
-        if(friendList[i].name.indexOf(this.state.search_word)>=0){
+        if(friendList[i].name.toLowerCase().indexOf(this.state.search_word.toLowerCase())>=0){
           friendTemp.push(friendList[i]);
         }
       };
@@ -153,39 +263,50 @@ var Friends = React.createClass({
             <View style={[styles.allCenter,{backgroundColor:'white',flexDirection:'row'}]}>
                 <Text style={{fontSize:18,color:'#000',}}>打招呼 </Text>
                 <View style={{backgroundColor:"#F89680",width:20,height:20,borderRadius:10}}>
-                  <Text style={{textAlign:'center',fontSize:15,color:'#FFF'}}>2</Text>
+                  <Text style={{textAlign:'center',fontSize:15,color:'#FFF'}}>{helloCount}</Text>
                 </View>
             </View>
           </TouchableOpacity>
-          <ScrollView style={{flex:7,marginTop:6/PixelRatio.get()}}>
-            {friendList.map(function(friend, index){
-              return(
-                <TouchableNativeFeedback key={index} onPress={this.goChat}>
-                  <View style={{paddingTop:10,paddingBottom:10,height:100,backgroundColor:'white',flexDirection:'row',marginBottom:6/PixelRatio.get()}}>
-                    <View style={[styles.allCenter,{flex:1}]}>
-                        <Image
-                          style={{width:60,height:60,borderRadius:60/2}}
-                          source={{uri: friend.imgSrc}} />
-                    </View>
-                    <View style={{flex:3,paddingLeft:5}}>
-                      <View style={{justifyContent:'center',flex:1}}>
-                        <Text style={{fontSize:18,}}>{friend.name}</Text>
+          <PullToRefreshViewAndroid
+          style={{flex:7}}
+          refreshing={this.state.isRefreshing}
+          onRefresh={this.refresh_data}
+          colors={['#FFF', '#FFF', '#FFF']}
+          progressBackgroundColor={'#F89680'}
+          >
+            <ScrollView style={{marginTop:6/PixelRatio.get()}}>
+              {friendList.map(function(friend, index){
+                return(
+                  <TouchableNativeFeedback key={index} onPress={()=>this.goChat(friend.friendId,friend.messageList,friend,friend.chatroomId)} onLongPress={()=>this.longPress(friend.id)}>
+                    <View style={{paddingTop:10,paddingBottom:10,height:100,backgroundColor:'white',flexDirection:'row',marginBottom:6/PixelRatio.get()}}>
+                      <View style={[styles.allCenter,{flex:1}]}>
+                          <Image
+                            style={{width:60,height:60,borderRadius:60/2}}
+                            source={{uri: friend.image}} />
                       </View>
-                      <View style={{justifyContent:'center',flex:1}}>
-                        <Text style={{fontSize:13,color:"#F89680"}}>{friend.answer}</Text>
+                      <View style={{flex:3,paddingLeft:5}}>
+                        <View style={{justifyContent:'center',flex:1}}>
+                          <Text style={{fontSize:20,}}>{friend.name}</Text>
+                        </View>
+                        <View style={{flex:1,flexDirection:'row',position:'relative',top:5}}>
+                          <Image
+                            style={{width:12,height:12,position:'relative',top:5,marginRight:5}}
+                            source={require('../../assets/images/icon_friend_message.png')} />
+                          <Text style={{fontSize:13,color:"#F89680"}}>{friend.lastAnswer}</Text>
+                        </View>
+                        <View style={{justifyContent:'center',flex:1}}>
+                          <Text style={{fontSize:16,}}>{friend.lastContent}</Text>
+                        </View>
                       </View>
-                      <View style={{justifyContent:'center',flex:1}}>
-                        <Text style={{fontSize:15,}}>{friend.lastTalk}</Text>
+                      <View style={{flex:1}}>
+                        <Text style={{marginTop:10}}>{friend.updatedAt?friend.updatedAt.split('T')[0].split('-')[1]+'/'+friend.updatedAt.split('T')[0].split('-')[2]:'1/1'}</Text>
                       </View>
                     </View>
-                    <View style={{flex:1}}>
-                      <Text style={{marginTop:10}}>{friend.time}</Text>
-                    </View>
-                  </View>
-                </TouchableNativeFeedback>
-              )
-            }.bind(this))}
-          </ScrollView>
+                  </TouchableNativeFeedback>
+                )
+              }.bind(this))}
+            </ScrollView>
+          </PullToRefreshViewAndroid>
         </TitleBarLayout>
         {this.state.search_show?
           <View style={{position:'absolute',top:25,left:0,backgroundColor:'white'}}>
@@ -203,27 +324,83 @@ var Friends = React.createClass({
   goToHello(){
     this.props.navigator.push({id:'hello'});
   },
-  goChat(){
-    console.log('gochat');
-    this.props.navigator.push({id:'messenger'});
+  goChat(friendId,messageList,chatroom_Data,chatroomId){
+    console.log('go chat with:',chatroom_Data);
+    this.props.navigator.push({id:'messenger',data:{data:chatroom_Data,friendId:friendId,messageList:messageList,image:chatroom_Data.image,chatroomId:chatroomId}});
   }
 });
 
 var Navi = React.createClass({
+  getInitialState(){
+    return{
+      hellos:[],
+      getInitData : false,
+      strangerList:[],
+      loading:true,
+    }
+  },
   render(){
+    if (this.props.chatStatus == 4) {
+      return(
+        <View style={{flex:1}}>
+          <Navigator
+            style={{flex:1}}
+            initialRoute = {{ id: 'home' }}
+            configureScene={this._configureScene}
+            renderScene={this._renderScene}
+          />
+        </View>
+      )
+    }else if (this.props.chatStatus == 5) {
+      var systemMessage = '您已被系統停權';
+    }else if (this.props.chatStatus == -1) {
+      var systemMessage = '與系統連線中';
+    }else{
+      var systemMessage = '請您先在模糊聊完成註冊';      
+    }
+
     return(
-    <View style={{flex:1}}>
-        <Navigator
-          style={{flex:1}}
-          initialRoute = {{ id: 'home' }}
-          configureScene={this._configureScene}
-          renderScene={this._renderScene}
-        />
+      <View style={styles.allCenter}>
+        <Text>{systemMessage}</Text>
       </View>
     )
   },
+  data_refresh(){
+    this.setState({loading:true});
+    chatAPI.hi_get_list(this.props.accessToken,this.props.uuid,this.props.chatData.id)
+    .then((response)=>{
+      if (response) {
+        this.setState({hellos:JSON.parse(response._bodyInit).result});
+      };
+    });
+    chatAPI.get_history_target(this.props.accessToken,this.props.uuid,this.props.chatData.id,'unspecified',0)
+    .then((response)=>{
+      if (response) {
+        this.setState({strangerList:JSON.parse(response._bodyInit).result,loading:false});
+      };
+    });
+  },
   _configureScene: function(route) {
     return Navigator.SceneConfigs.PushFromRight;
+  },
+  componentDidMount(){
+  },
+  componentWillReceiveProps(){
+    if (!this.state.getInitData && this.props.uuid != '' && this.props.accessToken != "" && this.props.chatData.id != 'loading') {
+      chatAPI.hi_get_list(this.props.accessToken,this.props.uuid,this.props.chatData.id)
+      .then((response)=>{
+        if (response) {
+          this.setState({hellos:JSON.parse(response._bodyInit).result});
+        };
+      });
+      chatAPI.get_history_target(this.props.accessToken,this.props.uuid,this.props.chatData.id,'unspecified',0)
+      .then((response)=>{
+        if (response) {
+          this.setState({strangerList:JSON.parse(response._bodyInit).result,loading:false});
+        };
+      });
+      this.setState({getInitData:true});
+    };
   },
   _renderScene: function(route, navigator) {
     _navigator = navigator;
@@ -231,17 +408,49 @@ var Navi = React.createClass({
       case 'home':
         return (
           <Friends
-            navigator={_navigator}/>
+            navigator={_navigator}
+            hellos={this.state.hellos}
+            strangerList={this.state.strangerList}
+            uuid={this.props.uuid}
+            accessToken={this.props.accessToken}
+            chatData={this.props.chatData}
+            data_refresh={this.data_refresh}/>
         );
       case 'hello':
         return (
           <Hellos
-            navigator={_navigator}/>
+            uuid={this.props.uuid}
+            accessToken={this.props.accessToken}
+            chatData={this.props.chatData}
+            navigator={_navigator}
+            hellos={this.state.hellos}
+            data_refresh={this.data_refresh}
+          />
         );
+      case 'report':
+        return(
+          <Report
+            friendId={route.friendId}
+            navigator={_navigator}
+            uuid={this.props.uuid}
+            type="block"
+            data_refresh={data_refresh}
+            accessToken={this.props.accessToken}
+            chatData={this.props.chatData}/>
+        )
       case 'messenger':
         return(
           <Messenger
-            navigator={_navigator}/>
+            navigator={_navigator}
+            uuid={this.props.uuid}
+            friendImage={route.data.image}
+            friendId={route.data.friendId}
+            chatroomId={route.data.chatroomId}
+            messageList={route.data.messageList}
+            accessToken={this.props.accessToken}
+            chatData={this.props.chatData}
+            chatRoomData={route.data.data}
+            data_refresh={this.data_refresh}/>
         )
     }
   },

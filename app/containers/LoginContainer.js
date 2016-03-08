@@ -14,6 +14,7 @@ import { FBLoginManager } from 'NativeModules';
 import Text from '../components/Text';
 
 import colorgyAPI from '../utils/colorgyAPI';
+import chatAPI from '../utils/chatAPI';
 import notify from '../utils/notify';
 
 import { doEnterDevModePress } from '../actions/devModeActions';
@@ -25,7 +26,6 @@ var LoginContainer = React.createClass({
       fbLoading: false
     };
   },
-
   render: function() {
     var { networkConnectivity } = this.props;
 

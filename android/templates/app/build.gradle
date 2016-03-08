@@ -140,4 +140,6 @@ dependencies {
     compile project(':react-native-android-statusbar')
     compile project(':react-native-image-picker')
     compile project(':reactwheelview')
+    compile project(':react-native-fs')
+    compile project(':react-native-imagewand')
 }

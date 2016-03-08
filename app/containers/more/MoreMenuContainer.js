@@ -19,6 +19,7 @@ import ListItem from '../../components/ListItem';
 
 import colorgyAPI from '../../utils/colorgyAPI';
 import notify from '../../utils/notify';
+import chatAPI from '../../utils/chatAPI';
 
 import { doClearAccessToken } from '../../actions/colorgyAPIActions';
 import { doEnterDevModePress } from '../../actions/devModeActions';
@@ -62,6 +63,7 @@ var MoreContainer = React.createClass({
 
   _handleLogout() {
     this.props.dispatch(doClearAccessToken());
+    chatAPI.clean_storage();
   },
 
   render: function() {

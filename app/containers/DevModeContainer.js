@@ -89,7 +89,7 @@ var DevModeContainer = React.createClass({
   },
 
   _handleRequestAccessToken: function() {
-    colorgyAPI.requestAccessToken({ username: 'pkc', password: 'qazwsxedc' });
+    colorgyAPI.requestAccessToken({ username: 'pkg', password: 'qazwsxedc' });
   },
 
   _handleRequestAccessTokenWithFailure: function() {

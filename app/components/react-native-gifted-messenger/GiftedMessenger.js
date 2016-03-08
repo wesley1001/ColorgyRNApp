@@ -13,8 +13,9 @@ var {
   Image,
   TouchableNativeFeedback,
   Platform,
+  TouchableOpacity,
   PixelRatio,
-  Alert
+  Alert,
 } = React;
 
 var moment = require('moment');
@@ -33,11 +34,13 @@ var ImageResizing = React.createClass({
   },
   render(){
     return(
-      <ImageWand
-        style={{flex: 1,height: this.state.height,width:this.state.width}}
-        src={this.props.uri}
-        shouldNotifyLoadEvents={true}
-        onImageInfo={this._imageInfo}/>
+      <TouchableOpacity onPress={()=>this.props.show_big_image(this.props.uri)}>
+        <ImageWand
+          style={{flex: 1,height: this.state.height,width:this.state.width}}
+          src={this.props.uri}
+          shouldNotifyLoadEvents={true}
+          onImageInfo={this._imageInfo}/>
+      </TouchableOpacity>
     )
   },
   _imageInfo(event){
@@ -107,7 +110,7 @@ var GiftedMessenger = React.createClass({
     
     var textInputHeight = 0;
     if (this.props.hideTextInput === false) {
-      textInputHeight = 44;
+      textInputHeight = 0;
     }
     
     this.listViewMaxHeight = this.props.maxHeight - textInputHeight;
@@ -125,6 +128,7 @@ var GiftedMessenger = React.createClass({
       height: new Animated.Value(this.listViewMaxHeight),
       isLoadingEarlierMessages: false,
       allLoaded: false,
+      isRefreshing:false
     };
   },
   
@@ -304,7 +308,7 @@ var GiftedMessenger = React.createClass({
 
   renderImageContent:function(url){
     return(
-      <ImageResizing uri={url}/>
+      <ImageResizing uri={url} show_big_image={this.props.show_big_image}/>
     )
   },
   renderRow(rowData = {}, sectionID = null, rowID = null) {
@@ -508,8 +512,14 @@ var GiftedMessenger = React.createClass({
   },
   handleScroll: function(event: Object) {
    if (event.nativeEvent.contentOffset.y == event.nativeEvent.contentSize.height - event.nativeEvent.layoutMeasurement.height) {
-    this.props.getMoreMessages();
+    if (!this.state.isRefreshing) {
+      this.props.getMoreMessages();
+      this.setState({isRefreshing: true});
+    }
     console.log('update');
+    setTimeout(function() {
+      this.setState({isRefreshing: false});
+    }.bind(this),500)
    };
   },
   renderAnimatedView() {
@@ -519,33 +529,37 @@ var GiftedMessenger = React.createClass({
           style={{
             height: this.state.height,
           }}
-
         >
-          <ListView
-            ref='listView'
-            dataSource={this.state.dataSource}
-            renderRow={this.renderRow}
-            onScroll={this.handleScroll}
-            renderFooter={this.renderLoadEarlierMessages}
-            style={this.styles.listView}
-    
-            renderScrollComponent={props => <InvertibleScrollView {...props} handleScroll={this.props.handleScroll} inverted />}
-    
-            // not working android RN 0.14.2
-            onKeyboardWillShow={this.onKeyboardWillShow}
-            onKeyboardWillHide={this.onKeyboardWillHide}
-    
-            /*
-              keyboardShouldPersistTaps={false} // @issue keyboardShouldPersistTaps={false} + textInput focused = 2 taps are needed to trigger the ParsedText links
-              keyboardDismissMode='interactive'
-            */
-        
-            keyboardShouldPersistTaps={true}
-            keyboardDismissMode='on-drag'
-        
-            {...this.props}
-          />
-  
+            {this.state.isRefreshing?
+              <Image
+              style={{width:30,height:30,alignSelf:'center'}}
+              source={require('../../assets/images/loaging.gif')} />
+             :null}
+            <ListView
+              ref='listView'
+              dataSource={this.state.dataSource}
+              renderRow={this.renderRow}
+              onScroll={this.handleScroll}
+              renderFooter={this.renderLoadEarlierMessages}
+              style={this.styles.listView}
+      
+              renderScrollComponent={props => <InvertibleScrollView {...props} handleScroll={this.props.handleScroll} inverted />}
+      
+              // not working android RN 0.14.2
+              onKeyboardWillShow={this.onKeyboardWillShow}
+              onKeyboardWillHide={this.onKeyboardWillHide}
+      
+              /*
+                keyboardShouldPersistTaps={false} // @issue keyboardShouldPersistTaps={false} + textInput focused = 2 taps are needed to trigger the ParsedText links
+                keyboardDismissMode='interactive'
+              */
+          
+              keyboardShouldPersistTaps={true}
+              keyboardDismissMode='on-drag'
+          
+              {...this.props}
+            />
+            {this.renderTextInput()}
         </Animated.View>
       );
     }
@@ -556,6 +570,7 @@ var GiftedMessenger = React.createClass({
         }}
 
       >
+          {this.state.isRefreshing?<Text></Text>:null}
         <ListView
           ref='listView'
           dataSource={this.state.dataSource}
@@ -577,7 +592,7 @@ var GiftedMessenger = React.createClass({
       
           {...this.props}
         />
-
+        {this.renderTextInput()}
       </Animated.View>
     );
 
@@ -589,9 +604,7 @@ var GiftedMessenger = React.createClass({
         style={this.styles.container}
         ref='container'
       >        
-        {(this.props.inverted === true ? this.renderAnimatedView() : null)}
-        {this.renderTextInput()}
-        {(this.props.inverted === false ? this.renderAnimatedView() : null)}            
+        {this.renderAnimatedView()}         
       </View>
     )
   },
@@ -644,7 +657,7 @@ var GiftedMessenger = React.createClass({
         alignItems:'center'
       },
       mainBtn:{
-        borderWidth:4/ PixelRatio.get(),
+        borderWidth:1,
         borderColor:'#F89680',
         paddingTop:5,
         paddingBottom:5,
@@ -656,7 +669,7 @@ var GiftedMessenger = React.createClass({
       },
       textInputContainer: {
         height: 44,
-        borderTopWidth: 1 / PixelRatio.get(),
+        borderTopWidth: 1,
         borderColor: '#F89680',
         flexDirection: 'row',
         backgroundColor:"#FFF",

@@ -358,6 +358,25 @@ var ProfileFirstLook = React.createClass({
   render(){
     console.log("this.props.data",this.props.data);
     var about = this.props.data.about;
+    var counterArray = [];
+    if (about.school != '') {
+      counterArray.push(about.school);
+    }
+    if (about.habitancy != '') {
+      counterArray.push(about.habitancy);
+    }
+    if (about.horoscope != '') {
+      counterArray.push(about.horoscope);
+    }
+    var dot_count = counterArray.length-1;
+    var top_string = '';
+    for (var i = 0; i < counterArray.length; i++) {
+      top_string = top_string + counterArray[i];
+      if (dot_count>0) {
+        top_string = top_string +' .';
+        dot_count = dot_count - 1;
+      }
+    }
     return(
       <View style={{flex:1}}>
         <ScrollView style={{marginBottom:50}}>
@@ -373,7 +392,7 @@ var ProfileFirstLook = React.createClass({
               </Image>
               <View style={{}}>
                 <View style={{marginLeft:Dimensions.get('window').width/10*0.4,padding:15,backgroundColor:'white',width:Dimensions.get('window').width/10*9.2,marginBottom:6/PixelRatio.get(),marginTop:6/PixelRatio.get()}}>
-                  <Text style={{color:"#4A4A4A",textAlign:'center'}}>{about.school} . {about.habitancy} . {about.horoscope}</Text>
+                  <Text style={{color:"#4A4A4A",textAlign:'center'}}>{top_string}</Text>
                 </View>
                 {this.props.data.about.conversation == '' && this.props.data.about.expertise == '' && this.props.data.about.passion == ''
                   ?
@@ -410,7 +429,7 @@ var ProfileFirstLook = React.createClass({
           </View>
         </TouchableNativeFeedback>
         <TouchableNativeFeedback onPress={this.back}>
-          <View style={{position:'absolute', top:15, left:15}}>
+          <View style={{position:'absolute', top:5, left:5,padding:10}}>
             <Image
               style={{width:18,height:18}}
               source={require('../../assets/images/chat_delete_orange.png')} />
@@ -440,9 +459,13 @@ var ProfileFirstLook = React.createClass({
           title="打招呼"
           content="簡短的問候你的未來知心～"
           word_limit={10}
+          pressBlack={this.closeDialog}
           options={[null,{text:'送出',method:this.hello,color:'#F89680'}]}/>:null}
       </View>
     )
+  },
+  closeDialog(){
+    this.setState({dialog:false});
   },
   sayHello(){
     if (this.state.been == true) {
@@ -501,6 +524,9 @@ var SelfEdit = React.createClass({
     }
     this.setState({data:datas});
   },
+  uploadImage(){
+    this.props.uploadAvatar();
+  },
   render(){
     return(
       <View style={{flex:1}}>
@@ -515,11 +541,13 @@ var SelfEdit = React.createClass({
           ]}
         >
           <ScrollView style={{flex:1,backgroundColor:"#fff"}}>
-            <View style={[styles.allCenter,{backgroundColor:"#FAF7F5"}]}>
-              <Image
-                style={{borderWidth:6,borderColor:"#FFF",margin:15,width:Dimensions.get('window').width/2,height:Dimensions.get('window').width/2,borderRadius:Dimensions.get('window').width/4}}
-                source={{uri: this.props.chatData.data.avatar_url}} />
-            </View>
+            <TouchableNativeFeedback onPress={this.uploadImage}>
+              <View style={[styles.allCenter,{backgroundColor:"#FAF7F5"}]}>
+                <Image
+                  style={{borderWidth:6,borderColor:"#FFF",margin:15,marginTop:50,width:Dimensions.get('window').width/2,height:Dimensions.get('window').width/2,borderRadius:Dimensions.get('window').width/4}}
+                  source={{uri: this.props.chatData.data.avatar_url}} />
+              </View>
+            </TouchableNativeFeedback>
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >暱稱</Text>
               <TextInput
@@ -584,6 +612,7 @@ var StrangerList = React.createClass({
       page:0,
       isRefreshing:false,
       like_me_list:[],
+      loading:true,
     }
   },
   submit(text){
@@ -711,6 +740,13 @@ var StrangerList = React.createClass({
           }.bind(this))}
         </ScrollView>
         </PullToRefreshViewAndroid>
+        {this.state.loading?
+          <View>
+            <Image
+              style={{alignSelf:'center',width:30,height:30}}
+              source={require('../../assets/images/loaging.gif')} />
+          </View>
+          :null}
         {this.props.haveAnswerToday?null:<Dialog 
           title="本日清晰問"
           content={this.props.problem_today}
@@ -735,7 +771,7 @@ var StrangerList = React.createClass({
             newList.unshift(temp);
           }
         }
-        this.setState({strangerList:newList});
+        this.setState({strangerList:newList,loading:false});
         console.log('update ---> strangerList',this.state.strangerList);
       })
   },
@@ -752,8 +788,7 @@ var StrangerList = React.createClass({
   },
   changeFilter(type){
     this.setState({strangerList:[],page:0});
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-    this.setState({filter:type});
+    this.setState({filter:type,loading:true});
     if (type == 'all') {
       this.get_available_target("unspecified",0);
     }else{
@@ -913,10 +948,10 @@ var CroppingImage = React.createClass({
           <View {...this._panResponder.panHandlers} style={{width:Dimensions.get('window').width,height:Dimensions.get('window').width,position:'absolute',top:(Dimensions.get('window').height - Dimensions.get('window').width)/2,left:0,backgroundColor:'rgba(0,0,0,0)',borderColor:'blue',borderWidth:1}}></View>
           <View style={{width:Dimensions.get('window').width,height:(Dimensions.get('window').height - Dimensions.get('window').width)/2,position:'absolute', backgroundColor:'rgba(0,0,0,.3)',left:0,top:Dimensions.get('window').width+(Dimensions.get('window').height - Dimensions.get('window').width)/2}}></View>
           <TouchableNativeFeedback onPress={this.bigger}>
-            <View style={{position:'absolute', top:10,left:10}}><Text style={{color:'white',fontSize:20}}>放大</Text></View>
+            <View style={this.props.mode=='self_edit'?{position:'absolute',top:30,left:10}:{position:'absolute', top:10,left:10}}><Text style={{color:'white',fontSize:20}}>放大</Text></View>
           </TouchableNativeFeedback>
           <TouchableNativeFeedback onPress={this.smaller}>
-            <View style={{position:'absolute', top:10,right:10}}><Text style={{color:'white',fontSize:20}}>縮小</Text></View>
+            <View style={this.props.mode=='self_edit'?{position:'absolute',top:30,right:10}:{position:'absolute', top:10,right:10}}><Text style={{color:'white',fontSize:20}}>縮小</Text></View>
           </TouchableNativeFeedback>
           <TouchableNativeFeedback onPress={()=>this.submit(this.state.original_size,this.props.source_base64,this.state.cropping_data)}>
             <View style={{position:'absolute', top:Dimensions.get('window').width+(Dimensions.get('window').height - Dimensions.get('window').width)/2+20,right:40}}><Text style={{color:'white',fontSize:20}}>確定</Text></View>
@@ -928,10 +963,18 @@ var CroppingImage = React.createClass({
     )
   },
   back(){
-    this.props.rechoose();
+    if(this.props.mode == 'self_edit'){
+      _navigator.pop();
+    }else{
+      this.props.rechoose();
+    }
   },
   submit(original_size,path,data){
-    this.props.submit(original_size,path,data);
+    if (this.props.mode=='self_edit') {
+      this.props.submit(original_size,path,data,true); 
+    }else{
+      this.props.submit(original_size,path,data);
+    }
   },
   bigger(){
     this.setState({imagesWidth:this.state.imagesWidth*1.1,imagesHeight:this.state.imagesHeight*1.1,rule:this.state.rule*1.1})
@@ -1018,7 +1061,21 @@ var MainView = React.createClass({
             chatData={this.props.chatData} 
             showAppTabBar={this.props.showAppTabBar}
             hideAppTabBar={this.props.hideAppTabBar}
+            uploadAvatar={this.props.uploadAvatar}
             refresh_data={route.refresh_data}/>
+        )
+      case 'cropping':
+        return(
+          <CroppingImage
+            navigator={_navigator}
+            hideAppTabBar={route.hideAppTabBar}
+            showAppTabBar={route.showAppTabBar}
+            source_base64={route.source_base64}
+            cropping_data={route.cropping_data}
+            source_url={route.source_url}
+            submit={route.submit}
+            mode="self_edit"
+            rechoose={route.rechoose}/>
         )
     }
   },
@@ -1031,7 +1088,7 @@ var Chat = React.createClass({
     return{
       title:'模糊聊',
       havePhoto:false,
-      havePhotoCrop:false,
+      havePhotoCrop:true,
       haveNamed:false,
       source_url:'',
       onLogSignUp:true,
@@ -1120,7 +1177,9 @@ var Chat = React.createClass({
       console.log('AsyncStorage error: ' + error.message);
     }
   },
-
+  componentWillMount(){
+    this.props.initChatStatus();
+  },
   componentDidMount() {
     this._loadInitialState().done();
     this.hideAppTabBarOrShow();
@@ -1137,12 +1196,7 @@ var Chat = React.createClass({
     this.props.dispatch(showAppTabBar());
   },
   hideAppTabBarOrShow(){
-    if (
-        this.state.ProfileFirstLook ||
-        (!this.state.havePhotoCrop && this.state.havePhoto) || 
-        (!this.state.haveNamed && this.state.havePhotoCrop) || 
-        (this.state.haveNamed && (!this.state.haveAnsweredToday && this.state.onLogSignUp))
-    ) {
+    if (this.props.chatStatus == 2 && !this.state.havePhotoCrop){
       this.props.dispatch(hideAppTabBar());
     }else{
       this.props.dispatch(showAppTabBar());
@@ -1150,24 +1204,27 @@ var Chat = React.createClass({
   },
   okImage(){
     this.setState({haveUploadImage:true});
+    this.props.updateChatStatus(2);
   },
   okVerify(){
     Alert.alert('驗證成功');
     this._chat_state_haveVerify();
-    this.setState({haveVerify:true});
+    this.props.updateChatStatus(1);
   },
   render() {
-    if (!this.state.haveVerify) {
+    if (this.props.chatStatus == 5) {
+      var ReturnView = <View style={styles.allCenter}><Text>系統已將您停權...</Text></View>
+    }else if (this.props.chatStatus == -1) {
+      var ReturnView = <View style={styles.allCenter}><Text>系統連線中...</Text></View>
+    }else if (this.props.chatStatus == 0) {
       var ReturnView = <WelcomeView ok={this.okVerify} send={this.sendVerifyMail} accessToken={this.props.accessToken}/>;
-    }else if (!this.state.havePhoto && !this.state.haveUploadImage) {
-    // }else if (!this.state.havePhoto) {
+    }else if (this.props.chatStatus == 1 && this.state.havePhotoCrop) {
       var ReturnView = <UploadImageView showAppTabBar={this.showAppTabBar} okImage={this.okImage} _chat_state_haveUploadImage={this._chat_state_haveUploadImage}  onImage={this.state.onImage} default_imgSrc={this.state.newImage || this.props.chatData.data.avatar_url} pickPhotoOrTakeAPhoto={this.pickPhotoOrTakeAPhoto}/>;
-    }else if (!this.state.havePhotoCrop && !this.state.haveUploadImage){
-    // }else if (!this.state.havePhotoCrop){
+    }else if (this.props.chatStatus == 1 && !this.state.havePhotoCrop){
       var ReturnView = <CroppingImage hideAppTabBar={this.hideAppTabBar} showAppTabBar={this.showAppTabBar} source_base64={this.state.source_base64} cropping_data={this.state.cropping_data} source_url={this.state.source_url} submit={this.submit_crop} rechoose={this.rechoose_crop}/>
-    }else if(this.props.chatData.data.name == ''){
+    }else if(this.props.chatStatus == 2){
       var ReturnView = <PostNameView postName={this.postName}/>;
-    }else if ((!this.props.haveAnswerToday) && this.state.onLogSignUp) {
+    }else if (this.props.chatStatus == 3) {
       var ReturnView = <AnswerView postAnswer={this.postAnswer} question_today={this.state.question_today}/>;
     }else{
       var ReturnView = <MainView 
@@ -1183,6 +1240,7 @@ var Chat = React.createClass({
         chatData={this.props.chatData}
         hideAppTabBar={this.hideAppTabBar}
         showAppTabBar={this.showAppTabBar}
+        uploadAvatar={this.uploadAvatar}
         say_hello={this.say_hello}/>
     }
     return (
@@ -1194,11 +1252,13 @@ var Chat = React.createClass({
   hidePaddingTop(){
     this.setState({paddingTopHide:true});
   },
-
+  uploadAvatar(){
+    this.pickPhotoOrTakeAPhoto(true);
+  },
   showPaddingTop(){
     this.setState({paddingTopHide:false});
   },
-  submit_crop(original_size,path,data){
+  submit_crop(original_size,path,data,self_edit){
     console.log("cropping_data==>",data);
     var data = data;
     if (!data.rule) {
@@ -1216,18 +1276,22 @@ var Chat = React.createClass({
     // 上傳相片
     console.log(source_for_update);
     var data = {
-      'user[avatar]':source_for_update,
-      'user[avatar_crop_x]':String(x),
-      'user[avatar_crop_y]':String(y),
-      'user[avatar_crop_w]':String(w),
-      'user[avatar_crop_h]':String(h)
+      user:{
+        'avatar':source_for_update,
+        'avatar_crop_x':String(x),
+        'avatar_crop_y':String(y),
+        'avatar_crop_w':String(w),
+        'avatar_crop_h':String(h)
+      }
     };
-    fetch("https://colorgy.io/api/v1/me.json?access_token="+this.props.accessToken,data,{
+    console.log(data);
+    fetch("https://colorgy.io/api/v1/me.json?access_token="+this.props.accessToken,{
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      method: 'patch',
+      method: 'PATCH',
+      body:JSON.stringify(data)
     })
     .then((response)=>{
       var data = JSON.parse(response._bodyInit);
@@ -1249,6 +1313,11 @@ var Chat = React.createClass({
         })
       })
       .then((response)=>{
+        console.log(response);
+        if (self_edit) {
+          this.props.initChatStatus();
+          _navigator.pop();
+        }
       })
     })
     // 確定一下
@@ -1268,6 +1337,7 @@ var Chat = React.createClass({
     chatAPI.update_name(this.props.accessToken,this.props.uuid,this.props.chatData.id,name)
     .then((response)=>{
       console.log(response);
+      this.props.updateChatStatus(3)
     });
     this.setState({haveNamed:true});
   },
@@ -1283,9 +1353,10 @@ var Chat = React.createClass({
       this._lastest_answer_store();
       // 紀錄已完成資料填寫
       this._chat_state_haveSignUp().done();
+      this.props.updateChatStatus(4);
     }
   },
-  pickPhotoOrTakeAPhoto(){
+  pickPhotoOrTakeAPhoto(self_edit){
     var options = {
       title: '選擇活動', // specify null or empty string to remove the title
       cancelButtonTitle: '取消',
@@ -1318,6 +1389,7 @@ var Chat = React.createClass({
         console.log('User tapped custom button: ', response.customButton);
       }
       else {
+        this.setState({havePhotoCrop:false});
         // You can display the image using either data:
         var source_base = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
         // uri (on android)
@@ -1330,6 +1402,18 @@ var Chat = React.createClass({
           havePhoto: true,
         });
         console.log("this.state.source_base64 == source_base.uri?==>",this.state.source_base64 == source_base.uri)
+        if (self_edit) {
+          _navigator.push({
+            id:'cropping',
+            hideAppTabBar:this.hideAppTabBar,
+            showAppTabBar:this.showAppTabBar,
+            source_base64:this.state.source_base64,
+            cropping_data:this.state.cropping_data,
+            source_url:this.state.source_url,
+            submit:this.submit_crop,
+            rechoose:this.rechoose_crop
+          });
+        }
       }
     });
   },
@@ -1347,7 +1431,7 @@ var styles = StyleSheet.create({
   },
   topTabSelected:{
     borderBottomColor:'#F89680',
-    borderBottomWidth:18/ PixelRatio.get()
+    borderBottomWidth:3
   },
   topTabText:{
     textAlign:'center',
@@ -1361,7 +1445,7 @@ var styles = StyleSheet.create({
     alignItems:'center'
   },
   mainBtn:{
-    borderWidth:6/ PixelRatio.get(),
+    borderWidth:1.2,
     borderColor:'#F89680',
     paddingTop:5,
     paddingBottom:5,
@@ -1369,7 +1453,7 @@ var styles = StyleSheet.create({
     paddingRight:15
   },
   mainBtnWhite:{
-    borderWidth:6/ PixelRatio.get(),
+    borderWidth:1.2,
     borderColor:'#FFF',
     paddingTop:5,
     paddingBottom:5,
@@ -1377,7 +1461,7 @@ var styles = StyleSheet.create({
     paddingRight:15
   },
   mainBtn_dis:{
-    borderWidth:6/ PixelRatio.get(),
+    borderWidth:1.2,
     borderColor:'#979797',
     paddingTop:5,
     paddingBottom:5,

@@ -159,13 +159,13 @@ var Hellos = React.createClass({
                     <View style={{flexDirection:'row',marginTop:2/PixelRatio.get()}}>
                       <TouchableNativeFeedback onPress={()=>this.response(hello.id,false,index)}><View style={[styles.allCenter,{flex:1,margin:1/PixelRatio.get(),backgroundColor:'white',height:45}]}>
                         <Image
-                          style={{width:23,height:23}}
+                          style={{width:20,height:20}}
                           source={require('../../assets/images/icon_friend_close.png')}
                           />
                       </View></TouchableNativeFeedback>
                       <TouchableNativeFeedback onPress={()=>this.response(hello.id,true,index)}><View style={[styles.allCenter,{flex:1,margin:1/PixelRatio.get(),backgroundColor:'white',height:45}]}>
                         <Image
-                          style={{width:23,height:23}}
+                          style={{width:39.88/1.5,height:28.8/1.5}}
                           source={require('../../assets/images/icon_friend_ok.png')}/>
                       </View></TouchableNativeFeedback>
                     </View>
@@ -231,10 +231,15 @@ var Friends = React.createClass({
   },
   render() {
     var friendList = this.state.strangerList;
+    if (this.props.hellos && this.props.hellos.length) {
+      var helloCount = this.props.hellos.length
+    }else{
+      var helloCount = 0;
+    }
     if (this.state.search_word.length>0) {
       var friendTemp = [];
       for (var i = friendList.length - 1; i >= 0; i--) {
-        if(friendList[i].name.indexOf(this.state.search_word)>=0){
+        if(friendList[i].name.toLowerCase().indexOf(this.state.search_word.toLowerCase())>=0){
           friendTemp.push(friendList[i]);
         }
       };
@@ -258,7 +263,7 @@ var Friends = React.createClass({
             <View style={[styles.allCenter,{backgroundColor:'white',flexDirection:'row'}]}>
                 <Text style={{fontSize:18,color:'#000',}}>打招呼 </Text>
                 <View style={{backgroundColor:"#F89680",width:20,height:20,borderRadius:10}}>
-                  <Text style={{textAlign:'center',fontSize:15,color:'#FFF'}}>{this.props.hellos.length}</Text>
+                  <Text style={{textAlign:'center',fontSize:15,color:'#FFF'}}>{helloCount}</Text>
                 </View>
             </View>
           </TouchableOpacity>
@@ -331,21 +336,37 @@ var Navi = React.createClass({
       hellos:[],
       getInitData : false,
       strangerList:[],
+      loading:true,
     }
   },
   render(){
+    if (this.props.chatStatus == 4) {
+      return(
+        <View style={{flex:1}}>
+          <Navigator
+            style={{flex:1}}
+            initialRoute = {{ id: 'home' }}
+            configureScene={this._configureScene}
+            renderScene={this._renderScene}
+          />
+        </View>
+      )
+    }else if (this.props.chatStatus == 5) {
+      var systemMessage = '您已被系統停權';
+    }else if (this.props.chatStatus == -1) {
+      var systemMessage = '與系統連線中';
+    }else{
+      var systemMessage = '請您先在模糊聊完成註冊';      
+    }
+
     return(
-    <View style={{flex:1}}>
-        <Navigator
-          style={{flex:1}}
-          initialRoute = {{ id: 'home' }}
-          configureScene={this._configureScene}
-          renderScene={this._renderScene}
-        />
+      <View style={styles.allCenter}>
+        <Text>{systemMessage}</Text>
       </View>
     )
   },
   data_refresh(){
+    this.setState({loading:true});
     chatAPI.hi_get_list(this.props.accessToken,this.props.uuid,this.props.chatData.id)
     .then((response)=>{
       if (response) {
@@ -355,7 +376,7 @@ var Navi = React.createClass({
     chatAPI.get_history_target(this.props.accessToken,this.props.uuid,this.props.chatData.id,'unspecified',0)
     .then((response)=>{
       if (response) {
-        this.setState({strangerList:JSON.parse(response._bodyInit).result});
+        this.setState({strangerList:JSON.parse(response._bodyInit).result,loading:false});
       };
     });
   },
@@ -375,7 +396,7 @@ var Navi = React.createClass({
       chatAPI.get_history_target(this.props.accessToken,this.props.uuid,this.props.chatData.id,'unspecified',0)
       .then((response)=>{
         if (response) {
-          this.setState({strangerList:JSON.parse(response._bodyInit).result});
+          this.setState({strangerList:JSON.parse(response._bodyInit).result,loading:false});
         };
       });
       this.setState({getInitData:true});

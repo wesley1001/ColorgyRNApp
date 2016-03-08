@@ -6,7 +6,8 @@ import React, {
   TouchableWithoutFeedback,
   TouchableHighlight,
   Dimensions,
-  TextInput
+  TextInput,
+  Alert
 } from 'react-native';
 
 import Color from 'color';
@@ -43,12 +44,19 @@ let Dialog = React.createClass({
     this.setState({length:text.length});
   },
 
+  pressBlack(){
+    if (this.props.pressBlack) {
+      this.props.pressBlack();
+    }
+  },
+
   render() {
     var value = this.props.value || this.props.text;
     var color = Color(this.props.color);
     var textColor = (color.luminosity() < 0.3) ? THEME.DARK_TEXT_COLOR : THEME.LIGHT_TEXT_COLOR;
     return (
       <View style={styles.view}>
+        <TouchableNativeFeedback onPress={this.pressBlack}><View style={styles.view}></View></TouchableNativeFeedback>
         <View style={{marginBottom:20,padding:25,backgroundColor:'white',width:Dimensions.get('window').width/4*3}}>
           <Text style={{fontSize:18}}>{this.props.title}</Text>
           <Text style={{fontSize:14,lineHeight:25,marginTop:10,}}>{this.props.content}</Text>

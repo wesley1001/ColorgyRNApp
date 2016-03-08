@@ -145,10 +145,10 @@ function get_user_data(access_token,uuid){
   });
 }
 
-function chatroom_leave_chatroom(uuid,accessToken,userId,chatroomId) {
+function chatroom_leave_chatroom(accessToken,uuid,userId,chatroomId) {
 	return new Promise(function(resolve,reject){
-		console.log('============= /chatroom/leave_chatroom =============');
-	  fetch(socketServer + '/chatroom/leave_chatroom', {
+		console.log('============= /chatroom/leave_chatroom =============',accessToken,uuid,userId,chatroomId);
+	  fetch("http://chat.colorgy.io/chatroom/leave_chatroom", {
 		  method: 'POST',
 		  headers: {
 		    'Accept': 'application/json',
@@ -162,6 +162,7 @@ function chatroom_leave_chatroom(uuid,accessToken,userId,chatroomId) {
 		  })
 		})
 		.then(function(data) {
+			console.log(data);
 			resolve(data);
 	  }).catch(function(error) {
 	    ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
@@ -231,15 +232,7 @@ function check_user_available(access_token,uuid){
 		  })
 		})
 		.then(function(data) {
-	    var userId = JSON.parse(data._bodyText).userId;
-	    var status = JSON.parse(data._bodyText).status;
-	    if (status == "not_registered") {
-	    	console.log("not_registered: userId:", userId);
-	    	resolve(userId)
-	    }else{
-	    	console.log(userId);
-	    	resolve(userId);
-	    }
+			resolve(data)
 	  }).catch(function(error) {
 	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
 	    resolve(false);
@@ -292,6 +285,31 @@ function hi_get_my_list(accessToken,uuid,userId) {
 		  	accessToken:accessToken,
 		  	uuid:uuid,
 		  	userId:userId,
+		  })
+		})
+		.then(function(data) {
+	    	resolve(data);
+	  }).catch(function(error) {
+	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);
+		    resolve(false)
+		    console.log("error",error)
+	  })
+	})
+}
+
+function users_update_user_status (accessToken,uuid,status) {
+	return new Promise(function (resolve, reject) {
+		console.log('=============/users/update_user_status=========');
+		fetch(socketServer + '/users/update_user_status', {
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify({
+		  	accessToken:accessToken,
+		  	uuid:uuid,
+		  	status:status,
 		  })
 		})
 		.then(function(data) {
@@ -732,6 +750,7 @@ socket = {
   send_email_verify:send_email_verify,
   hi_get_my_list:hi_get_my_list,
   chatroom_more_message:chatroom_more_message,
+  users_update_user_status:users_update_user_status,
 };
 
 if (window) window.socket = socket;

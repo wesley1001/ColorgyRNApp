@@ -89,12 +89,12 @@ var Report = React.createClass({
         title={title}
         textColor={"#000"}
         color={"#FFF"}
-        actions={[null,{ title: '返回', icon: require('../../assets/images/chat_delete_orange.png'), onPress: this._handleBack, show: 'always' }]}
+        actions={[null,{ title: '返回', icon: require('../../assets/images/chat_delete_orange_64.png'), onPress: this._handleBack, show: 'always' }]}
       >
         <View style={{flex:1,backgroundColor:"#FAF7F5"}}>
           <ScrollView style={{marginBottom:50}}>
               <View>
-                <View style={{padding:25,marginBottom:20,backgroundColor:'#FFF'}}>
+                <View style={{paddingTop:25,paddingLeft:25,paddingBottom:25,paddingRight:0,marginBottom:20,backgroundColor:'#FFF'}}>
                   <Text style={{color:"#979797"}}>發生了什麼事！？</Text>
                   {this.state.reason.map(function(reason,index) {
                     if (reason.selected) {
@@ -108,9 +108,9 @@ var Report = React.createClass({
                           <View style={{flex:5}}>
                             <Text>{reason.title}</Text>
                           </View>
-                          <View style={{flex:1,flexDirection:'row',jusifyContent:'center'}}>
+                          <View style={{flex:1,flexDirection:'row',jusifyContent:'flex-end'}}>
                             <Image
-                                style={{width:26,height:26}}
+                                style={{width:20,height:20,position:'relative',left:20}}
                                 source={img} />
                           </View>
                         </View>

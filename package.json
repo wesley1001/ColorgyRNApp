@@ -8,7 +8,7 @@
   "dependencies": {
     "color": "^0.10.1",
     "fetch-api": "0.0.2",
-    "react-native": "^0.18.0",
+    "react-native": "^0.21.0",
     "react-native-android-design-support": "0.0.5",
     "react-native-android-statusbar": "^0.1.2",
     "react-native-device-info": "^0.7.0",

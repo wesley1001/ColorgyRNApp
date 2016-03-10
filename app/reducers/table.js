@@ -10,7 +10,9 @@ const defaultState = {
   // Loading status of the table data (from the local database)
   tableLoading: LOADING_STATE.PENDING,
   // Courses of the current year & term to display on the table
-  tableCourses: {}
+  tableCourses: {},
+  notificationEnabled: true,
+  notificationBeforeMinutes: 10
 };
 
 export default handleActions({
@@ -151,4 +153,20 @@ export default handleActions({
       navigateBackCount
     };
   },
+
+  TOGGLE_NOTIFICATION_ENABLED: (state, action) => {
+    var notificationEnabled = !state.notificationEnabled;
+    return {
+      ...state,
+      notificationEnabled
+    };
+  },
+
+  SET_NOTIFICATION_BEFORE_MINUTES: (state, action) => {
+    var notificationBeforeMinutes = parseInt(action.minutes) || 10;
+    return {
+      ...state,
+      notificationBeforeMinutes
+    };
+  }
 }, defaultState);

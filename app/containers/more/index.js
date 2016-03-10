@@ -9,6 +9,7 @@ import TitleBarLayout from '../../components/TitleBarLayout';
 
 import MoreMenuContainer from './MoreMenuContainer';
 import PrivacySettingsContainer from './PrivacySettingsContainer';
+import CourseNotificationSettingsContainer from './CourseNotificationSettingsContainer';
 import FeedbackContainer from '../FeedbackContainer';
 
 import ga from '../../utils/ga';
@@ -63,6 +64,11 @@ var MoreContainer = React.createClass({
             case 'privacySettings':
               return (
                 <PrivacySettingsContainer navigator={navigator} />
+              );
+              break;
+            case 'courseNotificationSettings':
+              return (
+                <CourseNotificationSettingsContainer navigator={navigator} />
               );
               break;
             case 'feedback':

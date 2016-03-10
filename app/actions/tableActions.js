@@ -6,6 +6,7 @@ import ga from '../utils/ga';
 import error from '../utils/errorHandler';
 import courseDatabase from '../databases/courseDatabase';
 import tableDatabase from '../databases/tableDatabase';
+import Notification from 'react-native-system-notification';
 
 export const courseDatabaseLoading = createAction('COURSE_DATABASE_LOADING');
 export const courseDatabaseLoad = createAction('COURSE_DATABASE_LOAD');
@@ -116,7 +117,45 @@ export const doLoadTableCourses = (userId, orgCode) => (dispatch) => {
   courseDatabase.getPeriodData(orgCode, { returnObject: true }).then((periodData) => {
     tableDatabase.findCourses(userId, orgCode).then((courses) => {
       dispatch(tableCourseLoaded({ courses: courses, periodData: periodData }));
-      // TODO: Maybe we can set the scheduled notifications here
+      Notification.deleteAll().then(() => {
+        var currentState = store.getState();
+        var { notificationEnabled, notificationBeforeMinutes } = currentState.table;
+        if (!notificationEnabled) return;
+
+        for (var courseCode in courses) {
+          var course = courses[courseCode];
+          var name = course['name'];
+          for (var i=1; i<10; i++) {
+            var day = course['day_' + i];
+            var periodCode = course['period_' + i];
+            var loc = course['location_' + i];
+            if (day == null || periodCode == null) break;
+            var time = periodData[periodCode] && periodData[periodCode].time;
+            if (time == null) break;
+            var ts = time.split(/[:-]/);
+            var hour = parseInt(ts[0]);
+            var minute = parseInt(ts[1]);
+            d = new Date();
+            d.setSeconds(0);
+            d.setHours(hour);
+            d.setMinutes(minute);
+            var currentDay = d.getDay();
+            var dayDistance = day - currentDay;
+            d.setDate(d.getDate() + dayDistance);
+            d.setTime(d.getTime() - notificationBeforeMinutes * 60 * 1000);
+
+            Notification.create({
+              subject: '上課提醒',
+              message: `${time} 在 ${loc} 上 ${name} 喔！`,
+              sendAt: d,
+              repeatEvery: 'week',
+              count: 18
+            });
+          }
+        }
+      }).catch((e) => {
+        error(e);
+      });
     }).catch((e) => {
       error(e);
       dispatch(loadTableCourseFailed(e));

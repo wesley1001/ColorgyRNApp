@@ -14,6 +14,7 @@ import courseDatabase, { sqlValue } from '../databases/courseDatabase';
 import colorgyAPI from '../utils/colorgyAPI';
 import { doUpdateMe } from '../actions/colorgyAPIActions';
 import { counterPlus, asyncCounterPlus } from '../actions/counterActions';
+import Notification from 'react-native-system-notification';
 
 var DevModeContainer = React.createClass({
 
@@ -231,6 +232,28 @@ var DevModeContainer = React.createClass({
           <TouchableOpacity onPress={() => { this.props.dispatch(doUpdateMe({ unconfirmedOrganizationCode: null, unconfirmedDepartmentCode: null, unconfirmedStartedYear: null })) }}>
             <Text style={styles.action}>
               Clear My Org!
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.instructions}>
+            - - -
+          </Text>
+          <Text>
+            {JSON.stringify(this.state.nResults, null, 2)}
+          </Text>
+          <TouchableOpacity onPress={() => {
+            Notification.getIDs().then((ids) => {
+              this.setState({ nResults: ids });
+              ids.forEach((id, i) => {
+                Notification.find(id).then((notification) => {
+                  var { nResults } = this.state;
+                  nResults[i] = notification;
+                  this.setState({ nResults });
+                });
+              });
+            });
+          }}>
+            <Text style={styles.action}>
+              Get N Status!
             </Text>
           </TouchableOpacity>
           <Text style={styles.instructions}>

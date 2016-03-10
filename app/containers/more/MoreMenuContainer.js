@@ -99,6 +99,10 @@ var MoreContainer = React.createClass({
             </TouchableWithoutFeedback>
           </View>
           <ListItem
+            text="上課通知設定"
+            onPress={() => { this.props.navigator.push({ name: 'courseNotificationSettings' }); }}
+          />
+          <ListItem
             text="隱私權設定"
             onPress={() => { this.props.navigator.push({ name: 'privacySettings' }); }}
           />

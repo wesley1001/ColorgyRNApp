@@ -14,6 +14,7 @@ import React, {
   Dimensions,
   TouchableWithoutFeedback,
   Alert,
+  ToastAndroid,
   PullToRefreshViewAndroid
 } from 'react-native';
 import { connect } from 'react-redux/native';
@@ -96,9 +97,7 @@ var Hellos = React.createClass({
           offsetTop={this.props.statusBarHeight}
           style={[this.props.style,{paddingTop:25,backgroundColor:'white'}]}
           title="打招呼"
-          textColor={"#000"}
-          color={"#FFF"}
-          actions={[{ title: '返回', icon: require('../../assets/images/back_orange.png'), onPress: this._handleBack, show: 'always' },]}
+          actions={[{ title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' },]}
         >
         <PullToRefreshViewAndroid
         style={{flex: 1}}
@@ -252,16 +251,14 @@ var Friends = React.createClass({
           offsetTop={this.props.statusBarHeight}
           style={[this.props.style,{paddingTop:25,backgroundColor:'white',flex:1}]}
           title="好朋友"
-          textColor={"#000"}
-          color={"#FFF"}
           actions={[
             null,
-            { title: '搜尋', icon: require('../../assets/images/icon_chat_seach_x2.png'), onPress: this.handleSearch, show: 'always' }
+            { title: '搜尋', icon: require('../../assets/images/search_icons.png'), onPress: this.handleSearch, show: 'always' }
           ]}
         >
           <TouchableOpacity style={{flex:1,height:60}} onPress={this.goToHello}>
-            <View style={[styles.allCenter,{backgroundColor:'white',flexDirection:'row'}]}>
-                <Text style={{fontSize:18,color:'#000',}}>打招呼 </Text>
+            <View style={[styles.allCenter,{backgroundColor:'white',flexDirection:'row',borderColor:'rgb(200,200,200)',borderBottomWidth:1}]}>
+                <Text style={{fontSize:18,color:'#000',}}>打招呼</Text>
                 <View style={{backgroundColor:"#F89680",width:20,height:20,borderRadius:10}}>
                   <Text style={{textAlign:'center',fontSize:15,color:'#FFF'}}>{helloCount}</Text>
                 </View>
@@ -309,13 +306,18 @@ var Friends = React.createClass({
           </PullToRefreshViewAndroid>
         </TitleBarLayout>
         {this.state.search_show?
-          <View style={{position:'absolute',top:25,left:0,backgroundColor:'white'}}>
+          <View style={{position:'absolute',top:25,left:0,backgroundColor:'white',flexDirection:'row'}}>
             <TextInput
-              style={{height: 60, borderColor: 'gray', borderWidth: 1}}
+              style={{height: 60, borderColor: 'gray', borderWidth: 1,width:Dimensions.get('window').width/10*8}}
               onChangeText={(text) => this.setState({search_word: text})}
               value={this.state.search_word}
               placeholder="搜尋好友"
             />
+            <TouchableOpacity onPress={()=>this.setState({search_show:false,search_word:''})}>
+              <View style={{height: 60,width:Dimensions.get('window').width/10*2,flexDirection:'column',justifyContent:'center'}}>
+                <Text style={{color:'gray',fontSize:15,textAlign:'center',alignItems:'center'}}>取消</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         :null}
       </View>

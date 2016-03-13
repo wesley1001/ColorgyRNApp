@@ -26,7 +26,7 @@ import chatAPI from '../../utils/chatAPI';
 var Report = React.createClass({
   componentDidMount(){
     BackAndroid.addEventListener('hardwareBackPress', function() {
-      Alert.alert('請完成表單');
+      // Alert.alert('請完成表單');
     }.bind(this));
   },
   componentWillMount(){

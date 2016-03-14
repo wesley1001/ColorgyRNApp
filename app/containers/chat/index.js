@@ -70,6 +70,7 @@ var WelcomeView = React.createClass({
     }
   },
   verify(){
+    this._chat_state_haveSend();
     fetch('https://colorgy.io:443/api/v1/me.json?fields=organization_code&&access_token='+this.props.accessToken)
     .then(function(data) {
       if(JSON.parse(data._bodyInit).organization_code && JSON.parse(data._bodyInit).organization_code!='' && JSON.parse(data._bodyInit).organization_code!= undefined){
@@ -82,6 +83,7 @@ var WelcomeView = React.createClass({
         setTimeout(function() {
           this.ok()
         }.bind(this),200)
+        this.props.leaveIntro();
       }else{
         this.setState({letSVerify:true});
       }
@@ -117,15 +119,24 @@ var WelcomeView = React.createClass({
     )
   },
   send(email){
-    this.props.send(email);
     this.setState({letSVerify:false,SendAlert:true});
     setTimeout(function() {
       this._chat_state_haveSend().done();
       this.setState({SendAlert:false,haveSend:true});
     }.bind(this),1000)
     // 寄認證信
+    var data = {
+      user_email:{
+        'email':email
+      }
+    };
     fetch('https://colorgy.io/api/v1/me/emails.json?access_token='+this.props.accessToken,{
-      'user_email[email]':email
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body:JSON.stringify(data)
     }).then(function(data) {
       console.log(data);
     })
@@ -533,11 +544,9 @@ var SelfEdit = React.createClass({
         <TitleBarLayout
           style={[this.props.style,{paddingTop:25,backgroundColor:'white',flex:1}]}
           title="全部"
-          textColor={"#000"}
-          color={"#FFF"}
           actions={[
-            { title: '返回', icon: require('../../assets/images/back_orange.png'), onPress: this._handleBack, show: 'always' },
-            { title: '更新', icon: require('../../assets/images/write.png'), onPress: this._update, show: 'always' }
+            { title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' },
+            { title: '更新', icon: require('../../assets/images/icon_check_active.png'), onPress: this._update, show: 'always' }
           ]}
         >
           <ScrollView style={{flex:1,backgroundColor:"#fff"}}>
@@ -685,7 +694,7 @@ var StrangerList = React.createClass({
                   <TouchableNativeFeedback key={index} onPress={()=>this.open_profile(this.state.strangerList[index])}>
                     <View>
                       <Image
-                        style={{width:Dimensions.get('window').width/2,height:Dimensions.get('window').width/2}}
+                        style={{width:Dimensions.get('window').width/2,borderLeftWidth:1,borderBottomWidth:1,borderRightWidth:1,borderColor:'white',height:Dimensions.get('window').width/2}}
                         source={{uri: this.state.strangerList[index].avatar_blur_2x_url}} >
                           <View style={{position:'absolute',top:Dimensions.get('window').width/3,justifyContent:'center'}}>
                             <Image
@@ -705,7 +714,7 @@ var StrangerList = React.createClass({
                   <TouchableNativeFeedback key={index-1} onPress={()=>this.open_profile(this.state.strangerList[index-1])}>
                     <View>
                       <Image
-                        style={{width:Dimensions.get('window').width/2,height:Dimensions.get('window').width/2}}
+                        style={{width:Dimensions.get('window').width/2,borderLeftWidth:1,borderBottomWidth:1,borderColor:'white',height:Dimensions.get('window').width/2}}
                         source={{uri: this.state.strangerList[index-1].avatar_blur_2x_url}} >
                           <View style={{position:'absolute',top:Dimensions.get('window').width/3,justifyContent:'center'}}>
                             <Image
@@ -720,7 +729,7 @@ var StrangerList = React.createClass({
                   <TouchableNativeFeedback key={index} onPress={()=>this.open_profile(this.state.strangerList[index])}>
                     <View>
                       <Image
-                        style={{width:Dimensions.get('window').width/2,height:Dimensions.get('window').width/2}}
+                        style={{width:Dimensions.get('window').width/2,borderLeftWidth:1,borderBottomWidth:1,borderRightWidth:1,borderColor:'white',height:Dimensions.get('window').width/2}}
                         source={{uri: this.state.strangerList[index].avatar_blur_2x_url}} >
                           <View style={{position:'absolute',top:Dimensions.get('window').width/3,justifyContent:'center'}}>
                             <Image
@@ -1211,15 +1220,18 @@ var Chat = React.createClass({
     this._chat_state_haveVerify();
     this.props.updateChatStatus(1);
   },
+  leaveIntro(){
+    this.setState({haveSend:true})
+  },
   render() {
     if (this.props.chatStatus == 5) {
       var ReturnView = <View style={styles.allCenter}><Text>系統已將您停權...</Text></View>
     }else if (this.props.chatStatus == -1) {
       var ReturnView = <View style={styles.allCenter}><Text>系統連線中...</Text></View>
-    }else if (this.props.chatStatus == 0) {
-      var ReturnView = <WelcomeView ok={this.okVerify} send={this.sendVerifyMail} accessToken={this.props.accessToken}/>;
+    }else if (this.props.chatStatus == 0 || !this.state.haveSend) {
+      var ReturnView = <WelcomeView leaveIntro={this.leaveIntro} ok={this.okVerify} send={this.sendVerifyMail} accessToken={this.props.accessToken}/>;
     }else if (this.props.chatStatus == 1 && this.state.havePhotoCrop) {
-      var ReturnView = <UploadImageView showAppTabBar={this.showAppTabBar} okImage={this.okImage} _chat_state_haveUploadImage={this._chat_state_haveUploadImage}  onImage={this.state.onImage} default_imgSrc={this.state.newImage || this.props.chatData.data.avatar_url} pickPhotoOrTakeAPhoto={this.pickPhotoOrTakeAPhoto}/>;
+      var ReturnView = <UploadImageView showAppTabBar={this.showAppTabBar} okImage={this.okImage} _chat_state_haveUploadImage={this._chat_state_haveUploadImage}  onImage={this.state.onImage} default_imgSrc={this.state.newImage || this.props.chatData.data.avatar_url || ''} pickPhotoOrTakeAPhoto={this.pickPhotoOrTakeAPhoto}/>;
     }else if (this.props.chatStatus == 1 && !this.state.havePhotoCrop){
       var ReturnView = <CroppingImage hideAppTabBar={this.hideAppTabBar} showAppTabBar={this.showAppTabBar} source_base64={this.state.source_base64} cropping_data={this.state.cropping_data} source_url={this.state.source_url} submit={this.submit_crop} rechoose={this.rechoose_crop}/>
     }else if(this.props.chatStatus == 2){
@@ -1340,6 +1352,9 @@ var Chat = React.createClass({
       this.props.updateChatStatus(3)
     });
     this.setState({haveNamed:true});
+  },
+  sendVerifyMail(email){
+
   },
   postAnswer(answer){
     if(answer.length==0){

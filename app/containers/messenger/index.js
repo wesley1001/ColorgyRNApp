@@ -32,7 +32,7 @@ var ImageResizing = React.createClass({
   getInitialState(){
     return{
       width:Dimensions.get('window').width,
-      height:200,
+      height:200
     }
   },
   render(){
@@ -60,6 +60,7 @@ var Messenger = React.createClass({
       messageList:this.props.messageList,
       socketId:'',
       io:{},
+      about:{},
       show_dialog:false,
       friend_data:{
         id:this.props.chatRoomData.id,
@@ -278,6 +279,12 @@ var Messenger = React.createClass({
         this._handleBack();
       }
     }.bind(this));
+    chatAPI.get_other_user_data(this.props.friendId)
+    .then((response)=>{
+      var data = JSON.parse(response._bodyInit)
+      console.log("get_other_user_data",data);
+      this.setState({about:data.result.about});
+    })
     chatAPI.connectToServer()
     .then((socket)=>{
         this.setState({io:socket});
@@ -321,7 +328,7 @@ var Messenger = React.createClass({
     Alert.alert(
       title,
       content,
-      button,
+      button
     )
   },
   pureface(){
@@ -435,14 +442,22 @@ var Messenger = React.createClass({
         {this.state.showBigHead?
           <View style={{flexDirection:'column',justifyContent:'center',alignItems:'center',position:'absolute',top:0,left:0,height:Dimensions.get('window').height,width:Dimensions.get('window').width,backgroundColor:'rgba(0,0,0,.5)'}}>
             <Image
-                style={{borderWidth:6,borderColor:"#FFF",width:Dimensions.get('window').width/3*2,height:Dimensions.get('window').width/3*2,borderRadius:Dimensions.get('window').width/3}}
+                style={{borderWidth:3,borderColor:"#FFF",width:Dimensions.get('window').width/2,height:Dimensions.get('window').width/2,borderRadius:Dimensions.get('window').width/4}}
                 source={{uri: this.state.friend_data.image}}>
             </Image>
-            <View style={{left:Dimensions.get('window').width/3-30,top:-30,position:'relative',paddingTop:5,paddingBottom:5,paddingLeft:20,paddingRight:20,borderRadius:15,backgroundColor:"#F89680"}}>
+            <View style={{left:Dimensions.get('window').width/3-50,top:-30,position:'relative',paddingTop:5,paddingBottom:5,paddingLeft:20,paddingRight:20,borderRadius:15,backgroundColor:"#F89680"}}>
               <Text style={{textAlign:'center',color:'white'}}>{this.state.chatProgress}%</Text>
             </View>
             <Text style={{fontSize:20,color:'white'}}>{this.state.friend_data.alias}</Text>
             <Text style={{fontSize:12,color:'white'}}>{this.props.chatRoomData.lastAnswer}</Text>
+            <View style={{padding:10,width:Dimensions.get('window').width/10*7,borderColor:'rgb(200,200,200)',borderWidth:1.5,borderRadius:5,marginTop:30}}>
+              <Text style={{color:'rgb(230,230,230)',textAlign:'center',fontSize:16}}>{this.state.about.school}</Text>
+              <Text style={{color:'rgb(230,230,230)',textAlign:'center',fontSize:16}}>{this.state.about.horoscope}/{this.state.about.habitancy}</Text>
+              {this.state.about.passion == '' && this.state.about.expertise == '' && this.state.about.conversation ==''?<Text style={{color:'rgb(230,230,230)',textAlign:'center'}}>神秘的他沒留下簡介...</Text>:null}
+              {this.state.about.conversation != ''?<Text style={{color:'rgb(170,170,170)',marginTop:10}}>想聊的話題：<Text style={{color:'rgb(230,230,230)'}}>{this.state.about.conversation}</Text></Text>:null}
+              {this.state.about.passion != ''?<Text style={{color:'rgb(170,170,170)'}}>最近熱衷的事：<Text style={{color:'rgb(230,230,230)'}}>{this.state.about.passion}</Text></Text>:null}
+              {this.state.about.expertise != ''?<Text style={{color:'rgb(170,170,170)'}}>專精的事情：<Text style={{color:'rgb(230,230,230)'}}>{this.state.about.expertise}</Text></Text>:null}
+            </View>
             <TouchableNativeFeedback onPress={this.showBigHead}>
               <View style={{position:'absolute',top:40,right:20}}>
                 <Image
@@ -458,7 +473,18 @@ var Messenger = React.createClass({
           options={[{text:'取消',method:this.cancel_dialog},{text:'確定',color:'#F89680',method:this.submit_nickname}]}/>:null}
         {this.state.show_big_image?
           <View style={{backgroundColor:'rgb(30,30,30)',position:'absolute',top:0,left:0,height:Dimensions.get('window').height,width:Dimensions.get('window').width,justifyContent:'center',alignItems:'center'}}>
-            <TouchableNativeFeedback onPress={()=>this.setState({show_big_image:false})}><View style={{backgroundColor:'rgba(0,0,0,.1)',position:'absolute',top:0,left:0,height:Dimensions.get('window').height,width:Dimensions.get('window').width,justifyContent:'center',alignItems:'center'}}></View></TouchableNativeFeedback>
+            <TouchableNativeFeedback onPress={()=>this.setState({show_big_image:false})}>
+              <View style={{
+                backgroundColor:'rgba(0,0,0,.1)',
+                position:'absolute',
+                top:0,
+                left:0,
+                height:Dimensions.get('window').height,
+                width:Dimensions.get('window').width,
+                justifyContent:'center',
+                alignItems:'center'}}>
+              </View>
+            </TouchableNativeFeedback>
             <ImageResizing uri={this.state.big_image} />
             <TouchableNativeFeedback onPress={()=>this.setState({show_big_image:false})}>
               <View style={{position:'absolute',top:25,left:5}}>

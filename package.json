@@ -15,6 +15,7 @@
     "react-native-cropping": "0.0.4",
     "react-native-device-info": "^0.7.0",
     "react-native-dialogs": "0.0.9",
+    "react-native-dropdown": "0.0.6",
     "react-native-facebook-login": "^1.0.2",
     "react-native-fs": "^1.1.0",
     "react-native-gestures": "^0.2.0",

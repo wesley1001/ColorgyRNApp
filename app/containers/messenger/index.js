@@ -382,7 +382,7 @@ var Messenger = React.createClass({
           textColor={"#000"}
           color={"#FFF"}
           actions={[
-            { title: '返回', icon: require('../../assets/images/back_orange.png'), onPress: this._handleBack, show: 'always' },
+            { title: '返回', icon: require('../../assets/images/back_Icons.png'), onPress: this._handleBack, show: 'always' },
             { title: '更多', icon: leftIcon, onPress: this.handleMenu, show: 'always' }
           ]}
         >
@@ -452,7 +452,7 @@ var Messenger = React.createClass({
             <Text style={{fontSize:12,color:'white'}}>{this.props.chatRoomData.lastAnswer}</Text>
             <View style={{padding:10,width:Dimensions.get('window').width/10*7,borderColor:'rgb(200,200,200)',borderWidth:1.5,borderRadius:5,marginTop:30}}>
               <Text style={{color:'rgb(230,230,230)',textAlign:'center',fontSize:16}}>{this.state.about.school}</Text>
-              <Text style={{color:'rgb(230,230,230)',textAlign:'center',fontSize:16}}>{this.state.about.horoscope}/{this.state.about.habitancy}</Text>
+              <Text style={{color:'rgb(230,230,230)',textAlign:'center',fontSize:16}}>{this.state.about.horoscope}{this.state.about.horoscope == '' || this.state.about.habitancy == ''?null:'/'}{this.state.about.habitancy}</Text>
               {this.state.about.passion == '' && this.state.about.expertise == '' && this.state.about.conversation ==''?<Text style={{color:'rgb(230,230,230)',textAlign:'center'}}>神秘的他沒留下簡介...</Text>:null}
               {this.state.about.conversation != ''?<Text style={{color:'rgb(170,170,170)',marginTop:10}}>想聊的話題：<Text style={{color:'rgb(230,230,230)'}}>{this.state.about.conversation}</Text></Text>:null}
               {this.state.about.passion != ''?<Text style={{color:'rgb(170,170,170)'}}>最近熱衷的事：<Text style={{color:'rgb(230,230,230)'}}>{this.state.about.passion}</Text></Text>:null}

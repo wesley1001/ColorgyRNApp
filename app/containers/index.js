@@ -153,6 +153,37 @@ var App = React.createClass({
   refresh_data(){
     this.componentDidMount();
   },
+  regetStatus(){
+    colorgyAPI.getAccessToken().then((accessToken) => {
+      this.setState({accessToken:accessToken});
+      chatAPI.check_user_available(accessToken,this.props.uuid)
+      .then((response)=>{
+        if (response) {
+          var data = JSON.parse(response._bodyInit);
+          console.log("check_user_available",data);
+          this.setState({chatId:data.userId,chatStatus:data.status});
+          this._saveChatId(response).done();
+          chatAPI.check_answered_latest(accessToken,this.props.uuid,response)
+            .then((response)=>{
+              console.log("check_answered_latest",response);
+              if(JSON.parse(response._bodyInit).result == "not answered"){
+                this.setState({haveAnswerToday:false})
+              }else{
+                this.setState({haveAnswerToday:true})
+              }
+            })
+        }
+      });
+      chatAPI.get_user_data(accessToken,this.props.uuid)
+      .then((response)=>{
+        if (response) {
+          var data = JSON.parse(response).result;
+          console.log("data",data);
+          this.setState({chat_user_data:data});
+        };
+      })
+    });
+  },
   updateChatStatus(index){
     // update to index
     if (index == 2) {
@@ -198,7 +229,7 @@ var App = React.createClass({
                   <BoardContainer />
                 </View>
                 <View tabLabel="模糊聊" style={{ flex: 1 }}>
-                  <ChatContainer initChatStatus={this.initChatStatus} renewChatStatus={this.renewChatStatus} chatStatus={this.state.chatStatus} updateChatStatus={this.updateChatStatus} refresh_data={this.refresh_data} answerToday={this.answerToday} haveAnswerToday={this.state.haveAnswerToday} uuid={this.props.uuid} accessToken={this.state.accessToken} chatData={{id:this.state.chatId,data:this.state.chat_user_data}} />
+                  <ChatContainer regetStatus={this.regetStatus} initChatStatus={this.initChatStatus} renewChatStatus={this.renewChatStatus} chatStatus={this.state.chatStatus} updateChatStatus={this.updateChatStatus} refresh_data={this.refresh_data} answerToday={this.answerToday} haveAnswerToday={this.state.haveAnswerToday} uuid={this.props.uuid} accessToken={this.state.accessToken} chatData={{id:this.state.chatId,data:this.state.chat_user_data}} />
                 </View>
                 <View tabLabel="好朋友" style={{ flex: 1 }}>
                   <FriendsContainer chatStatus={this.state.chatStatus} uuid={this.props.uuid} accessToken={this.state.accessToken} chatData={{id:this.state.chatId,data:this.state.chat_user_data}}/>

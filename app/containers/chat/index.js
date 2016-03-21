@@ -19,6 +19,15 @@ import React, {
   ToastAndroid,
   PullToRefreshViewAndroid
 } from 'react-native';
+
+const DropDown = require('react-native-dropdown');
+const {
+  Select,
+  Option,
+  OptionList,
+  updatePosition
+} = DropDown;
+
 import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -507,6 +516,8 @@ var SelfEdit = React.createClass({
     }.bind(this));
     this.props.hidePaddingTop();
     console.log('SelfEdit:',this.props.chatData);
+     updatePosition(this.refs['SELECT1']);
+    updatePosition(this.refs['OPTIONLIST']);
   },
   _handleBack(){
       this.props.navigator.pop();
@@ -538,6 +549,16 @@ var SelfEdit = React.createClass({
   uploadImage(){
     this.props.uploadAvatar();
   },
+  _getOptionList() {
+    return this.refs['OPTIONLIST'];
+  },
+  _canada(province) {
+
+    this.setState({
+      ...this.state,
+      canada: province
+    });
+  },
   render(){
     return(
       <View style={{flex:1}}>
@@ -557,6 +578,26 @@ var SelfEdit = React.createClass({
                   source={{uri: this.props.chatData.data.avatar_url}} />
               </View>
             </TouchableNativeFeedback>
+            <Select
+              width={250}
+              ref="SELECT1"
+              optionListRef={this._getOptionList.bind(this)}
+              defaultValue="Select a Province in Canada ..."
+              onSelect={this._canada.bind(this)}>
+              <Option>Alberta</Option>
+              <Option>British Columbia</Option>
+              <Option>Manitoba</Option>
+              <Option>New Brunswick</Option>
+              <Option>Newfoundland and Labrador</Option>
+              <Option>Northwest Territories</Option>
+              <Option>Nova Scotia</Option>
+              <Option>Nunavut</Option>
+              <Option>Ontario</Option>
+              <Option>Prince Edward Island</Option>
+              <Option>Quebec</Option>
+              <Option>Saskatchewan</Option>
+              <Option>Yukon</Option>
+            </Select>
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >暱稱</Text>
               <TextInput
@@ -569,7 +610,8 @@ var SelfEdit = React.createClass({
               <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('horoscope',text)}
-                value={this.state.data.about.horoscope}/>
+                value={this.state.data.about.horoscope}
+                maxLength={3}/>
             </View>
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >學校</Text>
@@ -580,7 +622,8 @@ var SelfEdit = React.createClass({
               <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('habitancy',text)}
-                value={this.state.data.about.habitancy}/>
+                value={this.state.data.about.habitancy}
+                maxLength={3}/>
             </View>
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >想聊的話題</Text>
@@ -650,7 +693,7 @@ var StrangerList = React.createClass({
   render(){
     return(
       <View style={{flex:1}}>
-        <View style={{height:55,backgroundColor:'white',flexDirection:'row'}}>
+        <View style={{height:55,backgroundColor:'f89680',flexDirection:'row'}}>
           <TouchableNativeFeedback onPress={()=>this.changeFilter('all')}>
             <View style={this.state.filter== 'all'?[styles.topTab,styles.topTabSelected]:styles.topTab}>
               <Text style={this.state.filter== 'all'?[styles.topTabText,styles.topTabTextSelected]:styles.topTabText}>全部</Text>
@@ -671,7 +714,7 @@ var StrangerList = React.createClass({
             <View style={[styles.topTab,{}]}>
               <Image
                 style={{width:22,height:22,alignSelf:'center'}}
-                source={require('../../assets/images/chat_self_icon.png')} />
+                source={require('../../assets/images/profile_Icons@3x.png')} />
             </View>
           </TouchableNativeFeedback>
         </View>
@@ -694,7 +737,7 @@ var StrangerList = React.createClass({
                   <TouchableNativeFeedback key={index} onPress={()=>this.open_profile(this.state.strangerList[index])}>
                     <View>
                       <Image
-                        style={{width:Dimensions.get('window').width/2,borderLeftWidth:1,borderBottomWidth:1,borderRightWidth:1,borderColor:'white',height:Dimensions.get('window').width/2}}
+                        style={{backgroundColor:'rgba(0,0,0,.1)',width:Dimensions.get('window').width/2,borderLeftWidth:1,borderBottomWidth:1,borderRightWidth:1,borderColor:'white',height:Dimensions.get('window').width/2}}
                         source={{uri: this.state.strangerList[index].avatar_blur_2x_url}} >
                           <View style={{position:'absolute',top:Dimensions.get('window').width/3,justifyContent:'center'}}>
                             <Image
@@ -714,7 +757,7 @@ var StrangerList = React.createClass({
                   <TouchableNativeFeedback key={index-1} onPress={()=>this.open_profile(this.state.strangerList[index-1])}>
                     <View>
                       <Image
-                        style={{width:Dimensions.get('window').width/2,borderLeftWidth:1,borderBottomWidth:1,borderColor:'white',height:Dimensions.get('window').width/2}}
+                        style={{backgroundColor:'rgba(0,0,0,.1)',width:Dimensions.get('window').width/2,borderLeftWidth:1,borderBottomWidth:1,borderColor:'white',height:Dimensions.get('window').width/2}}
                         source={{uri: this.state.strangerList[index-1].avatar_blur_2x_url}} >
                           <View style={{position:'absolute',top:Dimensions.get('window').width/3,justifyContent:'center'}}>
                             <Image
@@ -729,7 +772,7 @@ var StrangerList = React.createClass({
                   <TouchableNativeFeedback key={index} onPress={()=>this.open_profile(this.state.strangerList[index])}>
                     <View>
                       <Image
-                        style={{width:Dimensions.get('window').width/2,borderLeftWidth:1,borderBottomWidth:1,borderRightWidth:1,borderColor:'white',height:Dimensions.get('window').width/2}}
+                        style={{backgroundColor:'rgba(0,0,0,.1)',width:Dimensions.get('window').width/2,borderLeftWidth:1,borderBottomWidth:1,borderRightWidth:1,borderColor:'white',height:Dimensions.get('window').width/2}}
                         source={{uri: this.state.strangerList[index].avatar_blur_2x_url}} >
                           <View style={{position:'absolute',top:Dimensions.get('window').width/3,justifyContent:'center'}}>
                             <Image
@@ -1216,9 +1259,10 @@ var Chat = React.createClass({
     this.props.updateChatStatus(2);
   },
   okVerify(){
-    Alert.alert('驗證成功');
+    Alert.alert('系統訊息','驗證成功');
     this._chat_state_haveVerify();
     this.props.updateChatStatus(1);
+    this.props.regetStatus();
   },
   leaveIntro(){
     this.setState({haveSend:true})
@@ -1445,14 +1489,15 @@ var styles = StyleSheet.create({
     flex:3,
   },
   topTabSelected:{
-    borderBottomColor:'#F89680',
+    borderBottomColor:'white',
     borderBottomWidth:3
   },
   topTabText:{
     textAlign:'center',
+    color:'white'
   },
   topTabTextSelected:{
-    color:'#F89680',
+    color:'white',
   },
   allCenter:{
     justifyContent:'center',

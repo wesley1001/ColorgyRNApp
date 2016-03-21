@@ -12,6 +12,8 @@
     "react-native-android-design-support": "0.0.5",
     "react-native-android-statusbar": "^0.1.2",
     "react-native-device-info": "^0.7.0",
+    "react-native-dialogs": "0.0.9",
+    "react-native-dropdown": "0.0.6",
     "react-native-facebook-login": "^1.0.2",
     "react-native-fs": "^1.2.0",
     "react-native-gcm-android": "^0.1.9",

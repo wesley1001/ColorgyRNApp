@@ -3,6 +3,7 @@ import React, {
   View,
   WebView,
   ProgressBarAndroid,
+  TouchableOpacity,
   TouchableNativeFeedback,
   TextInput,
   ScrollView,
@@ -103,7 +104,7 @@ var WelcomeView = React.createClass({
   },
   render() {
     return(
-      <View style={styles.allCenter}>
+      <View style={[styles.allCenter, {backgroundColor:'#ffffff'}]}>
           <Image
             style={{width:268/2.2,height:259/2.2,marginBottom:10}}
             source={require('./../../assets/images/mohoochat_icon.png')} />
@@ -198,11 +199,11 @@ var UploadImageView = React.createClass({
   render() {
     return(
       <View style={styles.allCenter}>
-          <ImageWand
-            blur={4}
-            style={{width:259/2,height:259/2,marginBottom:10,borderRadius:259/4,borderWidth:5,borderColor:'white'}}
-            src={this.props.default_imgSrc || "http://des13.cc/star/media/k2/items/cache/d6e7bc44feb1613d041d5385e5745b10_XL.jpg"}
-          />
+        <ImageWand
+          blur={4}
+          style={{width:259/2,height:259/2,marginBottom:10,borderRadius:259/4,borderWidth:5,borderColor:'white'}}
+          src={this.props.default_imgSrc || "http://des13.cc/star/media/k2/items/cache/d6e7bc44feb1613d041d5385e5745b10_XL.jpg"}
+        />
         <Text style={{marginBottom:5,fontSize:18}}>展開ㄧ段冒險</Text>
         <Text style={{marginBottom:20,fontSize:12}}>頭貼經過模糊處理，唯有越聊越清晰～</Text>
           <View style={{flexDirection:'row'}}>
@@ -515,9 +516,6 @@ var SelfEdit = React.createClass({
       this.props.showAppTabBar();
     }.bind(this));
     this.props.hidePaddingTop();
-    console.log('SelfEdit:',this.props.chatData);
-     updatePosition(this.refs['SELECT1']);
-    updatePosition(this.refs['OPTIONLIST']);
   },
   _handleBack(){
       this.props.navigator.pop();
@@ -561,10 +559,10 @@ var SelfEdit = React.createClass({
   },
   render(){
     return(
-      <View style={{flex:1}}>
+      <View style={{flex:1, backgroundColor:'#f89680'}}>
         <TitleBarLayout
-          style={[this.props.style,{paddingTop:25,backgroundColor:'white',flex:1}]}
-          title="全部"
+          style={[this.props.style,{paddingTop:25,backgroundColor:'#f89680',flex:1}]}
+          title="返回"
           actions={[
             { title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' },
             { title: '更新', icon: require('../../assets/images/icon_check_active.png'), onPress: this._update, show: 'always' }
@@ -578,26 +576,6 @@ var SelfEdit = React.createClass({
                   source={{uri: this.props.chatData.data.avatar_url}} />
               </View>
             </TouchableNativeFeedback>
-            <Select
-              width={250}
-              ref="SELECT1"
-              optionListRef={this._getOptionList.bind(this)}
-              defaultValue="Select a Province in Canada ..."
-              onSelect={this._canada.bind(this)}>
-              <Option>Alberta</Option>
-              <Option>British Columbia</Option>
-              <Option>Manitoba</Option>
-              <Option>New Brunswick</Option>
-              <Option>Newfoundland and Labrador</Option>
-              <Option>Northwest Territories</Option>
-              <Option>Nova Scotia</Option>
-              <Option>Nunavut</Option>
-              <Option>Ontario</Option>
-              <Option>Prince Edward Island</Option>
-              <Option>Quebec</Option>
-              <Option>Saskatchewan</Option>
-              <Option>Yukon</Option>
-            </Select>
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >暱稱</Text>
               <TextInput
@@ -646,6 +624,11 @@ var SelfEdit = React.createClass({
                 onChangeText={(text) => this.onChangingText('expertise',text)}
                 value={this.state.data.about.expertise}/>
             </View>
+            <TouchableOpacity
+              onPress={this._update}
+              style={{backgroundColor:'transparent',borderWidth:1,borderColor:'#f89680',padding:10,margin:15}}>
+              <Text style={{color:'#f89680',textAlign:'center'}}>更新資料</Text>
+            </TouchableOpacity>
           </ScrollView>
         </TitleBarLayout>
         <Image
@@ -693,7 +676,7 @@ var StrangerList = React.createClass({
   render(){
     return(
       <View style={{flex:1}}>
-        <View style={{height:55,backgroundColor:'f89680',flexDirection:'row'}}>
+        <View style={{height:55,backgroundColor:'#f89680',flexDirection:'row'}}>
           <TouchableNativeFeedback onPress={()=>this.changeFilter('all')}>
             <View style={this.state.filter== 'all'?[styles.topTab,styles.topTabSelected]:styles.topTab}>
               <Text style={this.state.filter== 'all'?[styles.topTabText,styles.topTabTextSelected]:styles.topTabText}>全部</Text>
@@ -733,8 +716,10 @@ var StrangerList = React.createClass({
           {this.state.strangerList.map(function(st,index) {
             if (this.state.strangerList.length == 1) {
               return(
-                <View style={{flexDirection:'row'}}>
-                  <TouchableNativeFeedback key={index} onPress={()=>this.open_profile(this.state.strangerList[index])}>
+                <View
+                  key={index}
+                  style={{flexDirection:'row'}}>
+                  <TouchableNativeFeedback onPress={()=>this.open_profile(this.state.strangerList[index])}>
                     <View>
                       <Image
                         style={{backgroundColor:'rgba(0,0,0,.1)',width:Dimensions.get('window').width/2,borderLeftWidth:1,borderBottomWidth:1,borderRightWidth:1,borderColor:'white',height:Dimensions.get('window').width/2}}
@@ -1300,7 +1285,8 @@ var Chat = React.createClass({
         say_hello={this.say_hello}/>
     }
     return (
-      <View style={this.state.paddingTopHide?{flex:1}:{paddingTop:25,flex:1}}>
+      <View style={{flex:1, backgroundColor:'#f7f7f7'}}>
+        {this.state.paddingTopHide?null:<View style={{backgroundColor:'#f89680',height:25}}></View>}
         {ReturnView}
       </View>
     );

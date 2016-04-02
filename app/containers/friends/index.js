@@ -14,6 +14,7 @@ import React, {
   Dimensions,
   TouchableWithoutFeedback,
   Alert,
+  RefreshControl,
   ToastAndroid,
   PullToRefreshViewAndroid
 } from 'react-native';
@@ -30,6 +31,8 @@ import Dialog from '../../components/Dialog';
 
 import chatAPI from '../../utils/chatAPI';
 import ga from '../../utils/ga';
+
+import { hideAppTabBar, showAppTabBar } from '../../actions/appTabActions';
 
 var Hellos = React.createClass({
   getInitialState(){
@@ -95,84 +98,86 @@ var Hellos = React.createClass({
         <TitleBarLayout
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
-          style={[this.props.style,{paddingTop:25,backgroundColor:'white'}]}
+          style={[this.props.style,{paddingTop:25,backgroundColor:'#f89680'}]}
           title="打招呼"
           actions={[{ title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' },]}
         >
-        <PullToRefreshViewAndroid
-        style={{flex: 1}}
-        refreshing={this.state.isRefreshing}
-        onRefresh={this.refresh_data}
-        colors={['#FFF', '#FFF', '#FFF']}
-        progressBackgroundColor={'#F89680'}
-        >
-          <ScrollView style={{flex:1,marginTop:6/PixelRatio.get()}}>
-              {this.props.hellos.map(function(hello,index){
-                if (this.state.show_little_Tabs.indexOf(index)>=0) {
-                  var show_little_Tabs = true;
-                }else{
-                  var show_little_Tabs = false;
-                }
-                return(
-                  <View key={index}>
-                    <View style={{paddingTop:10,paddingBottom:10,height:100,backgroundColor:'white',flexDirection:'row',marginBottom:6/PixelRatio.get()}}>
-                      <View style={[styles.allCenter,{flex:1}]}>
-                          <Image
-                            style={{width:60,height:60,borderRadius:60/2}}
-                            source={{uri: hello.image}}
-                          />
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              style={{flex: 1}}
+              refreshing={this.state.isRefreshing}
+              onRefresh={this.refresh_data}
+              colors={['#FFF', '#FFF', '#FFF']}
+              progressBackgroundColor={'#F89680'}
+            />
+          }
+          style={{flex:1,marginTop:6/PixelRatio.get()}}>
+            {this.props.hellos.map(function(hello,index){
+              if (this.state.show_little_Tabs.indexOf(index)>=0) {
+                var show_little_Tabs = true;
+              }else{
+                var show_little_Tabs = false;
+              }
+              return(
+                <View key={index}>
+                  <View style={{paddingTop:10,paddingBottom:10,height:100,backgroundColor:'white',flexDirection:'row',marginBottom:6/PixelRatio.get()}}>
+                    <View style={[styles.allCenter,{flex:1}]}>
+                        <Image
+                          style={{width:60,height:60,borderRadius:60/2}}
+                          source={{uri: hello.image}}
+                        />
+                    </View>
+                    <View style={{flex:3,paddingLeft:5}}>
+                      <View style={{justifyContent:'center',flex:1}}>
+                        <Text style={{fontSize:18,}}>{hello.name}</Text>
                       </View>
-                      <View style={{flex:3,paddingLeft:5}}>
-                        <View style={{justifyContent:'center',flex:1}}>
-                          <Text style={{fontSize:18,}}>{hello.name}</Text>
-                        </View>
-                        <View style={{justifyContent:'center',flex:1}}>
-                          <Text style={{fontSize:13,color:"#F89680"}}>{hello.lastAnswer}</Text>
-                        </View>
-                        <View style={{justifyContent:'center',flex:1}}>
-                          <Text style={{fontSize:15,}}>{hello.message}</Text>
-                        </View>
+                      <View style={{justifyContent:'center',flex:1}}>
+                        <Text style={{fontSize:13,color:"#F89680"}}>{hello.lastAnswer}</Text>
                       </View>
-                      <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end'}}>
-                        {show_little_Tabs?<View style={{height:80,backgroundColor:'#979797',borderRadius:5}}>
-                          <TouchableNativeFeedback>
-                            <View style={{height:40,marginRight:10,marginLeft:10,flexDirection:'column',justifyContent:'center'}}>
-                              <Text style={{color:'white'}}>檢舉對方</Text>
-                            </View>
-                          </TouchableNativeFeedback>
-                          <TouchableNativeFeedback>
-                            <View style={{height:40,marginRight:10,marginLeft:10,flexDirection:'column',justifyContent:'center'}}>
-                              <Text style={{color:'white'}}>封鎖對方</Text>
-                            </View>
-                          </TouchableNativeFeedback>
-                        </View>:null}
-                        <TouchableNativeFeedback onPress={()=>this.more(index)}>
-                          <View style={{padding:15}}>
-                            <Image
-                              style={{width:5.76/1.2,height:28.8/1.2}}
-                              source={require('../../assets/images/icon_friend_more.png')} />
+                      <View style={{justifyContent:'center',flex:1}}>
+                        <Text style={{fontSize:15,}}>{hello.message}</Text>
+                      </View>
+                    </View>
+                    <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end'}}>
+                      {show_little_Tabs?<View style={{height:80,backgroundColor:'#979797',borderRadius:5}}>
+                        <TouchableNativeFeedback>
+                          <View style={{height:40,marginRight:10,marginLeft:10,flexDirection:'column',justifyContent:'center'}}>
+                            <Text style={{color:'white'}}>檢舉對方</Text>
                           </View>
                         </TouchableNativeFeedback>
-                      </View>
-                    </View>
-                    <View style={{flexDirection:'row',marginTop:2/PixelRatio.get()}}>
-                      <TouchableNativeFeedback onPress={()=>this.response(hello.id,false,index)}><View style={[styles.allCenter,{flex:1,margin:1/PixelRatio.get(),backgroundColor:'white',height:45}]}>
-                        <Image
-                          style={{width:20,height:20}}
-                          source={require('../../assets/images/icon_friend_close.png')}
-                          />
-                      </View></TouchableNativeFeedback>
-                      <TouchableNativeFeedback onPress={()=>this.response(hello.id,true,index)}><View style={[styles.allCenter,{flex:1,margin:1/PixelRatio.get(),backgroundColor:'white',height:45}]}>
-                        <Image
-                          style={{width:39.88/1.5,height:28.8/1.5}}
-                          source={require('../../assets/images/icon_friend_ok.png')}/>
-                      </View></TouchableNativeFeedback>
+                        <TouchableNativeFeedback>
+                          <View style={{height:40,marginRight:10,marginLeft:10,flexDirection:'column',justifyContent:'center'}}>
+                            <Text style={{color:'white'}}>封鎖對方</Text>
+                          </View>
+                        </TouchableNativeFeedback>
+                      </View>:null}
+                      <TouchableNativeFeedback onPress={()=>this.more(index)}>
+                        <View style={{padding:15}}>
+                          <Image
+                            style={{width:5.76/1.2,height:28.8/1.2}}
+                            source={require('../../assets/images/icon_friend_more.png')} />
+                        </View>
+                      </TouchableNativeFeedback>
                     </View>
                   </View>
-                )
-              }.bind(this))}
-            </ScrollView>
-          </PullToRefreshViewAndroid>
+                  <View style={{flexDirection:'row',marginTop:2/PixelRatio.get()}}>
+                    <TouchableNativeFeedback onPress={()=>this.response(hello.id,false,index)}><View style={[styles.allCenter,{flex:1,margin:1/PixelRatio.get(),backgroundColor:'white',height:45}]}>
+                      <Image
+                        style={{width:20,height:20}}
+                        source={require('../../assets/images/icon_friend_close.png')}
+                        />
+                    </View></TouchableNativeFeedback>
+                    <TouchableNativeFeedback onPress={()=>this.response(hello.id,true,index)}><View style={[styles.allCenter,{flex:1,margin:1/PixelRatio.get(),backgroundColor:'white',height:45}]}>
+                      <Image
+                        style={{width:39.88/1.5,height:28.8/1.5}}
+                        source={require('../../assets/images/icon_friend_ok.png')}/>
+                    </View></TouchableNativeFeedback>
+                  </View>
+                </View>
+              )
+            }.bind(this))}
+          </ScrollView>
         </TitleBarLayout>
       </View>
     );
@@ -244,12 +249,13 @@ var Friends = React.createClass({
       };
       friendList = friendTemp;
     };
+    console.log(friendList);
     return (
-      <View style={{flexDirection:'column',flex:1}}>
+      <View style={{flexDirection:'column',flex:1, backgroundColor:'#f89680'}}>
         <TitleBarLayout
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
-          style={[this.props.style,{paddingTop:25,backgroundColor:'white',flex:1}]}
+          style={[this.props.style,{paddingTop:25,backgroundColor:'#f89680',flex:1}]}
           title="好朋友"
           actions={[
             null,
@@ -375,10 +381,19 @@ var Navi = React.createClass({
         this.setState({hellos:JSON.parse(response._bodyInit).result});
       };
     });
-    chatAPI.get_history_target(this.props.accessToken,this.props.uuid,this.props.chatData.id,'unspecified',0)
+    chatAPI.get_history_target(
+      this.props.accessToken,
+      this.props.uuid,
+      this.props.chatData.id,
+      'unspecified',
+      0
+    )
     .then((response)=>{
       if (response) {
-        this.setState({strangerList:JSON.parse(response._bodyInit).result,loading:false});
+        this.setState({
+          strangerList: JSON.parse(response._bodyInit).result,
+          loading: false
+        });
       };
     });
   },
@@ -423,6 +438,8 @@ var Navi = React.createClass({
           <Hellos
             uuid={this.props.uuid}
             accessToken={this.props.accessToken}
+            hideAppTabBar={this.props.hideAppTabBar}
+            showAppTabBar={this.props.showAppTabBar}
             chatData={this.props.chatData}
             navigator={_navigator}
             hellos={this.state.hellos}

@@ -12,6 +12,7 @@ var {
   Animated,
   Image,
   TouchableNativeFeedback,
+  DeviceEventEmitter,
   Platform,
   TouchableOpacity,
   PixelRatio,
@@ -378,7 +379,7 @@ var GiftedMessenger = React.createClass({
   
   onKeyboardWillShow(e) {
     Animated.timing(this.state.height, {
-      toValue: this.listViewMaxHeight - (e.endCoordinates ? e.endCoordinates.height : e.end.height),
+      toValue: this.listViewMaxHeight - 20,
       duration: 200,
     }).start();
   },
@@ -546,8 +547,8 @@ var GiftedMessenger = React.createClass({
               renderScrollComponent={props => <InvertibleScrollView {...props} handleScroll={this.props.handleScroll} inverted />}
       
               // not working android RN 0.14.2
-              onKeyboardWillShow={this.onKeyboardWillShow}
-              onKeyboardWillHide={this.onKeyboardWillHide}
+              onKeyboardDidShow={this.onKeyboardWillShow}
+              onKeyboardDidHide={this.onKeyboardWillHide}
       
               /*
                 keyboardShouldPersistTaps={false} // @issue keyboardShouldPersistTaps={false} + textInput focused = 2 taps are needed to trigger the ParsedText links
@@ -568,7 +569,6 @@ var GiftedMessenger = React.createClass({
         style={{
           height: this.state.height,
         }}
-
       >
           {this.state.isRefreshing?<Text></Text>:null}
         <ListView
@@ -644,6 +644,8 @@ var GiftedMessenger = React.createClass({
   },
 
   componentWillMount() {
+    // DeviceEventEmitter.addListener('keyboardDidShow', this.onKeyboardWillShow.bind(this))
+    // DeviceEventEmitter.addListener('keyboardDidHide', this.onKeyboardWillHide.bind(this))
     this.styles = {
       container: {
         flex: 1,

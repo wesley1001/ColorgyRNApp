@@ -229,10 +229,25 @@ var App = React.createClass({
                   <BoardContainer />
                 </View>
                 <View tabLabel="模糊聊" style={{ flex: 1 }}>
-                  <ChatContainer regetStatus={this.regetStatus} initChatStatus={this.initChatStatus} renewChatStatus={this.renewChatStatus} chatStatus={this.state.chatStatus} updateChatStatus={this.updateChatStatus} refresh_data={this.refresh_data} answerToday={this.answerToday} haveAnswerToday={this.state.haveAnswerToday} uuid={this.props.uuid} accessToken={this.state.accessToken} chatData={{id:this.state.chatId,data:this.state.chat_user_data}} />
+                  <ChatContainer
+                    regetStatus={this.regetStatus}
+                    initChatStatus={this.initChatStatus}
+                    renewChatStatus={this.renewChatStatus}
+                    chatStatus={this.state.chatStatus}
+                    updateChatStatus={this.updateChatStatus}
+                    refresh_data={this.refresh_data}
+                    answerToday={this.answerToday}
+                    haveAnswerToday={this.state.haveAnswerToday}
+                    uuid={this.props.uuid}
+                    accessToken={this.state.accessToken}
+                    chatData={{id:this.state.chatId,data:this.state.chat_user_data}} />
                 </View>
                 <View tabLabel="好朋友" style={{ flex: 1 }}>
-                  <FriendsContainer chatStatus={this.state.chatStatus} uuid={this.props.uuid} accessToken={this.state.accessToken} chatData={{id:this.state.chatId,data:this.state.chat_user_data}}/>
+                  <FriendsContainer
+                    chatStatus={this.state.chatStatus}
+                    uuid={this.props.uuid}
+                    accessToken={this.state.accessToken}
+                    chatData={{id:this.state.chatId,data:this.state.chat_user_data}}/>
                 </View>
                 <View tabLabel="更多" style={{ flex: 1 }}>
                   <MoreContainer />

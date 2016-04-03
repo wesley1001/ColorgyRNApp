@@ -136,7 +136,7 @@ var Report = React.createClass({
       </TitleBarLayout>
     )
   }
-  
+
 });
 
 export default connect((state) => ({

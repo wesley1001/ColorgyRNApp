@@ -358,7 +358,7 @@ var Navi = React.createClass({
     }else if (this.props.chatStatus == -1) {
       var systemMessage = '與系統連線中';
     }else{
-      var systemMessage = '請您先在模糊聊完成註冊';      
+      var systemMessage = '請您先在模糊聊完成註冊';
     }
 
     return(

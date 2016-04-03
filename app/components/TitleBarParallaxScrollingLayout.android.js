@@ -18,7 +18,6 @@ let TitleBarParallaxScrollingLayout = React.createClass({
     enableOffsetTop: PropTypes.bool,
     background: PropTypes.element,
     hideTitleInitially: PropTypes.bool,
-    enableOffsetTop: PropTypes.bool,
     offsetTop: PropTypes.number
   },
 

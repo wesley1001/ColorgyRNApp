@@ -25,6 +25,7 @@ import { doBackPress } from '../actions/appActions';
 import ga from '../utils/ga';
 import chatAPI from '../utils/chatAPI';
 import colorgyAPI from '../utils/colorgyAPI';
+import notify from '../utils/notify';
 
 var App = React.createClass({
   componentWillMount: function() {
@@ -48,6 +49,23 @@ var App = React.createClass({
         return true;
       });
     }
+
+    colorgyAPI.fetch(`/v1/available_org/${this.props.organizationCode}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    }).then((r) => {
+      return r.json();
+    }).then((json) => {
+      if (json.available) {
+        this.props.dispatch({ type: 'ORG_AVAILABLE' });
+      } else {
+        this.props.dispatch({ type: 'ORG_NOT_AVAILABLE' });
+      }
+    }).catch((e) => {
+    });
   },
 
   async _loadInitialState() {
@@ -229,25 +247,49 @@ var App = React.createClass({
                   <BoardContainer />
                 </View>
                 <View tabLabel="模糊聊" style={{ flex: 1 }}>
-                  <ChatContainer
-                    regetStatus={this.regetStatus}
-                    initChatStatus={this.initChatStatus}
-                    renewChatStatus={this.renewChatStatus}
-                    chatStatus={this.state.chatStatus}
-                    updateChatStatus={this.updateChatStatus}
-                    refresh_data={this.refresh_data}
-                    answerToday={this.answerToday}
-                    haveAnswerToday={this.state.haveAnswerToday}
-                    uuid={this.props.uuid}
-                    accessToken={this.state.accessToken}
-                    chatData={{id:this.state.chatId,data:this.state.chat_user_data}} />
+                  {(() => {
+                    if (this.props.orgAvailable) {
+                      return (
+                        <ChatContainer
+                          regetStatus={this.regetStatus}
+                          initChatStatus={this.initChatStatus}
+                          renewChatStatus={this.renewChatStatus}
+                          chatStatus={this.state.chatStatus}
+                          updateChatStatus={this.updateChatStatus}
+                          refresh_data={this.refresh_data}
+                          answerToday={this.answerToday}
+                          haveAnswerToday={this.state.haveAnswerToday}
+                          uuid={this.props.uuid}
+                          accessToken={this.state.accessToken}
+                          chatData={{id:this.state.chatId,data:this.state.chat_user_data}} />
+                      );
+                    } else {
+                      return (
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                          <Text style={{ alignItems: 'center', justifyContent: 'center' }}>你的學校尚未開通</Text>
+                        </View>
+                      );
+                    }
+                  })()}
                 </View>
                 <View tabLabel="好朋友" style={{ flex: 1 }}>
-                  <FriendsContainer
-                    chatStatus={this.state.chatStatus}
-                    uuid={this.props.uuid}
-                    accessToken={this.state.accessToken}
-                    chatData={{id:this.state.chatId,data:this.state.chat_user_data}}/>
+                  {(() => {
+                    if (this.props.orgAvailable) {
+                      return (
+                        <FriendsContainer
+                          chatStatus={this.state.chatStatus}
+                          uuid={this.props.uuid}
+                          accessToken={this.state.accessToken}
+                          chatData={{id:this.state.chatId,data:this.state.chat_user_data}}/>
+                      );
+                    } else {
+                      return (
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                          <Text style={{ alignItems: 'center', justifyContent: 'center' }}>你的學校尚未開通</Text>
+                        </View>
+                      );
+                    }
+                  })()}
                 </View>
                 <View tabLabel="更多" style={{ flex: 1 }}>
                   <MoreContainer />
@@ -272,5 +314,6 @@ export default connect((state) => ({
   deviceInfo: state.deviceInfo,
   isDevMode: state.devMode.devMode,
   currentTab: state.appTab.currentTab,
-  hideAppTabBar: state.appTab.hideAppTabBar
+  hideAppTabBar: state.appTab.hideAppTabBar,
+  orgAvailable: state.colorgyAPI.orgAvailable
 }))(App);

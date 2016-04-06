@@ -119,6 +119,20 @@ export default handleActions({
       ...state,
       meUpdating: false
     };
+  },
+
+  ORG_AVAILABLE: (state, action) => {
+    return {
+      ...state,
+      orgAvailable: true
+    };
+  },
+
+  ORG_NOT_AVAILABLE: (state, action) => {
+    return {
+      ...state,
+      orgAvailable: false
+    };
   }
 }, {
   hasAccessToken: false,
@@ -128,5 +142,6 @@ export default handleActions({
   accessTokenExpiresAt: null,
   lastResponse: {},
   me: {},
-  meUpdatedAt: null
+  meUpdatedAt: null,
+  orgAvailable: false
 });

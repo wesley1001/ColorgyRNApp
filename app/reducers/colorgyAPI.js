@@ -77,6 +77,27 @@ export default handleActions({
     };
   },
 
+  GOT_DEVICE_UNIQUE_ID: (state, action) => {
+    return {
+      ...state,
+      deviceUniqueID: action.payload.deviceUniqueID
+    };
+  },
+
+  GOT_DEVICE_NAME: (state, action) => {
+    return {
+      ...state,
+      deviceName: action.payload.deviceName
+    };
+  },
+
+  GCM_REGISTERED: (state, action) => {
+    return {
+      ...state,
+      gcmDeviceToken: action.payload.deviceToken
+    };
+  },
+
   UPDATE_ME: (state, action) => {
     return {
       ...state,
@@ -98,6 +119,20 @@ export default handleActions({
       ...state,
       meUpdating: false
     };
+  },
+
+  ORG_AVAILABLE: (state, action) => {
+    return {
+      ...state,
+      orgAvailable: true
+    };
+  },
+
+  ORG_NOT_AVAILABLE: (state, action) => {
+    return {
+      ...state,
+      orgAvailable: false
+    };
   }
 }, {
   hasAccessToken: false,
@@ -107,5 +142,6 @@ export default handleActions({
   accessTokenExpiresAt: null,
   lastResponse: {},
   me: {},
-  meUpdatedAt: null
+  meUpdatedAt: null,
+  orgAvailable: false
 });

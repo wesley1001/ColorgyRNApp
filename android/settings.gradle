@@ -8,8 +8,17 @@ project(':RNDeviceInfo').projectDir = new File(rootProject.projectDir, '../node_
 include ':react-native-sqlite-storage'
 project(':react-native-sqlite-storage').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sqlite-storage/src/android')
 
+include ':react-native-google-analytics-native'
+project(':react-native-google-analytics-native').projectDir = new File(settingsDir, '../node_modules/react-native-google-analytics-native/android')
+
 include ':react-native-facebook-login'
 project(':react-native-facebook-login').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-facebook-login/android')
+
+include ':RNGcmAndroid'
+project(':RNGcmAndroid').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gcm-android/android')
+
+include ':react-native-system-notification'
+project(':react-native-system-notification').projectDir = new File(settingsDir, '../node_modules/react-native-system-notification/android')
 
 include ':app', ':react-native-linear-gradient'
 project(':react-native-linear-gradient').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-linear-gradient/android')
@@ -17,5 +26,20 @@ project(':react-native-linear-gradient').projectDir = new File(rootProject.proje
 include ':react-native-vector-icons'
 project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 
+include ':react-native-android-design-support'
+project(':react-native-android-design-support').projectDir = new File(settingsDir, '../node_modules/react-native-android-design-support/android')
+
 include ':react-native-android-statusbar'
 project(':react-native-android-statusbar').projectDir = new File(settingsDir, '../node_modules/react-native-android-statusbar')
+
+include ':react-native-image-picker'
+project(':react-native-image-picker').projectDir = new File(settingsDir, '../node_modules/react-native-image-picker/android')
+
+include ':reactwheelview', ':app'
+project(':reactwheelview').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wheel')
+
+include ':react-native-fs'
+project(':react-native-fs').projectDir = new File(settingsDir, '../node_modules/react-native-fs/android')
+
+include ':react-native-imagewand'
+project(':react-native-imagewand').projectDir = new File(rootProject.projectDir, '../app/components/react-native-imagewand/android')

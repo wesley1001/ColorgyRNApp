@@ -1,9 +1,18 @@
 import React, { NativeModules, NetInfo, Dimensions, PixelRatio } from 'react-native';
 import { createAction } from 'redux-actions';
+import DeviceInfo from 'react-native-device-info';
+
+import { gotDeviceUniqueID, gotDeviceName } from './colorgyAPIActions'
 
 export const gotDeviceInfo = createAction('GOT_DEVICE_INFO');
 
 export const doDeviceInfo = () => dispatch => {
+  const deviceUniqueID = DeviceInfo.getUniqueID();
+  const deviceName = DeviceInfo.getDeviceName();
+  dispatch(gotDeviceInfo({ uniqueID: deviceUniqueID }));
+  dispatch(gotDeviceUniqueID({ deviceUniqueID: `${DeviceInfo.getManufacturer()}-${deviceUniqueID}` }));
+  dispatch(gotDeviceName({ deviceName }));
+
 
   // Network information
   const handleNetReachabilityChange = (reachability) => {
@@ -26,6 +35,9 @@ export const doDeviceInfo = () => dispatch => {
   var windowWidth = Dimensions.get('window').width;
   var windowHeight = Dimensions.get('window').height;
   dispatch(gotDeviceInfo({ windowWidth, windowHeight }));
+
+  var pixelRatio = PixelRatio.get();
+  dispatch(gotDeviceInfo({ pixelRatio }));
 
   if (NativeModules.SystemWindowAndroid) {
     NativeModules.SystemWindowAndroid.isTranslucentStatusBar((e) => {

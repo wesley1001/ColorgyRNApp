@@ -4,13 +4,13 @@ import React, {
   Animated,
   View,
   TouchableOpacity,
+  TouchableNativeFeedback,
   Image
 } from 'react-native';
 
 import THEME from '../constants/THEME';
 
 import Text from './Text';
-import TouchableNativeFeedback from './TouchableNativeFeedback';
 
 let CourseCard = React.createClass({
   propTypes: {
@@ -72,7 +72,7 @@ let CourseCard = React.createClass({
                     source={require('../assets/images/icon_lecturer.png')}
                   />
                 </View>
-                <Text style={styles.detailsItemText}>{course.lecturer}</Text>
+                <Text style={styles.detailsItemText}>{course.lecturer || '教師未知'}</Text>
               </View>
               <View style={styles.detailsItem}>
                 <View style={styles.detailsItemIcon}>
@@ -90,7 +90,7 @@ let CourseCard = React.createClass({
                     source={require('../assets/images/icon_time.png')}
                   />
                 </View>
-                <Text style={styles.detailsItemText}>{course.times}</Text>
+                <Text style={styles.detailsItemText}>{course.times || '未知'}</Text>
               </View>
             </View>
           </View>
@@ -137,7 +137,7 @@ let styles = StyleSheet.create({
   },
   detailsItemIcon: {
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 4
   }
 });
 

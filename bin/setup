@@ -28,13 +28,16 @@ rm -f node_modules/redux-actions/.babelrc
 rm -f node_modules/react-redux/.babelrc
 rm -f node_modules/flux-standard-action/.babelrc
 # increase the file watcher timeout for React Native packager
-mv node_modules/react-native/packager/react-packager/src/FileWatcher/index.js node_modules/react-native/packager/react-packager/src/FileWatcher/index.js.bak
-sed "s/const MAX_WAIT_TIME = 25000;/const MAX_WAIT_TIME = 250000;/g" node_modules/react-native/packager/react-packager/src/FileWatcher/index.js.bak > node_modules/react-native/packager/react-packager/src/FileWatcher/index.js
+mv node_modules/react-native/packager/react-packager/src/DependencyResolver/FileWatcher/index.js node_modules/react-native/packager/react-packager/src/DependencyResolver/FileWatcher/index.js.bak
+sed "s/const MAX_WAIT_TIME = [0-9]*;/const MAX_WAIT_TIME = 250000;/g" node_modules/react-native/packager/react-packager/src/DependencyResolver/FileWatcher/index.js.bak > node_modules/react-native/packager/react-packager/src/DependencyResolver/FileWatcher/index.js
+# patch to avoid the error "undefined is not an object (evaluating error.message)"
+mv node_modules/react-native/Libraries/Promise.js node_modules/react-native/Libraries/Promise.js.bak
+sed "s/const {message, stack} = error;/const {message, stack} = (error || {});/g" node_modules/react-native/Libraries/Promise.js.bak > node_modules/react-native/Libraries/Promise.js
 
 # Set up configurable variables
-# if [ ! -f config.js ]; then
-#   cp sample.config.js config.js
-# fi
+if [ ! -f config.js ]; then
+  cp sample.config.js config.js
+fi
 
 # Only if this isn't CI
 # if [ -z "$CI" ]; then

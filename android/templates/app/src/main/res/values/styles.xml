@@ -1,0 +1,41 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+
+        <item name="colorPrimary">{{THEME.COLOR}}</item>
+        <item name="colorPrimaryDark">{{THEME.COLOR_DARK}}</item>
+        <item name="colorAccent">{{THEME.COLOR_ACCENT}}</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style name="TitleInputText">
+        <item name="android:textSize">32dp</item>
+    </style>
+
+    <style name="TitleInputHint">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="ThemedTitleInputHint">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">{{THEME.COLOR}}</item>
+    </style>
+
+    <style name="SubtitleInputText">
+        <item name="android:textSize">18dp</item>
+    </style>
+
+    <style name="SubtitleInputHint">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="ThemedSubtitleInputHint">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">{{THEME.COLOR}}</item>
+        <item name="android:textColorHint">{{THEME.COLOR}}</item>
+    </style>
+
+</resources>

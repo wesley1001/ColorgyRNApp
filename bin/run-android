@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Exit if any subcommand fails
+set -e
+
+# Switch to the project directory
+BASEDIR=$(dirname "$0")
+cd "$BASEDIR"
+cd ..
+
+# Render templates
+./bin/render-templates
+
+# Run
+react-native run-android

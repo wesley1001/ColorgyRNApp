@@ -12,6 +12,7 @@ import _ from 'underscore';
 
 import Text from '../../components/Text';
 
+import THEME from '../../constants/THEME';
 import LOADING_STATE from '../../constants/LOADING_STATE';
 
 import colorgyAPI from '../../utils/colorgyAPI';
@@ -22,7 +23,7 @@ import {
   doRemoveCourse
 } from '../../actions/tableActions';
 
-import TitleBarScrollView from '../../components/TitleBarScrollView';
+import TitleBarParallaxScrollingLayout from '../../components/TitleBarParallaxScrollingLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import UserAvatar from '../../components/UserAvatar';
 
@@ -108,25 +109,23 @@ var CoursePageContainer = React.createClass({
 
     if (course) {
       return (
-        <TitleBarScrollView
+        <TitleBarParallaxScrollingLayout
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
-          style={this.props.style}
+          style={[{ backgroundColor: THEME.BACKGROUND_COLOR }, this.props.style]}
           title={course.name}
-          leftAction={
-            <TitleBarActionIcon onPress={this._handleBack}>
-              <Icon name="arrow-back" size={24} color="#FFFFFF" />
-            </TitleBarActionIcon>
+          actions={[{ title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' }]}
+          background={
+            <View style={{ backgroundColor: '#333', height: 200 }}>
+            </View>
           }
-          background={<View>
-            <Image style={{ width: deviceWidth }} />
-          </View>}
         >
           <View style={[styles.container]}>
+            <View style={styles.containerBackground} />
             <View style={styles.infoBlock}>
               <View style={styles.infoBox}>
                 <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_lecturer.png')} />
-                <Text>{course.lecturer}</Text>
+                <Text>{course.lecturer || '老師未知'}</Text>
               </View>
               <View style={styles.infoBox}>
                 <Image style={styles.infoBoxIcon} source={require('../../assets/images/icon_code.png')} />
@@ -187,11 +186,13 @@ var CoursePageContainer = React.createClass({
               })()}
             </View>
           </View>
-        </TitleBarScrollView>
+        </TitleBarParallaxScrollingLayout>
       );
     } else {
       return (
-        <Text>Loading</Text>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Loading...</Text>
+        </View>
       );
     }
   }
@@ -200,7 +201,6 @@ var CoursePageContainer = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EEEEEE',
     marginTop: 120
   },
   infoBlock: {

@@ -1,17 +1,20 @@
 import React, {
   Navigator,
-  ProgressBarAndroid
+  ProgressBarAndroid,
+  BackAndroid
 } from 'react-native';
 import { connect } from 'react-redux/native';
 
 import Text from '../../components/Text';
-import TitleBarView from '../../components/TitleBarView';
+import TitleBarLayout from '../../components/TitleBarLayout';
 
 import TableContainer from './TableContainer';
 import CoursePageContainer from './CoursePageContainer';
 import EditCourseContainer from './EditCourseContainer';
 import AddCourseContainer from './AddCourseContainer';
+import CreateCourseContainer from './CreateCourseContainer';
 import UserPageContainer from '../UserPageContainer';
+import FeedbackContainer from '../FeedbackContainer';
 
 import { doLoadCourseDatabase, doSyncUserCourses } from '../../actions/tableActions';
 
@@ -28,17 +31,34 @@ var Table = React.createClass({
   },
 
   componentDidMount() {
-    this.navigator.navigationContext.addListener('didfocus', (e) => {
-      this._reportRouteUpdate();
-    });
+    // this.navigator.navigationContext.addListener('didfocus', (e) => {
+    //   this._reportRouteUpdate();
+    // });
 
-    this._reportRouteUpdate();
+    // this._reportRouteUpdate();
   },
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.navigateBackCount !== this.props.navigateBackCount) {
-      this.navigator.pop();
+      if (!this.navigator.state.routeStack || this.navigator.state.routeStack.length <= 1) {
+        BackAndroid.exitApp();
+      } else {
+        this.navigator.pop();
+      }
+    } else if (nextProps.tabRePressCount !== this.props.tabRePressCount) {
+      if (this.navigator) this.navigator.popToTop();
     }
+  },
+
+  _registerNavigator(navigator) {
+    if (!navigator) return;
+    this.navigator = navigator;
+
+    navigator.navigationContext.addListener('didfocus', (e) => {
+      this._reportRouteUpdate();
+    });
+
+    this._reportRouteUpdate();
   },
 
   _reportRouteUpdate() {
@@ -46,7 +66,7 @@ var Table = React.createClass({
     var currentRoute = currentRouteStack[currentRouteStack.length - 1];
     var currentRouteString = JSON.stringify(currentRoute);
 
-    ga.sendScreenView('Table', currentRouteString);
+    ga.sendScreenView(`Table:${currentRouteString}`);
   },
 
   render() {
@@ -54,7 +74,7 @@ var Table = React.createClass({
         this.props.courseDatabaseUpdatedTime[this.props.organizationCode]) {
       return (
         <Navigator
-          ref={(navigator) => this.navigator = navigator}
+          ref={(navigator) => this._registerNavigator(navigator)}
           initialRoute={{ name: 'index' }}
           renderScene={(route, navigator) => {
             switch(route.name) {
@@ -78,9 +98,19 @@ var Table = React.createClass({
                   <AddCourseContainer navigator={navigator} />
                 );
                 break;
+              case 'createCourse':
+                return (
+                  <CreateCourseContainer navigator={navigator} courseName={route.courseName} />
+                );
+                break;
               case 'user':
                 return (
                   <UserPageContainer userId={route.id} navigator={navigator} />
+                );
+                break;
+              case 'feedback':
+                return (
+                  <FeedbackContainer navigator={navigator} />
                 );
                 break;
             }
@@ -90,6 +120,7 @@ var Table = React.createClass({
               case 'index':
               case 'editCourse':
               case 'addCourse':
+              case 'createCourse':
                 return Navigator.SceneConfigs.FloatFromBottom;
                 break;
               default:
@@ -102,7 +133,7 @@ var Table = React.createClass({
 
     } else {
       return (
-        <TitleBarView
+        <TitleBarLayout
           title="Table"
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
@@ -118,7 +149,7 @@ var Table = React.createClass({
             progress={this.props.courseDatabaseLoadingProgress}
           />
           <Text style={{ textAlign: 'center' }}>正在為您下載課程資料，請稍候⋯⋯</Text>
-        </TitleBarView>
+        </TitleBarLayout>
       );
     }
   }
@@ -130,6 +161,7 @@ export default connect((state) => ({
   courseDatabaseUpdatedTime: state.table.courseDatabaseUpdatedTime,
   courseDatabaseLoadingProgress: state.table.courseDatabaseLoadingProgress,
   navigateBackCount: state.table.navigateBackCount,
+  tabRePressCount: state.appTab.rePressCountOnTab['0'],
   networkConnectivity: state.deviceInfo.networkConnectivity,
   translucentStatusBar: state.deviceInfo.translucentStatusBar,
   statusBarHeight: state.deviceInfo.statusBarHeight

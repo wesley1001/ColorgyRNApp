@@ -5,8 +5,8 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="Common-Icons" sketch:type="MSArtboardGroup" transform="translate(-48.000000, -192.000000)" fill="#F89680">
-            <g id="icon_check_active" sketch:type="MSLayerGroup" transform="translate(48.000000, 192.000000)">
+        <g id="Common-Icons" sketch:type="MSArtboardGroup" transform="translate(-48.000000, -240.000000)" fill="#F89680">
+            <g id="icon_check_active" sketch:type="MSLayerGroup" transform="translate(48.000000, 240.000000)">
                 <path d="M8.46153846,16.2307692 L3.61538462,11.3846154 L2,13 L8.46153846,19.4615385 L22.3076923,5.61538462 L20.6923077,4 L8.46153846,16.2307692 Z" id="check" sketch:type="MSShapeGroup"></path>
             </g>
         </g>

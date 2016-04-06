@@ -1,0 +1,83 @@
+{
+  "_args": [
+    [
+      "react-native-imagewand@^1.0.1",
+      "/Users/dannyyaou/Desktop/Developement/ColorgyRNApp_origin"
+    ]
+  ],
+  "_from": "react-native-imagewand@>=1.0.1 <2.0.0",
+  "_id": "react-native-imagewand@1.0.2",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/react-native-imagewand",
+  "_nodeVersion": "5.4.1",
+  "_npmOperationalInternal": {
+    "host": "packages-5-east.internal.npmjs.com",
+    "tmp": "tmp/react-native-imagewand-1.0.2.tgz_1455101926339_0.10284650907851756"
+  },
+  "_npmUser": {
+    "email": "firstera15@gmail.com",
+    "name": "northfoxz"
+  },
+  "_npmVersion": "3.3.12",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "react-native-imagewand",
+    "raw": "react-native-imagewand@^1.0.1",
+    "rawSpec": "^1.0.1",
+    "scope": null,
+    "spec": ">=1.0.1 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/react-native-imagewand/-/react-native-imagewand-1.0.2.tgz",
+  "_shasum": "f5b49e4f67997110d771dd18d706d8d5e1fbc44d",
+  "_shrinkwrap": null,
+  "_spec": "react-native-imagewand@^1.0.1",
+  "_where": "/Users/dannyyaou/Desktop/Developement/ColorgyRNApp_origin",
+  "author": {
+    "name": "northfoxz"
+  },
+  "bugs": {
+    "url": "https://github.com/NorthFoxz/react-native-imagewand/issues"
+  },
+  "dependencies": {},
+  "description": "image wand for react native",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "f5b49e4f67997110d771dd18d706d8d5e1fbc44d",
+    "tarball": "http://registry.npmjs.org/react-native-imagewand/-/react-native-imagewand-1.0.2.tgz"
+  },
+  "gitHead": "ba82fa36068cfbb7d6b4e55efd6564346b7da0f2",
+  "homepage": "https://github.com/NorthFoxz/react-native-imagewand#readme",
+  "keywords": [
+    "android",
+    "image",
+    "ios",
+    "react-component",
+    "react-native",
+    "wand"
+  ],
+  "license": "MIT",
+  "main": "index.android.js",
+  "maintainers": [
+    {
+      "name": "northfoxz",
+      "email": "firstera15@gmail.com"
+    }
+  ],
+  "name": "react-native-imagewand",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NorthFoxz/react-native-imagewand.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.2"
+}

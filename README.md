@@ -9,12 +9,14 @@ Colorgy mobile app on Android, using [React Native](https://facebook.github.io/r
 ./bin/setup
 ```
 
+Get the `google-services.json` (from [here](https://developers.google.com/mobile/add?platform=android&cntapi=gcm)) and place it under the project directory (next to `package.json`).
+
 Then edit `config.js` (automatically copied from `sample.config.js` if not exists) to set the configurations.
 
 ### Run on Android
 
 ```bash
-react-native run-android
+./bin/run-android
 ```
 
 
@@ -34,7 +36,7 @@ ANDROID_APP_RELEASE_KEY_PASSWORD=
 then run:
 
 ```bash
-cd android && ./gradlew assembleRelease
+bin/build-android
 ```
 
 The signed apk will locate at `android/app/build/outputs/apk`.

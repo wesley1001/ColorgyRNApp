@@ -159,7 +159,7 @@ class WebSQL {
                   transaction.executeSql(dropTablesQuery, null, () => {
                     resolve();
                   }, (e) => {
-                    console.error(e);
+                    console.error('WebSQL: reset', e);
                     reject(e);
                   });
                 });
@@ -171,7 +171,7 @@ class WebSQL {
               this.version = null;
               console.log(`WebSQL: reset: done.`);
             }).catch( (e) => {
-              console.error(e);
+              console.error('WebSQL: reset', e);
               reject(e);
             });
           } else {
@@ -179,7 +179,7 @@ class WebSQL {
             console.log(`WebSQL: reset: done.`);
           }
         }).catch( (e) => {
-          console.error(e);
+          console.error('WebSQL: reset', e);
           reject(e);
         });
     });

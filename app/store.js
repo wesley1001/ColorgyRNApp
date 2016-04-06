@@ -7,26 +7,36 @@ import thunkMiddleware from 'redux-thunk';
 import reduxPersistExpectIngs from 'redux-persist-except-ings';
 import createLogger from 'redux-logger';
 
+import config from '../config';
+
 import gaMiddleware from './middlewares/gaMiddleware';
-import alertMiddleware from './middlewares/alertMiddleware';
+import failureReportMiddleware from './middlewares/failureReportMiddleware';
+import notifyMiddleware from './middlewares/notifyMiddleware';
+import simpleLoggerMiddleware from './middlewares/simpleLoggerMiddleware';
 
 var createStoreWithMiddleware = applyMiddleware(
   thunkMiddleware,
   gaMiddleware,
-  alertMiddleware
+  failureReportMiddleware,
+  notifyMiddleware
 )(createStore);
 
 if (__DEV__) {
-  const loggerMiddleware = createLogger({
+  var loggerMiddleware = createLogger({
     level: 'info',
     collapsed: true,
     predicate: (getState, action) => true
   });
 
+  if (config.devLogger === 'simple') {
+    loggerMiddleware = simpleLoggerMiddleware;
+  }
+
   createStoreWithMiddleware = applyMiddleware(
     thunkMiddleware,
     gaMiddleware,
-    alertMiddleware,
+    failureReportMiddleware,
+    notifyMiddleware,
     loggerMiddleware
   )(createStore);
 }

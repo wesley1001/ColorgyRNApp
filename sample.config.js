@@ -1,3 +1,8 @@
 module.exports = {
-  googleAnalyticsID: ''
+  googleAnalyticsID: '',
+  devLogger: 'simple',
+  androidReleaseKeystoreFile: 'null',
+  androidReleaseKeystorePassword: 'null',
+  androidReleaseKeyAlias: 'null',
+  androidReleaseKeyPassword: 'null'
 }

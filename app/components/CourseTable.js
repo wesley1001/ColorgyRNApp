@@ -8,6 +8,7 @@ import React, {
   TouchableOpacity,
   Image
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 import THEME from '../constants/THEME';
 import Text from './Text';
@@ -168,19 +169,21 @@ let CourseTable = React.createClass({
                                   style={[styles.course, { backgroundColor: course.color }]}
                                   onPress={() => this._handleCoursePress({ courseCode: course.code })}
                                 >
-                                  <Text style={styles.courseText}>
-                                    {course.name}
-                                  </Text>
-                                  {(() => {
-                                    if (course[`location_${courseNumber}`]) return (
-                                      <Text style={styles.courseText}>
-                                        {course[`location_${courseNumber}`]}
-                                      </Text>
-                                    );
-                                  })()}
-                                  <Text style={styles.courseText}>
-                                    {course.lecturer}
-                                  </Text>
+                                  <View style={{ backgroundColor: 'transparent' }}>
+                                    <Text style={styles.courseText} numberOfLines={1}>
+                                      {course.name}
+                                    </Text>
+                                    {(() => {
+                                      if (course[`location_${courseNumber}`]) return (
+                                        <Text style={styles.courseText} numberOfLines={1}>
+                                          {course[`location_${courseNumber}`]}
+                                        </Text>
+                                      );
+                                    })()}
+                                    <Text style={styles.courseText} numberOfLines={1}>
+                                      {course.lecturer}
+                                    </Text>
+                                  </View>
                                 </TouchableOpacity>
                               );
                             }
@@ -255,9 +258,13 @@ let styles = StyleSheet.create({
     paddingRight: 5,
     paddingTop: 2,
     paddingBottom: 2
+
   },
   courseText: {
-    color: 'white'
+    color: 'white',
+    fontSize: 12,
+    marginBottom: 2,
+    width: 99999
   }
 });
 

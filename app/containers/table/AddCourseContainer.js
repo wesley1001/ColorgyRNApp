@@ -17,10 +17,11 @@ import courseDatabase from '../../databases/courseDatabase';
 
 import Text from '../../components/Text';
 import TextInput from '../../components/TextInput';
-import TitleBarView from '../../components/TitleBarView';
+import TitleBarLayout from '../../components/TitleBarLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import CourseCard from '../../components/CourseCard';
 import GhostButton from '../../components/GhostButton';
+import Button from '../../components/Button';
 
 import {
   doLoadTableCourses,
@@ -29,16 +30,23 @@ import {
   doSyncUserCourses
 } from '../../actions/tableActions';
 
-var TableContainer = React.createClass({
+var AddCourseContainer = React.createClass({
+
+  getInitialState() {
+    return {
+      searchQuery: null,
+      courses: {}
+    };
+  },
 
   componentWillMount() {
     this.props.dispatch(doLoadTableCourses(this.props.userId, this.props.organizationCode));
   },
 
-  componentWillUnmount() {
-    InteractionManager.runAfterInteractions(() => {
-      this.props.dispatch(doSyncUserCourses(this.props.userId, this.props.organizationCode));
-    });
+  componentWillReceiveProps(nextProps) {
+    if (this.props.selectedCourses != nextProps.selectedCourses) {
+      this._handleSearch(true);
+    }
   },
 
   componentWillUnmount() {
@@ -49,18 +57,12 @@ var TableContainer = React.createClass({
     });
   },
 
-  getInitialState() {
-    return {
-      searchQuery: null,
-      courses: {}
-    };
-  },
-
   _handleBack() {
     this.props.navigator.pop();
   },
 
   _handleSearch(query) {
+    if (query === true) query = this.state.searchQuery;
     this.setState({ searchQuery: query });
     courseDatabase.searchCourse(this.props.organizationCode, (query || '')).then((courses) => {
       this.setState({ courses });
@@ -71,26 +73,29 @@ var TableContainer = React.createClass({
     this.props.navigator.push({ name: 'course', code: payload.courseCode });
   },
 
+  _handleCreateCourse() {
+    this.props.navigator.push({ name: 'createCourse', courseName: this.state.searchQuery });
+  },
+
   render() {
     var { courses } = this.state;
     var { selectedCourses } = this.props;
     var selectedCourseCodes = Object.keys(selectedCourses);
 
     return (
-      <TitleBarView
+      <TitleBarLayout
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={this.props.statusBarHeight}
         style={this.props.style}
         title="加選課程"
-        leftAction={
-          <TitleBarActionIcon onPress={this._handleBack}>
-            <Icon name="arrow-back" size={24} color="#FFFFFF" />
-          </TitleBarActionIcon>
-        }
+        actions={[
+          { title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' }
+        ]}
       >
         <View style={styles.searchBar}>
           <TextInput
             placeholder="搜尋課名、老師姓名或課程代碼"
+            autoFocus={true}
             underlineColorAndroid="transparent"
             underlineColor="transparent"
             onChangeText={this._handleSearch}
@@ -98,8 +103,19 @@ var TableContainer = React.createClass({
           />
         </View>
         <ScrollView>
+          {(()=> {
+            if (this.state.searchQuery && this.state.searchQuery.length > 0) {
+              return (
+                <Button
+                  style={styles.manuallyCreateCourseButton}
+                  value={`手動新增「${this.state.searchQuery}」課程`}
+                  onPress={this._handleCreateCourse}
+                />
+              );
+            }
+          })()}
           {_.values(courses).map((course) => {
-            var selected = selectedCourseCodes.indexOf(course.code) > 0;
+            var selected = selectedCourseCodes.indexOf(course.code) >= 0;
             return (
               <CourseCard
                 key={course.code}
@@ -158,7 +174,7 @@ var TableContainer = React.createClass({
             );
           })}
         </ScrollView>
-      </TitleBarView>
+      </TitleBarLayout>
     );
   }
 });
@@ -168,9 +184,14 @@ var styles = StyleSheet.create({
     flex: 1
   },
   searchBar: {
-    backgroundColor: '#CCCCCC',
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
     paddingLeft: 12,
     paddingRight: 12
+  },
+  manuallyCreateCourseButton: {
+    margin: 12
   }
 });
 
@@ -182,4 +203,4 @@ export default connect((state) => ({
   networkConnectivity: state.deviceInfo.networkConnectivity,
   translucentStatusBar: state.deviceInfo.translucentStatusBar,
   statusBarHeight: state.deviceInfo.statusBarHeight
-}))(TableContainer);
+}))(AddCourseContainer);

@@ -2,16 +2,19 @@ import React, {
   InteractionManager,
   StyleSheet,
   View,
-  ScrollView
+  ScrollView,
+  TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from 'underscore';
+import moment from 'moment';
+require('moment/locale/zh-tw');
 
 import THEME from '../../constants/THEME';
 
 import Text from '../../components/Text';
-import TitleBarView from '../../components/TitleBarView';
+import TitleBarLayout from '../../components/TitleBarLayout';
 import TitleBarActionIcon from '../../components/TitleBarActionIcon';
 import CourseCard from '../../components/CourseCard';
 import GhostButton from '../../components/GhostButton';
@@ -19,7 +22,8 @@ import GhostButton from '../../components/GhostButton';
 import {
   doSyncUserCourses,
   doLoadTableCourses,
-  doRemoveCourse
+  doRemoveCourse,
+  doForceUpdateCourseDatabase
 } from '../../actions/tableActions';
 
 var TableContainer = React.createClass({
@@ -71,21 +75,15 @@ var TableContainer = React.createClass({
     }
 
     return (
-      <TitleBarView
+      <TitleBarLayout
         enableOffsetTop={this.props.translucentStatusBar}
         offsetTop={this.props.statusBarHeight}
         style={this.props.style}
         title="已選課程"
-        leftAction={
-          <TitleBarActionIcon onPress={this._handleBack}>
-            <Icon name="arrow-back" size={24} color="#FFFFFF" />
-          </TitleBarActionIcon>
-        }
-        rightAction={
-          <TitleBarActionIcon onPress={this._handleAdd}>
-            <Icon name="add" size={24} color="#FFFFFF" />
-          </TitleBarActionIcon>
-        }
+        actions={[
+          { title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' },
+          { title: '加選課程', icon: require('../../assets/images/icon_add_white.png'), onPress: this._handleAdd, show: 'always' }
+        ]}
       >
         <ScrollView
           contentContainerStyle={styles.container}
@@ -123,8 +121,19 @@ var TableContainer = React.createClass({
               />
             );
           })}
+          <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 16, paddingHorizontal: 12 }}>
+            <Text>資料最後更新：{moment(this.props.courseDatabaseUpdatedTime[this.props.organizationCode]).locale('zh-tw').fromNow()} (</Text>
+            <TouchableOpacity onPress={() => this.props.dispatch(doForceUpdateCourseDatabase(this.props.organizationCode))}>
+              <View style={{ backgroundColor: 'transparent', borderBottomWidth: 1, borderBottomColor: '#F89680' }}>
+                <Text style={{ color: '#F89680' }}>
+                  立即更新
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <Text>)</Text>
+          </View>
         </ScrollView>
-      </TitleBarView>
+      </TitleBarLayout>
     );
   }
 });
@@ -140,6 +149,8 @@ export default connect((state) => ({
   tableStatus: state.table.tableStatus,
   userId: state.colorgyAPI.me && state.colorgyAPI.me.id,
   organizationCode: state.colorgyAPI.me && state.colorgyAPI.me.possibleOrganizationCode,
+  courseDatabaseUpdatedTime: state.table.courseDatabaseUpdatedTime,
+  courseDatabaseLoadingProgress: state.table.courseDatabaseLoadingProgress,
   courses: state.table.tableCourses,
   windowHeight: state.deviceInfo.windowHeight,
   networkConnectivity: state.deviceInfo.networkConnectivity,

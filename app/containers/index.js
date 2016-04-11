@@ -60,8 +60,11 @@ var App = React.createClass({
       return r.json();
     }).then((json) => {
       if (json.available) {
+        notify('oa')
+        notify(JSON.stringify(json))
         this.props.dispatch({ type: 'ORG_AVAILABLE' });
       } else {
+        notify('ona')
         this.props.dispatch({ type: 'ORG_NOT_AVAILABLE' });
       }
     }).catch((e) => {

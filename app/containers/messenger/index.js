@@ -10,6 +10,7 @@ import React, {
   Image,
   TouchableNativeFeedback,
   BackAndroid,
+  DeviceEventEmitter,
   Alert
 } from 'react-native';
 import { connect } from 'react-redux/native';
@@ -55,6 +56,7 @@ var Messenger = React.createClass({
   getInitialState(){
     return{
       menuOpen:false,
+      keyboardHeighting:Dimensions.get('window').height,
       messages:[],
       chatroomId:'',
       messageList:this.props.messageList,
@@ -279,6 +281,8 @@ var Messenger = React.createClass({
         this._handleBack();
       }
     }.bind(this));
+    DeviceEventEmitter.addListener('keyboardDidShow', this.keyboardWillShow)
+    DeviceEventEmitter.addListener('keyboardDidHide', this.keyboardWillHide)
     chatAPI.get_other_user_data(this.props.friendId)
     .then((response)=>{
       var data = JSON.parse(response._bodyInit)
@@ -366,6 +370,18 @@ var Messenger = React.createClass({
   handleScroll(event){
     console.log(event);
   },
+  keyboardWillShow: function(e) {
+    // Alert.alert('keyboard event..');
+    this.setState({
+      keyboardHeighting: Dimensions.get('window').height - e.endCoordinates.height,
+    })
+  },
+  keyboardWillHide: function(e) {
+    // Alert.alert('keyboard event..');
+    this.setState({
+      keyboardHeight: Dimensions.get('window').height
+    })
+  },
   render() {
     if (this.state.menuOpen) {
       var leftIcon = require('../../assets/images/icon_chat_up.png')
@@ -395,7 +411,7 @@ var Messenger = React.createClass({
             isRefreshing={this.state.isRefreshing}
             messages={this.getMessages()}
             handleSend={this.handleSend}
-            maxHeight={Dimensions.get('window').height - 85} // 64 for the navBar
+            maxHeight={this.state.keyboardHeighting - 85} // 64 for the navBar
             photoAvilible={true}
             showImagePicker={this.showImagePicker}
             onImagePress={this.showBigHead}

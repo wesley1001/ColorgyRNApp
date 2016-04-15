@@ -1237,7 +1237,8 @@ var Chat = React.createClass({
   okVerify(){
     Alert.alert('系統訊息','驗證成功');
     this._chat_state_haveVerify();
-    this.props.updateChatStatus(2);
+    // this.props.updateChatStatus(2);
+    this.props.initChatStatus()
   },
   leaveIntro(){
     this.setState({haveSend:true})

@@ -1,4 +1,4 @@
-import React, { Platform, View, Text, AsyncStorage } from 'react-native';
+import React, { Platform, View, Text, AsyncStorage, Alert } from 'react-native';
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
 
@@ -134,6 +134,7 @@ var App = React.createClass({
     }
   },
   initChatStatus(){
+    // Alert.alert('initChatStatus');
     // 載入app即進行的動作for聊天室
     colorgyAPI.getAccessToken().then((accessToken) => {
       this.setState({accessToken:accessToken});
@@ -159,7 +160,7 @@ var App = React.createClass({
       .then((response)=>{
         if (response) {
           var data = JSON.parse(response).result;
-          console.log("data",data);
+          // Alert.alert("data",JSON.stringify(data));
           this.setState({chat_user_data:data});
         };
       })

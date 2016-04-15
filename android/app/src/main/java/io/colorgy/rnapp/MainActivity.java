@@ -19,6 +19,7 @@ import com.reactnativeandroiddesignsupport.DesignSupportPackage;
 import me.neo.react.StatusBarPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.heng.wheel.WheelPackage;
+import com.reactImageWand.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +51,7 @@ public class MainActivity extends ReactActivity {
    */
     @Override
     protected List<ReactPackage> getPackages() {
-        mImagePicker = new ImagePickerPackage(this);
+        // mImagePicker = new ImagePickerPackage(this);
 
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
@@ -65,15 +66,14 @@ public class MainActivity extends ReactActivity {
             new DesignSupportPackage(this),
             new StatusBarPackage(this),
             new WheelPackage(),
-            mImagePicker,
-            new AppNativePackage(this)
+            new ImagePickerPackage(),
+            new AppNativePackage(this),
+            new RNImageWandPackage()
         );
     }
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        mImagePicker.handleActivityResult(requestCode, resultCode, data);
     }
 }

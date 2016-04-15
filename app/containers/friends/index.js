@@ -98,7 +98,7 @@ var Hellos = React.createClass({
         <TitleBarLayout
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
-          style={[this.props.style,{paddingTop:25,backgroundColor:'#f89680'}]}
+          style={[this.props.style,{paddingTop:0,backgroundColor:'#f89680'}]}
           title="打招呼"
           actions={[{ title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' },]}
         >
@@ -136,7 +136,7 @@ var Hellos = React.createClass({
                         <Text style={{fontSize:13,color:"#F89680"}}>{hello.lastAnswer}</Text>
                       </View>
                       <View style={{justifyContent:'center',flex:1}}>
-                        <Text style={{fontSize:15,}}>{hello.message}</Text>
+                        <Text style={{fontSize:15,}}>{hello.message.substring(0,10)+'...'}</Text>
                       </View>
                     </View>
                     <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end'}}>
@@ -255,7 +255,7 @@ var Friends = React.createClass({
         <TitleBarLayout
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
-          style={[this.props.style,{paddingTop:25,backgroundColor:'#f89680',flex:1}]}
+          style={[this.props.style,{paddingTop:0,backgroundColor:'#f89680',flex:1}]}
           title="好朋友"
           actions={[
             null,
@@ -298,7 +298,7 @@ var Friends = React.createClass({
                           <Text style={{fontSize:13,color:"#F89680"}}>{friend.lastAnswer}</Text>
                         </View>
                         <View style={{justifyContent:'center',flex:1}}>
-                          <Text style={{fontSize:16,}}>{friend.lastContent}</Text>
+                          <Text style={{fontSize:16,}}>{friend.lastContent.substring(0,15)+'...'}</Text>
                         </View>
                       </View>
                       <View style={{flex:1}}>

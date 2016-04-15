@@ -25,7 +25,7 @@ var extend = require('extend');
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 var GiftedSpinner = require('react-native-gifted-spinner');
 var Button = require('react-native-button');
-
+var textInputHeight = 0;
 var ImageResizing = React.createClass({
   getInitialState(){
     return{
@@ -45,6 +45,7 @@ var ImageResizing = React.createClass({
     )
   },
   _imageInfo(event){
+    // Alert.alert('event',JSON.stringify(event))
     var bi = event.height/event.width
     this.setState({height:bi*200});
   }
@@ -114,7 +115,7 @@ var GiftedMessenger = React.createClass({
       textInputHeight = 0;
     }
     
-    this.listViewMaxHeight = this.props.maxHeight - textInputHeight;
+    this.listViewMaxHeight = this.props.maxHeight;
     
     var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => {
       if (typeof r1.status !== 'undefined') {
@@ -126,7 +127,7 @@ var GiftedMessenger = React.createClass({
       dataSource: ds.cloneWithRows([]),
       text: '',
       disabled: true,
-      height: new Animated.Value(this.listViewMaxHeight),
+      height: new Animated.Value(this.props.maxHeight),
       isLoadingEarlierMessages: false,
       allLoaded: false,
       isRefreshing:false
@@ -319,10 +320,10 @@ var GiftedMessenger = React.createClass({
       var content = this.renderImageContent(rowData.content);
     }
     return (
-      <View>
+      <View style={rowData.type == 'image'?{flex:1}:{flex:1}}>
       {this.renderDate(rowData, rowID)}
       {rowData.position === 'left' ? this.renderName(rowData, rowID) : null}
-      <View style={rowData.position === 'right' ?[this.styles.rowContainer,{alignSelf:'flex-end'}]:[this.styles.rowContainer,{alignSelf:'flex-start'}]}>
+      <View style={rowData.position === 'right' ?[this.styles.rowContainer,{alignSelf:'flex-end',flex:1}]:[this.styles.rowContainer,{alignSelf:'flex-start',flex:1}]}>
         {rowData.position === 'left' ? this.renderImage(rowData, rowID) : null}
         {rowData.position === 'right' ? this.renderErrorButton(rowData, rowID) : null}
         <View style={[(rowData.type == 'image' ? { borderRadius: 0,paddingLeft: 2,paddingRight: 2,paddingBottom: 2,paddingTop: 2,} : this.styles.bubble ), (rowData.position === 'left' ? this.styles.bubbleLeft : this.styles.bubbleRight), (rowData.status === 'ErrorButton' ? this.styles.bubbleError : null)]}>
@@ -371,17 +372,17 @@ var GiftedMessenger = React.createClass({
   },
 
   onKeyboardWillHide(e) {
-    Animated.timing(this.state.height, {
-      toValue: this.listViewMaxHeight,
-      duration: 150,
-    }).start();
+    // Animated.timing(this.state.height, {
+    //   toValue: this.props.maxHeight,
+    //   duration: 150,
+    // }).start();
   },
   
   onKeyboardWillShow(e) {
-    Animated.timing(this.state.height, {
-      toValue: this.listViewMaxHeight - 20,
-      duration: 200,
-    }).start();
+    // Animated.timing(this.state.height, {
+    //   toValue: this.props.maxHeight - 20,
+    //   duration: 200,
+    // }).start();
   },
   
   onSend() {
@@ -513,14 +514,10 @@ var GiftedMessenger = React.createClass({
   },
   handleScroll: function(event: Object) {
    if (event.nativeEvent.contentOffset.y == event.nativeEvent.contentSize.height - event.nativeEvent.layoutMeasurement.height) {
-    if (!this.state.isRefreshing) {
+    if (!this.props.isRefreshing) {
       this.props.getMoreMessages();
-      this.setState({isRefreshing: true});
     }
     console.log('update');
-    setTimeout(function() {
-      this.setState({isRefreshing: false});
-    }.bind(this),500)
    };
   },
   renderAnimatedView() {
@@ -528,10 +525,10 @@ var GiftedMessenger = React.createClass({
       return (
         <Animated.View
           style={{
-            height: this.state.height,
+            height: this.props.maxHeight,
           }}
         >
-            {this.state.isRefreshing?
+            {this.props.isRefreshing?
               <Image
               style={{width:30,height:30,alignSelf:'center'}}
               source={require('../../assets/images/loaging.gif')} />
@@ -567,10 +564,10 @@ var GiftedMessenger = React.createClass({
     return (
       <Animated.View
         style={{
-          height: this.state.height,
+          height: this.props.maxHeight,
         }}
       >
-          {this.state.isRefreshing?<Text></Text>:null}
+          {this.props.isRefreshing?<Text></Text>:null}
         <ListView
           ref='listView'
           dataSource={this.state.dataSource}
@@ -619,6 +616,7 @@ var GiftedMessenger = React.createClass({
               source={require('../../assets/images/icon_chat_camera.png')} />
           </View></TouchableNativeFeedback>:null}
           <TextInput
+            multiline={true}
             style={this.styles.textInput}
             placeholder={this.props.placeholder}
             ref='textInput'
@@ -738,9 +736,13 @@ var GiftedMessenger = React.createClass({
         color: '#000',
       },
       textLeft: {
+        // textAlign:'left'
+        width:Dimensions.get('window').width/3*2
       },
       textRight: {
         color: '#fff',
+        // textAlign:'right'
+        width:Dimensions.get('window').width/3*2
       },
       bubbleLeft: {
         // marginRight: 70,

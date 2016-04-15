@@ -155,6 +155,7 @@ var WelcomeView = React.createClass({
     // 串認證信
     fetch('https://colorgy.io:443/api/v1/me.json?fields=organization_code&&access_token='+this.props.accessToken)
     .then(function(data) {
+      // Alert.alert(JSON.stringify(data))
       if(JSON.parse(data._bodyInit).organization_code && JSON.parse(data._bodyInit).organization_code!='' && JSON.parse(data._bodyInit).organization_code!= undefined){
         var v = true;
       }else{

@@ -222,7 +222,7 @@ var GiftedMessenger = React.createClass({
         diffMessage = this.getNextMessage(rowID);
       }
       
-      if (diffMessage === null || (this._data[rowID].name !== diffMessage.name || this._data[rowID].id !== diffMessage.id)) {
+      // if (diffMessage === null || (this._data[rowID].name !== diffMessage.name || this._data[rowID].id !== diffMessage.id)) {
         if (typeof this.props.onImagePress === 'function') {
           return (
             <TouchableNativeFeedback 
@@ -240,11 +240,11 @@ var GiftedMessenger = React.createClass({
             <Image source={rowData.image} style={[this.styles.imagePosition, this.styles.image, (rowData.position === 'left' ? this.styles.imageLeft : this.styles.imageRight)]}/>
           );
         }
-      } else {
-        return (
-          <View style={this.styles.imagePosition}/>
-        );
-      }
+      // } else {
+      //   return (
+      //     <View style={this.styles.imagePosition}/>
+      //   );
+      // }
     }
     return (
       <View style={this.styles.spacer}/>
@@ -318,6 +318,9 @@ var GiftedMessenger = React.createClass({
       var content = this.renderText(rowData, rowID);
     }else if(rowData.type == 'image'){
       var content = this.renderImageContent(rowData.content);
+    }
+    if (rowData.position == 'left' && rowData.image == null) {
+      Alert.alert('system',JSON.stringify(rowData.image));
     }
     return (
       <View style={rowData.type == 'image'?{flex:1}:{flex:1}}>

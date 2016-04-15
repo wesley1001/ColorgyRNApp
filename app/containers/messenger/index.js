@@ -26,7 +26,7 @@ import GiftedMessenger from '../../components/react-native-gifted-messenger';
 import ga from '../../utils/ga';
 import chatAPI from '../../utils/chatAPI';
 
-var UIImagePickerManager = require('NativeModules').UIImagePickerManager;
+var UIImagePickerManager =  require('NativeModules').ImagePickerManager;
 var ImageWand = require('../../components/react-native-imagewand');
 
 var ImageResizing = React.createClass({
@@ -113,13 +113,13 @@ var Messenger = React.createClass({
         offset = 0;
       }else{
         doOrNot = false;
+        this.setState({isRefreshing:false});
       }
-      console.log(offset,getTotal);
       if (doOrNot) {
+        // Alert.alert("data:",offset+'/'+getTotal);
         chatAPI.chatroom_more_message(this.props.accessToken,this.props.uuid,this.props.chatData.id,this.props.chatroomId,offset)
         .then((response) => response.text())
         .then((responseText) => {
-          this.setState({isRefreshing:false})
           var data = JSON.parse(responseText)
           console.log(data);
           var new_messages = [];
@@ -128,8 +128,9 @@ var Messenger = React.createClass({
             console.log('receive msg index:',i,"to the begining");
             this.handleReceive(data.messageList[i],false,true);
             i = i+1;
-            if (i+1 == getTotal) {
+            if (i == getTotal) {
               clearInterval(itv);
+              this.setState({isRefreshing:false})
             }
           }.bind(this),1)
         })
@@ -213,41 +214,43 @@ var Messenger = React.createClass({
     }
   },
   handleReceive(message,firstLoad,getMore) {
-    if (message && message.chatProgress) {
-      this.update_chatProgress(message.chatProgress)
-    }
-    if (!firstLoad && !getMore) {
-      this.setState({totalMessageLength:this.state.totalMessageLength+1});
-      console.log(this.state.totalMessageLength);
-    }
-    if (message.userId != this.props.chatData.id || firstLoad || message.type == 'image' || getMore) {
-      var msg = {
-        image: {uri:this.props.friendImage},
-        date: new Date(2015, 0, 16, 19, 0),
-        position:'left',
-        type: 'chat',
-        text: '',
-        name: this.state.friend_data.alias,
-      };
-      msg.date = message.createdAt;
-      if (message.type == 'text' || message.type == "textMessage") {
-        msg.text = message.content.text;
-      }else if (message.type == 'image'){
-        msg.type = message.type;
-        msg.content = message.content.imgSrc;
+    if(message){
+      if (message && message.chatProgress) {
+        this.update_chatProgress(message.chatProgress)
       }
-      if (message.userId == this.props.chatData.id) {
-        msg.position = 'right';
-        msg.image = null;
-      };
-      if (getMore) {
-        var tp = [];
-        tp.push(msg);
-        this.setState({messages:tp.concat(this.state.messages)});
-      }else{
-        this.setState({messages:this.state.messages.concat(msg)});
+      if (!firstLoad && !getMore) {
+        this.setState({totalMessageLength:this.state.totalMessageLength+1});
+        console.log(this.state.totalMessageLength);
       }
-    };
+      if (message.userId && (message.userId != this.props.chatData.id || firstLoad || message.type == 'image' || getMore)) {
+        var msg = {
+          image: {uri:this.props.friendImage},
+          date: new Date(2015, 0, 16, 19, 0),
+          position:'left',
+          type: 'chat',
+          text: '',
+          name: this.state.friend_data.alias,
+        };
+        msg.date = message.createdAt;
+        if (message.type == 'text' || message.type == "textMessage") {
+          msg.text = message.content.text;
+        }else if (message.type == 'image'){
+          msg.type = message.type;
+          msg.content = message.content.imgSrc;
+        }
+        if (message.userId == this.props.chatData.id) {
+          msg.position = 'right';
+          msg.image = null;
+        };
+        if (getMore) {
+          var tp = [];
+          tp.push(msg);
+          this.setState({messages:tp.concat(this.state.messages)});
+        }else{
+          this.setState({messages:this.state.messages.concat(msg)});
+        }
+      };
+    }
   },
   componentWillMount(){
     this.props.dispatch(hideAppTabBar());
@@ -379,7 +382,7 @@ var Messenger = React.createClass({
   keyboardWillHide: function(e) {
     // Alert.alert('keyboard event..');
     this.setState({
-      keyboardHeight: Dimensions.get('window').height
+      keyboardHeighting: Dimensions.get('window').height
     })
   },
   render() {
@@ -411,7 +414,7 @@ var Messenger = React.createClass({
             isRefreshing={this.state.isRefreshing}
             messages={this.getMessages()}
             handleSend={this.handleSend}
-            maxHeight={this.state.keyboardHeighting - 85} // 64 for the navBar
+            maxHeight={this.state.keyboardHeighting - 85}
             photoAvilible={true}
             showImagePicker={this.showImagePicker}
             onImagePress={this.showBigHead}
@@ -423,11 +426,13 @@ var Messenger = React.createClass({
                 borderWidth:1,
                 borderColor:'black',
                 borderRadius:5,
+                flex:1
               },
               bubbleRight: {
                 backgroundColor: '#F89680',
                 marginLeft: 70,
                 borderRadius:5,
+                flex:1
               },
             }}
           />

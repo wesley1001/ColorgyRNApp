@@ -46,7 +46,7 @@ import Report from './../report';
 
 import ga from '../../utils/ga';
 
-var UIImagePickerManager = require('NativeModules').UIImagePickerManager;
+var UIImagePickerManager = require('NativeModules').ImagePickerManager;
 
 var source_for_update;
 var WelcomeView = React.createClass({
@@ -264,6 +264,7 @@ var PostNameView = React.createClass({
           <Text style={{marginBottom:20}}>為自己取個閃亮亮的名字吧！</Text>
           <View style={{marginBottom:20}}>
             <TextInput
+                multiline={true}
                 maxLength={ 10 - this.state.chinese_count}
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText(text)}
@@ -313,6 +314,7 @@ var AnswerView = React.createClass({
           <Text style={{marginBottom:20}}>{this.props.question_today.question}</Text>
           <View style={{marginBottom:20}}>
             <TextInput
+                multiline={true}
                 maxLength={20}
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.setState({text:text,length:text.length})}
@@ -516,8 +518,6 @@ var SelfEdit = React.createClass({
     }.bind(this));
     this.props.hidePaddingTop();
     console.log('SelfEdit:',this.props.chatData);
-     updatePosition(this.refs['SELECT1']);
-    updatePosition(this.refs['OPTIONLIST']);
   },
   _handleBack(){
       this.props.navigator.pop();
@@ -549,21 +549,11 @@ var SelfEdit = React.createClass({
   uploadImage(){
     this.props.uploadAvatar();
   },
-  _getOptionList() {
-    return this.refs['OPTIONLIST'];
-  },
-  _canada(province) {
-
-    this.setState({
-      ...this.state,
-      canada: province
-    });
-  },
   render(){
     return(
       <View style={{flex:1}}>
         <TitleBarLayout
-          style={[this.props.style,{paddingTop:25,backgroundColor:'white',flex:1}]}
+          style={[this.props.style,{backgroundColor:'white',flex:1}]}
           title="全部"
           actions={[
             { title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' },
@@ -578,29 +568,10 @@ var SelfEdit = React.createClass({
                   source={{uri: this.props.chatData.data.avatar_url}} />
               </View>
             </TouchableNativeFeedback>
-            <Select
-              width={250}
-              ref="SELECT1"
-              optionListRef={this._getOptionList.bind(this)}
-              defaultValue="Select a Province in Canada ..."
-              onSelect={this._canada.bind(this)}>
-              <Option>Alberta</Option>
-              <Option>British Columbia</Option>
-              <Option>Manitoba</Option>
-              <Option>New Brunswick</Option>
-              <Option>Newfoundland and Labrador</Option>
-              <Option>Northwest Territories</Option>
-              <Option>Nova Scotia</Option>
-              <Option>Nunavut</Option>
-              <Option>Ontario</Option>
-              <Option>Prince Edward Island</Option>
-              <Option>Quebec</Option>
-              <Option>Saskatchewan</Option>
-              <Option>Yukon</Option>
-            </Select>
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >暱稱</Text>
               <TextInput
+                multiline={true}
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('name',text)}
                 value={this.state.data.name}/>
@@ -608,6 +579,7 @@ var SelfEdit = React.createClass({
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >星座</Text>
               <TextInput
+                multiline={true}
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('horoscope',text)}
                 value={this.state.data.about.horoscope}
@@ -620,6 +592,7 @@ var SelfEdit = React.createClass({
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >居住地</Text>
               <TextInput
+                multiline={true}
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('habitancy',text)}
                 value={this.state.data.about.habitancy}
@@ -628,6 +601,7 @@ var SelfEdit = React.createClass({
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >想聊的話題</Text>
               <TextInput
+                multiline={true}
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('conversation',text)}
                 value={this.state.data.about.conversation}/>
@@ -635,6 +609,7 @@ var SelfEdit = React.createClass({
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >現在熱衷的事情</Text>
               <TextInput
+                multiline={true}
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('passion',text)}
                 value={this.state.data.about.passion}/>
@@ -642,6 +617,7 @@ var SelfEdit = React.createClass({
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
               <Text >專精的事情</Text>
               <TextInput
+                multiline={true}
                 style={{height: 40, borderColor: 'gray', borderWidth: 3/ PixelRatio.get(),width:Dimensions.get('window').width/5*4}}
                 onChangeText={(text) => this.onChangingText('expertise',text)}
                 value={this.state.data.about.expertise}/>
@@ -649,7 +625,7 @@ var SelfEdit = React.createClass({
           </ScrollView>
         </TitleBarLayout>
         <Image
-          style={{width:Dimensions.get('window').width,height:Dimensions.get('window').width/720*93,position:'absolute',top:75}}
+          style={{width:Dimensions.get('window').width,height:Dimensions.get('window').width/720*93,position:'absolute',top:55}}
           source={require('../../assets/images/hurry_info.png')} />
       </View>
     )
@@ -693,7 +669,7 @@ var StrangerList = React.createClass({
   render(){
     return(
       <View style={{flex:1}}>
-        <View style={{height:55,backgroundColor:'f89680',flexDirection:'row'}}>
+        <View style={{height:55,backgroundColor:'#f89680',flexDirection:'row'}}>
           <TouchableNativeFeedback onPress={()=>this.changeFilter('all')}>
             <View style={this.state.filter== 'all'?[styles.topTab,styles.topTabSelected]:styles.topTab}>
               <Text style={this.state.filter== 'all'?[styles.topTabText,styles.topTabTextSelected]:styles.topTabText}>全部</Text>
@@ -1273,10 +1249,11 @@ var Chat = React.createClass({
       var ReturnView = <View style={styles.allCenter}><Text>系統連線中...</Text></View>
     }else if (this.props.chatStatus == 0 || !this.state.haveSend) {
       var ReturnView = <WelcomeView leaveIntro={this.leaveIntro} ok={this.okVerify} send={this.sendVerifyMail} accessToken={this.props.accessToken}/>;
-    }else if (this.props.chatStatus == 1 && this.state.havePhotoCrop) {
+    }else if (this.props.chatStatus == 1) {
       var ReturnView = <UploadImageView showAppTabBar={this.showAppTabBar} okImage={this.okImage} _chat_state_haveUploadImage={this._chat_state_haveUploadImage}  onImage={this.state.onImage} default_imgSrc={this.state.newImage || this.props.chatData.data.avatar_url || ''} pickPhotoOrTakeAPhoto={this.pickPhotoOrTakeAPhoto}/>;
-    }else if (this.props.chatStatus == 1 && !this.state.havePhotoCrop){
-      var ReturnView = <CroppingImage hideAppTabBar={this.hideAppTabBar} showAppTabBar={this.showAppTabBar} source_base64={this.state.source_base64} cropping_data={this.state.cropping_data} source_url={this.state.source_url} submit={this.submit_crop} rechoose={this.rechoose_crop}/>
+    // }else if (this.props.chatStatus == 1 ){
+    //   var ReturnView = <CroppingImage hideAppTabBar={this.hideAppTabBar} showAppTabBar={this.showAppTabBar} source_base64={this.state.source_base64} cropping_data={this.state.cropping_data} source_url={this.state.source_url} submit={this.submit_crop} rechoose={this.rechoose_crop}/>
+    // }
     }else if(this.props.chatStatus == 2){
       var ReturnView = <PostNameView postName={this.postName}/>;
     }else if (this.props.chatStatus == 3) {
@@ -1299,44 +1276,44 @@ var Chat = React.createClass({
         say_hello={this.say_hello}/>
     }
     return (
-      <View style={this.state.paddingTopHide?{flex:1}:{paddingTop:25,flex:1}}>
+      <View style={{flex:1}}>
         {ReturnView}
       </View>
     );
   },
   hidePaddingTop(){
-    this.setState({paddingTopHide:true});
+    // this.setState({paddingTopHide:true});
   },
   uploadAvatar(){
     this.pickPhotoOrTakeAPhoto(true);
   },
   showPaddingTop(){
-    this.setState({paddingTopHide:false});
+    // this.setState({paddingTopHide:false});
   },
-  submit_crop(original_size,path,data,self_edit){
-    console.log("cropping_data==>",data);
-    var data = data;
-    if (!data.rule) {
-      data.rule = 1;
-    }
-    var window_width = Dimensions.get('window').width;
-    var moveLeftCount_bi = data.y/window_width*data.rule;
-    var moveTopCount_bi = data.x/window_width*original_size.height/original_size.width*data.rule;
-    var crop_ori_bi = 1/data.rule;
-    console.log(window_width,moveLeftCount_bi,moveTopCount_bi,crop_ori_bi)
-    var x = original_size.width*moveLeftCount_bi;
-    var y = original_size.width*moveTopCount_bi;
-    var w = original_size.width*crop_ori_bi;
-    var h = original_size.width*crop_ori_bi;
+  submit_crop(data,width){
+    // console.log("cropping_data==>",data);
+    // var data = data;
+    // if (!data.rule) {
+    //   data.rule = 1;
+    // }
+    // var window_width = Dimensions.get('window').width;
+    // var moveLeftCount_bi = data.y/window_width*data.rule;
+    // var moveTopCount_bi = data.x/window_width*original_size.height/original_size.width*data.rule;
+    // var crop_ori_bi = 1/data.rule;
+    // console.log(window_width,moveLeftCount_bi,moveTopCount_bi,crop_ori_bi)
+    // var x = original_size.width*moveLeftCount_bi;
+    // var y = original_size.width*moveTopCount_bi;
+    // var w = original_size.width*crop_ori_bi;
+    // var h = original_size.width*crop_ori_bi;
     // 上傳相片
-    console.log(source_for_update);
+    // console.log(source_for_update);
     var data = {
       user:{
         'avatar':source_for_update,
-        'avatar_crop_x':String(x),
-        'avatar_crop_y':String(y),
-        'avatar_crop_w':String(w),
-        'avatar_crop_h':String(h)
+        'avatar_crop_x':0,
+        'avatar_crop_y':0,
+        'avatar_crop_w':width,
+        'avatar_crop_h':width
       }
     };
     console.log(data);
@@ -1349,6 +1326,7 @@ var Chat = React.createClass({
       body:JSON.stringify(data)
     })
     .then((response)=>{
+      // Alert.alert('response:',response._bodyInit);
       var data = JSON.parse(response._bodyInit);
       console.log(data);
       this.setState({newImage:data.avatar_url});
@@ -1369,10 +1347,10 @@ var Chat = React.createClass({
       })
       .then((response)=>{
         console.log(response);
-        if (self_edit) {
+        // if (self_edit) {
           this.props.initChatStatus();
-          _navigator.pop();
-        }
+          // _navigator.pop();
+        // }
       })
     })
     // 確定一下
@@ -1426,7 +1404,9 @@ var Chat = React.createClass({
       maxWidth: 3000, // photos only
       maxHeight: 3000, // photos only
       quality: 1, // photos only
-      allowsEditing: false, // Built in iOS functionality to resize/reposition the image
+      aspectX: 1, 
+      aspectY: 1,
+      allowsEditing: true, // Built in iOS functionality to resize/reposition the image
       noData: false, // photos only - disables the base64 `data` field from being generated (greatly improves performance on large photos)
       storageOptions: { // if this key is provided, the image will get saved in the documents directory (rather than a temporary directory)
         skipBackup: true, // image will NOT be backed up to icloud
@@ -1434,7 +1414,7 @@ var Chat = React.createClass({
       }
     };
     UIImagePickerManager.showImagePicker(options, (response) => {
-      console.log('Response = ', response);
+      // Alert.alert('Response = ', JSON.stringify(response));
 
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -1460,18 +1440,19 @@ var Chat = React.createClass({
           havePhoto: true,
         });
         console.log("this.state.source_base64 == source_base.uri?==>",this.state.source_base64 == source_base.uri)
-        if (self_edit) {
-          _navigator.push({
-            id:'cropping',
-            hideAppTabBar:this.hideAppTabBar,
-            showAppTabBar:this.showAppTabBar,
-            source_base64:this.state.source_base64,
-            cropping_data:this.state.cropping_data,
-            source_url:this.state.source_url,
-            submit:this.submit_crop,
-            rechoose:this.rechoose_crop
-          });
-        }
+        // if (self_edit) {
+        //   _navigator.push({
+        //     id:'cropping',
+        //     hideAppTabBar:this.hideAppTabBar,
+        //     showAppTabBar:this.showAppTabBar,
+        //     source_base64:this.state.source_base64,
+        //     cropping_data:this.state.cropping_data,
+        //     source_url:this.state.source_url,
+        //     submit:this.submit_crop,
+        //     rechoose:this.rechoose_crop
+        //   });
+        // }
+        this.submit_crop(source_base,response.height);
       }
     });
   },

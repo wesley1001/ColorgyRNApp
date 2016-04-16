@@ -49,23 +49,6 @@ var App = React.createClass({
         return true;
       });
     }
-
-    colorgyAPI.fetch(`/v1/available_org/${this.props.organizationCode}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    }).then((r) => {
-      return r.json();
-    }).then((json) => {
-      if (json.available) {
-        this.props.dispatch({ type: 'ORG_AVAILABLE' });
-      } else {
-        this.props.dispatch({ type: 'ORG_NOT_AVAILABLE' });
-      }
-    }).catch((e) => {
-    });
   },
 
   async _loadInitialState() {
@@ -90,6 +73,7 @@ var App = React.createClass({
     }
   },
   componentDidMount: function() {
+    this.fetchOrgAvailability();
     ga.setUserID(this.props.uuid);
     ga.sendScreenView('Start');
     this._loadInitialState().done();
@@ -124,6 +108,28 @@ var App = React.createClass({
       })
     });
   },
+
+  fetchOrgAvailability() {
+    colorgyAPI.fetch(`/v1/available_org/${this.props.organizationCode}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    }).then((r) => {
+      return r.json();
+    }).then((json) => {
+      // notify(`AOL: "/v1/available_org/${this.props.organizationCode}": ${JSON.stringify(json)}`);
+      if (json.available) {
+        this.props.dispatch({ type: 'ORG_AVAILABLE' });
+      } else {
+        this.props.dispatch({ type: 'ORG_NOT_AVAILABLE' });
+      }
+    }).catch((e) => {
+      // notify(`AOL: ${this.props.organizationCode}: ${JSON.stringify(e)}`);
+    });
+  },
+
   getInitialState: function() {
     return{
       chatId: 'loading',
@@ -265,6 +271,7 @@ var App = React.createClass({
                           chatData={{id:this.state.chatId,data:this.state.chat_user_data}} />
                       );
                     } else {
+                      this.fetchOrgAvailability();
                       return (
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                           <Text style={{ alignItems: 'center', justifyContent: 'center' }}>你的學校尚未開通</Text>

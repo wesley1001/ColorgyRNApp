@@ -17,7 +17,8 @@ import React, {
   Navigator,
   RefreshControl,
   ToastAndroid,
-  PullToRefreshViewAndroid
+  PullToRefreshViewAndroi,
+  IntentAndroid
 } from 'react-native';
 
 const DropDown = require('react-native-dropdown');
@@ -175,13 +176,23 @@ var WelcomeView = React.createClass({
   ok(){
     this.props.ok();
   },
+  openLinkURL(){
+    var url = 'https://colorgy.io/user_manual_validation/sso_new_session?access_token='+this.props.accessToken;
+    IntentAndroid.canOpenURL(url, (supported) => {
+      if (supported) {
+        IntentAndroid.openURL(url);
+      } else {
+        Alert.alert('系統訊息','您沒有可以打開驗證網頁的APP，請進入以下網址以人工驗證:'+url);
+      }
+    });
+  },
   humanVerify(){
     Alert.alert(
       '使用人工驗證',
       '不如再檢查ㄧ次學校信箱吧～\n因為此驗證所需時間較長（2天）',
       [
-        {text: '取消', onPress: () => console.log('Ask me later pressed')},
-        {text: '驗證', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: '取消', onPress: () => console.log('ok..')},
+        {text: '驗證', onPress: () => this.openLinkURL()},
       ]
     )
   }

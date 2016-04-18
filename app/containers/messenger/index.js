@@ -124,12 +124,14 @@ var Messenger = React.createClass({
           console.log(data);
           var new_messages = [];
           var i = 0;
+          var tp = [];
           var itv = setInterval(function(){
             console.log('receive msg index:',i,"to the begining");
-            this.handleReceive(data.messageList[i],false,true);
+            tp.unshift(this.handleReceive(data.messageList[i],false,true));
             i = i+1;
             if (i == getTotal) {
               clearInterval(itv);
+              this.handleReceive(tp,false,false,true);
               this.setState({isRefreshing:false})
             }
           }.bind(this),1)
@@ -213,8 +215,11 @@ var Messenger = React.createClass({
       Alert.alert('對方已離開聊天室');
     }
   },
-  handleReceive(message,firstLoad,getMore) {
-    if(message){
+  handleReceive(message,firstLoad,getMore,getMoreOk) {
+    if (getMoreOk) {
+      this.setState({messages:message.concat(this.state.messages)});
+      // Alert.alert('system',JSON.stringify(message));
+    }else if(message){
       if (message && message.chatProgress) {
         this.update_chatProgress(message.chatProgress)
       }
@@ -242,10 +247,12 @@ var Messenger = React.createClass({
           msg.position = 'right';
           msg.image = null;
         };
+        console.log(msg.image);
         if (getMore) {
-          var tp = [];
-          tp.push(msg);
-          this.setState({messages:tp.concat(this.state.messages)});
+          return msg
+          // var tp = [];
+          // tp.push(msg);
+          // this.setState({messages:tp.concat(this.state.messages)});
         }else{
           this.setState({messages:this.state.messages.concat(msg)});
         }

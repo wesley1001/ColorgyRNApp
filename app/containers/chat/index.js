@@ -17,7 +17,7 @@ import React, {
   Navigator,
   RefreshControl,
   ToastAndroid,
-  PullToRefreshViewAndroi,
+  PullToRefreshViewAndroid,
   IntentAndroid
 } from 'react-native';
 
@@ -1417,7 +1417,7 @@ var Chat = React.createClass({
       maxWidth: 3000, // photos only
       maxHeight: 3000, // photos only
       quality: 1, // photos only
-      aspectX: 1, 
+      aspectX: 1,
       aspectY: 1,
       allowsEditing: true, // Built in iOS functionality to resize/reposition the image
       noData: false, // photos only - disables the base64 `data` field from being generated (greatly improves performance on large photos)

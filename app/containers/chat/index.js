@@ -156,7 +156,6 @@ var WelcomeView = React.createClass({
     // 串認證信
     fetch('https://colorgy.io:443/api/v1/me.json?fields=organization_code&&access_token='+this.props.accessToken)
     .then(function(data) {
-      // Alert.alert(JSON.stringify(data))
       if(JSON.parse(data._bodyInit).organization_code && JSON.parse(data._bodyInit).organization_code!='' && JSON.parse(data._bodyInit).organization_code!= undefined){
         var v = true;
       }else{
@@ -165,7 +164,8 @@ var WelcomeView = React.createClass({
       if (v) {
         this.setState({verifing:false,verifingSuccess:true});
         setTimeout(function() {
-          this.ok()
+          this.ok();
+          this.props.leaveIntro();
         }.bind(this),200)
       }else{
         this.setState({verifing:false});
@@ -1250,7 +1250,7 @@ var Chat = React.createClass({
     Alert.alert('系統訊息','驗證成功');
     this._chat_state_haveVerify();
     // this.props.updateChatStatus(2);
-    this.props.initChatStatus()
+    this.props.initChatStatus();
   },
   leaveIntro(){
     this.setState({haveSend:true})

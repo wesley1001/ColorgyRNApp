@@ -217,7 +217,7 @@ var UploadImageView = React.createClass({
           <ImageWand
             blur={4}
             style={{width:259/2,height:259/2,marginBottom:10,borderRadius:259/4,borderWidth:5,borderColor:'white'}}
-            src={this.props.default_imgSrc || "http://des13.cc/star/media/k2/items/cache/d6e7bc44feb1613d041d5385e5745b10_XL.jpg"}
+            src={this.props.default_imgSrc}
           />
         <Text style={{marginBottom:5,fontSize:18}}>展開ㄧ段冒險</Text>
         <Text style={{marginBottom:20,fontSize:12}}>頭貼經過模糊處理，唯有越聊越清晰～</Text>

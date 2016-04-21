@@ -103,6 +103,9 @@ var App = React.createClass({
         if (response) {
           var data = JSON.parse(response).result;
           console.log("data",data);
+          if (!data.avatar_url) {
+            data.avatar_url = '';
+          }
           this.setState({chat_user_data:data});
         };
       })
@@ -140,7 +143,6 @@ var App = React.createClass({
     }
   },
   initChatStatus(){
-    // Alert.alert('initChatStatus');
     // 載入app即進行的動作for聊天室
     colorgyAPI.getAccessToken().then((accessToken) => {
       this.setState({accessToken:accessToken});
@@ -166,7 +168,9 @@ var App = React.createClass({
       .then((response)=>{
         if (response) {
           var data = JSON.parse(response).result;
-          // Alert.alert("data",JSON.stringify(data));
+          if (!data.avatar_url) {
+            data.avatar_url = '';
+          }
           this.setState({chat_user_data:data});
         };
       })

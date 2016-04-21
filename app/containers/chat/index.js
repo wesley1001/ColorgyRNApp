@@ -90,7 +90,9 @@ var WelcomeView = React.createClass({
       }
       if (v) {
         this.setState({verifing:false,verifingSuccess:true});
+        // alert('可！(2)');
         setTimeout(function() {
+          // alert('好！(2)');
           this.ok()
         }.bind(this),200)
         this.props.leaveIntro();
@@ -163,7 +165,9 @@ var WelcomeView = React.createClass({
       }
       if (v) {
         this.setState({verifing:false,verifingSuccess:true});
+        // alert('可！');
         setTimeout(function() {
+          // alert('好！');
           this.ok();
           this.props.leaveIntro();
         }.bind(this),200)
@@ -577,7 +581,7 @@ var SelfEdit = React.createClass({
               <View style={[styles.allCenter,{backgroundColor:"#FAF7F5"}]}>
                 <Image
                   style={{borderWidth:6,borderColor:"#FFF",margin:15,marginTop:50,width:Dimensions.get('window').width/2,height:Dimensions.get('window').width/2,borderRadius:Dimensions.get('window').width/4}}
-                  source={{uri: this.props.chatData.data.avatar_url}} />
+                  source={{ uri: this.props.chatData && this.props.chatData.data && this.props.chatData.data.avatar_url }} />
               </View>
             </TouchableNativeFeedback>
             <View style={{paddingTop:10,paddingBottom:10,paddingLeft:20,paddingRight:20}}>
@@ -1263,7 +1267,7 @@ var Chat = React.createClass({
     }else if (this.props.chatStatus == 0 || !this.state.haveSend) {
       var ReturnView = <WelcomeView leaveIntro={this.leaveIntro} ok={this.okVerify} send={this.sendVerifyMail} accessToken={this.props.accessToken}/>;
     }else if (this.props.chatStatus == 1) {
-      var ReturnView = <UploadImageView showAppTabBar={this.showAppTabBar} okImage={this.okImage} _chat_state_haveUploadImage={this._chat_state_haveUploadImage}  onImage={this.state.onImage} default_imgSrc={this.state.newImage || this.props.chatData.data.avatar_url || ''} pickPhotoOrTakeAPhoto={this.pickPhotoOrTakeAPhoto}/>;
+      var ReturnView = <UploadImageView showAppTabBar={this.showAppTabBar} okImage={this.okImage} _chat_state_haveUploadImage={this._chat_state_haveUploadImage}  onImage={this.state.onImage} default_imgSrc={this.state.newImage || (this.props.chatData && this.props.chatData.data && this.props.chatData.data.avatar_url) || ''} pickPhotoOrTakeAPhoto={this.pickPhotoOrTakeAPhoto}/>;
     // }else if (this.props.chatStatus == 1 ){
     //   var ReturnView = <CroppingImage hideAppTabBar={this.hideAppTabBar} showAppTabBar={this.showAppTabBar} source_base64={this.state.source_base64} cropping_data={this.state.cropping_data} source_url={this.state.source_url} submit={this.submit_crop} rechoose={this.rechoose_crop}/>
     // }

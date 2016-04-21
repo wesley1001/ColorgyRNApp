@@ -17,7 +17,7 @@ import React, {
   Navigator,
   RefreshControl,
   ToastAndroid,
-  PullToRefreshViewAndroi,
+  PullToRefreshViewAndroid,
   IntentAndroid
 } from 'react-native';
 
@@ -1384,6 +1384,7 @@ var Chat = React.createClass({
     .then((response)=>{
       console.log(response);
       this.props.updateChatStatus(3)
+      this.props.initChatStatus();
     });
     this.setState({haveNamed:true});
   },

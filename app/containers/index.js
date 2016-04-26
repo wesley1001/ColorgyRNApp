@@ -90,7 +90,7 @@ var App = React.createClass({
           chatAPI.check_answered_latest(accessToken,this.props.uuid,response)
             .then((response)=>{
               console.log("check_answered_latest",response);
-              if(JSON.parse(response._bodyInit).result == "not answered"){
+              if(!response.ok){
                 this.setState({haveAnswerToday:false})
               }else{
                 this.setState({haveAnswerToday:true})
@@ -156,7 +156,7 @@ var App = React.createClass({
           chatAPI.check_answered_latest(accessToken,this.props.uuid,response)
             .then((response)=>{
               console.log("check_answered_latest",response);
-              if(JSON.parse(response._bodyInit).result == "not answered"){
+              if(!response.ok){
                 this.setState({haveAnswerToday:false})
               }else{
                 this.setState({haveAnswerToday:true})

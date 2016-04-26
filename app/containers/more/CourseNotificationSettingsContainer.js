@@ -42,6 +42,7 @@ var CourseNotificationSettingsContainer = React.createClass({
   },
 
   componentWillUnmount() {
+    console.log(this.props.userId, this.props.organizationCode);
     this.props.dispatch(doLoadTableCourses(this.props.userId, this.props.organizationCode));
   },
 

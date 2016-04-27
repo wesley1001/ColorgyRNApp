@@ -234,22 +234,31 @@ var Friends = React.createClass({
     }.bind(this),500)
   },
   render() {
-    var friendList = this.state.strangerList;
+    
+    var friendListAll = this.state.strangerList;
+    var friendList = [];
     if (this.props.hellos && this.props.hellos.length) {
       var helloCount = this.props.hellos.length
     }else{
       var helloCount = 0;
     }
-    if (this.state.search_word.length>0) {
-      var friendTemp = [];
-      for (var i = friendList.length - 1; i >= 0; i--) {
-        if(friendList[i].name.toLowerCase().indexOf(this.state.search_word.toLowerCase())>=0){
-          friendTemp.push(friendList[i]);
-        }
-      };
-      friendList = friendTemp;
-    };
-    console.log(friendList);
+    if (friendListAll.length != 0) {
+      if (this.state.search_word.length>0) {
+        var friendTemp = [];
+        for (var i = friendListAll.length - 1; i >= 0; i--) {
+          if(friendListAll[i].name.toLowerCase().indexOf(this.state.search_word.toLowerCase())>=0){
+            friendTemp.push(friendListAll[i]);
+          }
+        };
+        friendList.concat(friendTemp);
+      }else{
+        friendList = this.state.strangerList;
+      }
+      if (!friendList) {
+        friendList = [];
+      }
+      // Alert.alert('system--',JSON.stringify(this.state.strangerList));
+    }
     return (
       <View style={{flexDirection:'column',flex:1, backgroundColor:'#f89680'}}>
         <TitleBarLayout
@@ -279,13 +288,19 @@ var Friends = React.createClass({
           >
             <ScrollView style={{marginTop:6/PixelRatio.get()}}>
               {friendList.map(function(friend, index){
+                if (!friend.lastContent) {
+                  friend.lastContent = "";
+                }
+                if (friend.lastContent.length>15) {
+                  friend.lastContent = friend.name+"傳了一封訊息給您";
+                }
                 return(
                   <TouchableNativeFeedback key={index} onPress={()=>this.goChat(friend.friendId,friend.messageList,friend,friend.chatroomId)} onLongPress={()=>this.longPress(friend.id)}>
                     <View style={{paddingTop:10,paddingBottom:10,height:100,backgroundColor:'white',flexDirection:'row',marginBottom:6/PixelRatio.get()}}>
                       <View style={[styles.allCenter,{flex:1}]}>
                           <Image
                             style={{width:60,height:60,borderRadius:60/2}}
-                            source={{uri: friend.image}} />
+                            source={{uri: friend.image }} />
                       </View>
                       <View style={{flex:3,paddingLeft:5}}>
                         <View style={{justifyContent:'center',flex:1}}>
@@ -295,10 +310,10 @@ var Friends = React.createClass({
                           <Image
                             style={{width:12,height:12,position:'relative',top:5,marginRight:5}}
                             source={require('../../assets/images/icon_friend_message.png')} />
-                          <Text style={{fontSize:13,color:"#F89680"}}>{friend.lastAnswer}</Text>
+                          <Text style={{fontSize:13,color:"#F89680"}}>{friend.lastAnswer || ""}</Text>
                         </View>
                         <View style={{justifyContent:'center',flex:1}}>
-                          <Text style={{fontSize:16,}}>{friend.lastContent.substring(0,15)+'...'}</Text>
+                          <Text style={{fontSize:16,}}>{friend.lastContent}</Text>
                         </View>
                       </View>
                       <View style={{flex:1}}>
@@ -312,7 +327,7 @@ var Friends = React.createClass({
           </PullToRefreshViewAndroid>
         </TitleBarLayout>
         {this.state.search_show?
-          <View style={{position:'absolute',top:25,left:0,backgroundColor:'white',flexDirection:'row'}}>
+          <View style={{position:'absolute',top:0,left:0,backgroundColor:'white',flexDirection:'row'}}>
             <TextInput
               style={{height: 60, borderColor: 'gray', borderWidth: 1,width:Dimensions.get('window').width/10*8}}
               onChangeText={(text) => this.setState({search_word: text})}

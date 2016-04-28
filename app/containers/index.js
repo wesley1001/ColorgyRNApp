@@ -107,14 +107,18 @@ var App = React.createClass({
           this.setState({chatId:data.userId,chatStatus:data.status});
           this._saveChatId(response).done();
           chatAPI.check_answered_latest(accessToken,this.props.uuid,response)
-            .then((response)=>{
-              console.log("check_answered_latest",response);
-              if(!response.ok){
-                this.setState({haveAnswerToday:false})
-              }else{
-                this.setState({haveAnswerToday:true})
-              }
-            })
+          .then(function(response) {
+            return response.text()
+          })
+          .then((responseText)=>{
+            console.log("check_answered_latest",responseText);
+            var result = JSON.parse(responseText);
+            if(result.error && result.error == "not correspondant userId"){
+              this.setState({haveAnswerToday:false})
+            }else{
+              this.setState({haveAnswerToday:true})
+            }
+          })
         }
       });
       chatAPI.get_user_data(accessToken,this.props.uuid)
@@ -151,14 +155,18 @@ var App = React.createClass({
           this.setState({chatId:data.userId,chatStatus:data.status});
           this._saveChatId(response).done();
           chatAPI.check_answered_latest(accessToken,this.props.uuid,response)
-            .then((response)=>{
-              console.log("check_answered_latest",response);
-              if(!response.ok){
-                this.setState({haveAnswerToday:false})
-              }else{
-                this.setState({haveAnswerToday:true})
-              }
-            })
+          .then(function(response) {
+            return response.text()
+          })
+          .then((responseText)=>{
+            console.log("check_answered_latest",responseText);
+            var result = JSON.parse(responseText);
+            if(result.error && result.error == "not correspondant userId"){
+              this.setState({haveAnswerToday:false})
+            }else{
+              this.setState({haveAnswerToday:true})
+            }
+          })
         }
       });
       chatAPI.get_user_data(accessToken,this.props.uuid)
@@ -190,14 +198,18 @@ var App = React.createClass({
           this.setState({chatId:data.userId,chatStatus:data.status});
           this._saveChatId(response).done();
           chatAPI.check_answered_latest(accessToken,this.props.uuid,response)
-            .then((response)=>{
-              console.log("check_answered_latest",response);
-              if(JSON.parse(response._bodyInit).result == "not answered"){
-                this.setState({haveAnswerToday:false})
-              }else{
-                this.setState({haveAnswerToday:true})
-              }
-            })
+          .then(function(response) {
+            return response.text()
+          })
+          .then((responseText)=>{
+            console.log("check_answered_latest",responseText);
+            var result = JSON.parse(responseText);
+            if(result.error && result.error == "not correspondant userId"){
+              this.setState({haveAnswerToday:false})
+            }else{
+              this.setState({haveAnswerToday:true})
+            }
+          })
         }
       });
       chatAPI.get_user_data(accessToken,this.props.uuid)

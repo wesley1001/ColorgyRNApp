@@ -234,7 +234,6 @@ var Friends = React.createClass({
     }.bind(this),500)
   },
   render() {
-    
     var friendListAll = this.state.strangerList;
     var friendList = [];
     if (this.props.hellos && this.props.hellos.length) {
@@ -292,7 +291,7 @@ var Friends = React.createClass({
                   friend.lastContent = "";
                 }
                 if (friend.lastContent.length>15) {
-                  friend.lastContent = friend.name+"傳了一封訊息給您";
+                  friend.lastContent = encodeURI(friend.lastContent).split('%')[encodeURI(friend.lastContent).split('%').length-1].substring(2,15)+'...'
                 }
                 return(
                   <TouchableNativeFeedback key={index} onPress={()=>this.goChat(friend.friendId,friend.messageList,friend,friend.chatroomId)} onLongPress={()=>this.longPress(friend.id)}>

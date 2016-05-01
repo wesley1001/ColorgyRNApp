@@ -119,6 +119,9 @@ var Hellos = React.createClass({
               }else{
                 var show_little_Tabs = false;
               }
+              if (hello.message.length>15) {
+                hello.message = encodeURI(hello.message).split('%')[encodeURI(hello.message).split('%').length-1].substring(2,15)+'...'
+              }
               return(
                 <View key={index}>
                   <View style={{paddingTop:10,paddingBottom:10,height:100,backgroundColor:'white',flexDirection:'row',marginBottom:6/PixelRatio.get()}}>
@@ -136,7 +139,7 @@ var Hellos = React.createClass({
                         <Text style={{fontSize:13,color:"#F89680"}}>{hello.lastAnswer}</Text>
                       </View>
                       <View style={{justifyContent:'center',flex:1}}>
-                        <Text style={{fontSize:15,}}>{hello.message.substring(0,10)+'...'}</Text>
+                        <Text style={{fontSize:15,}}>{hello.message}</Text>
                       </View>
                     </View>
                     <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end'}}>
@@ -243,20 +246,17 @@ var Friends = React.createClass({
     }
     if (friendListAll.length != 0) {
       if (this.state.search_word.length>0) {
-        var friendTemp = [];
         for (var i = friendListAll.length - 1; i >= 0; i--) {
           if(friendListAll[i].name.toLowerCase().indexOf(this.state.search_word.toLowerCase())>=0){
-            friendTemp.push(friendListAll[i]);
+            friendList.unshift(friendListAll[i]);
           }
         };
-        friendList.concat(friendTemp);
       }else{
         friendList = this.state.strangerList;
       }
       if (!friendList) {
         friendList = [];
       }
-      // Alert.alert('system--',JSON.stringify(this.state.strangerList));
     }
     return (
       <View style={{flexDirection:'column',flex:1, backgroundColor:'#f89680'}}>

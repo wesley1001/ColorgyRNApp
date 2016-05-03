@@ -1,4 +1,4 @@
-import React, { Platform, View, Text, AsyncStorage } from 'react-native';
+import React, { Platform, View, Text, AsyncStorage, Alert } from 'react-native';
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter';
 import { connect } from 'react-redux/native';
 
@@ -49,23 +49,6 @@ var App = React.createClass({
         return true;
       });
     }
-
-    colorgyAPI.fetch(`/v1/available_org/${this.props.organizationCode}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    }).then((r) => {
-      return r.json();
-    }).then((json) => {
-      if (json.available) {
-        this.props.dispatch({ type: 'ORG_AVAILABLE' });
-      } else {
-        this.props.dispatch({ type: 'ORG_NOT_AVAILABLE' });
-      }
-    }).catch((e) => {
-    });
   },
 
   async _loadInitialState() {
@@ -90,6 +73,7 @@ var App = React.createClass({
     }
   },
   componentDidMount: function() {
+    this.fetchOrgAvailability();
     ga.setUserID(this.props.uuid);
     ga.sendScreenView('Start');
     this._loadInitialState().done();
@@ -103,15 +87,19 @@ var App = React.createClass({
           console.log("check_user_available",data);
           this.setState({chatId:data.userId,chatStatus:data.status});
           this._saveChatId(response).done();
-          chatAPI.check_answered_latest(accessToken,this.props.uuid,response)
-            .then((response)=>{
-              console.log("check_answered_latest",response);
-              if(JSON.parse(response._bodyInit).result == "not answered"){
-                this.setState({haveAnswerToday:false})
-              }else{
-                this.setState({haveAnswerToday:true})
-              }
-            })
+          chatAPI.check_answered_latest(accessToken,this.props.uuid,data.userId)
+          .then(function(response) {
+            return response.text()
+          })
+          .then((responseText)=>{
+            console.log("check_answered_latest",responseText);
+            var result = JSON.parse(responseText);
+            if(result.result != 'answered'){
+              this.setState({haveAnswerToday:false})
+            }else{
+              this.setState({haveAnswerToday:true})
+            }
+          })
         }
       });
       chatAPI.get_user_data(accessToken,this.props.uuid)
@@ -119,11 +107,36 @@ var App = React.createClass({
         if (response) {
           var data = JSON.parse(response).result;
           console.log("data",data);
+          if (!data.avatar_url) {
+            data.avatar_url = '';
+          }
           this.setState({chat_user_data:data});
         };
       })
     });
   },
+
+  fetchOrgAvailability() {
+    colorgyAPI.fetch(`/v1/available_org/${this.props.organizationCode}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    }).then((r) => {
+      return r.json();
+    }).then((json) => {
+      // notify(`AOL: "/v1/available_org/${this.props.organizationCode}": ${JSON.stringify(json)}`);
+      if (json.available) {
+        this.props.dispatch({ type: 'ORG_AVAILABLE' });
+      } else {
+        this.props.dispatch({ type: 'ORG_NOT_AVAILABLE' });
+      }
+    }).catch((e) => {
+      // notify(`AOL: ${this.props.organizationCode}: ${JSON.stringify(e)}`);
+    });
+  },
+
   getInitialState: function() {
     return{
       chatId: 'loading',
@@ -145,21 +158,27 @@ var App = React.createClass({
           this.setState({chatId:data.userId,chatStatus:data.status});
           this._saveChatId(response).done();
           chatAPI.check_answered_latest(accessToken,this.props.uuid,response)
-            .then((response)=>{
-              console.log("check_answered_latest",response);
-              if(JSON.parse(response._bodyInit).result == "not answered"){
-                this.setState({haveAnswerToday:false})
-              }else{
-                this.setState({haveAnswerToday:true})
-              }
-            })
+          .then(function(response) {
+            return response.text()
+          })
+          .then((responseText)=>{
+            console.log("check_answered_latest",responseText);
+            var result = JSON.parse(responseText);
+            if(result.result != 'answered'){
+              this.setState({haveAnswerToday:false})
+            }else{
+              this.setState({haveAnswerToday:true})
+            }
+          })
         }
       });
       chatAPI.get_user_data(accessToken,this.props.uuid)
       .then((response)=>{
         if (response) {
           var data = JSON.parse(response).result;
-          console.log("data",data);
+          if (!data.avatar_url) {
+            data.avatar_url = '';
+          }
           this.setState({chat_user_data:data});
         };
       })
@@ -182,14 +201,18 @@ var App = React.createClass({
           this.setState({chatId:data.userId,chatStatus:data.status});
           this._saveChatId(response).done();
           chatAPI.check_answered_latest(accessToken,this.props.uuid,response)
-            .then((response)=>{
-              console.log("check_answered_latest",response);
-              if(JSON.parse(response._bodyInit).result == "not answered"){
-                this.setState({haveAnswerToday:false})
-              }else{
-                this.setState({haveAnswerToday:true})
-              }
-            })
+          .then(function(response) {
+            return response.text()
+          })
+          .then((responseText)=>{
+            console.log("check_answered_latest",responseText);
+            var result = JSON.parse(responseText);
+            if(result.result != 'answered'){
+              this.setState({haveAnswerToday:false})
+            }else{
+              this.setState({haveAnswerToday:true})
+            }
+          })
         }
       });
       chatAPI.get_user_data(accessToken,this.props.uuid)
@@ -264,6 +287,7 @@ var App = React.createClass({
                           chatData={{id:this.state.chatId,data:this.state.chat_user_data}} />
                       );
                     } else {
+                      this.fetchOrgAvailability();
                       return (
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                           <Text style={{ alignItems: 'center', justifyContent: 'center' }}>你的學校尚未開通</Text>

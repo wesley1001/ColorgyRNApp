@@ -1,6 +1,6 @@
 {
   "name": "ColorgyRNApp",
-  "version": "0.1.2",
+  "version": "0.1.12",
   "private": true,
   "scripts": {
     "start": "react-native start"
@@ -20,7 +20,7 @@
     "react-native-gifted-messenger": "0.0.16",
     "react-native-google-analytics": "^1.0.0",
     "react-native-google-analytics-native": "0.0.3",
-    "react-native-image-picker": "^0.13.1",
+    "react-native-image-picker": "^0.18.13",
     "react-native-imagewand": "^1.0.2",
     "react-native-invertible-scroll-view": "^0.2.0",
     "react-native-keyboard-spacer": "^0.1.4",

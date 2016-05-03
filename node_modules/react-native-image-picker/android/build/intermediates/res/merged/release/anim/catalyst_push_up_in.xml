@@ -11,4 +11,3 @@
           android:duration="@android:integer/config_shortAnimTime"
           />
 </set>
-<!-- From: file:/Users/mkonicek/code/react-native/ReactAndroid/src/main/res/devsupport/anim/catalyst_push_up_in.xml -->

@@ -98,7 +98,7 @@ var Hellos = React.createClass({
         <TitleBarLayout
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
-          style={[this.props.style,{paddingTop:25,backgroundColor:'#f89680'}]}
+          style={[this.props.style,{paddingTop:0,backgroundColor:'#f89680'}]}
           title="打招呼"
           actions={[{ title: '返回', icon: require('../../assets/images/icon_arrow_back_white.png'), onPress: this._handleBack, show: 'always' },]}
         >
@@ -118,6 +118,9 @@ var Hellos = React.createClass({
                 var show_little_Tabs = true;
               }else{
                 var show_little_Tabs = false;
+              }
+              if (hello.message.length>15) {
+                hello.message = encodeURI(hello.message).split('%')[encodeURI(hello.message).split('%').length-1].substring(2,15)+'...'
               }
               return(
                 <View key={index}>
@@ -234,28 +237,33 @@ var Friends = React.createClass({
     }.bind(this),500)
   },
   render() {
-    var friendList = this.state.strangerList;
+    var friendListAll = this.state.strangerList;
+    var friendList = [];
     if (this.props.hellos && this.props.hellos.length) {
       var helloCount = this.props.hellos.length
     }else{
       var helloCount = 0;
     }
-    if (this.state.search_word.length>0) {
-      var friendTemp = [];
-      for (var i = friendList.length - 1; i >= 0; i--) {
-        if(friendList[i].name.toLowerCase().indexOf(this.state.search_word.toLowerCase())>=0){
-          friendTemp.push(friendList[i]);
-        }
-      };
-      friendList = friendTemp;
-    };
-    console.log(friendList);
+    if (friendListAll.length != 0) {
+      if (this.state.search_word.length>0) {
+        for (var i = friendListAll.length - 1; i >= 0; i--) {
+          if(friendListAll[i].name.toLowerCase().indexOf(this.state.search_word.toLowerCase())>=0){
+            friendList.unshift(friendListAll[i]);
+          }
+        };
+      }else{
+        friendList = this.state.strangerList;
+      }
+      if (!friendList) {
+        friendList = [];
+      }
+    }
     return (
       <View style={{flexDirection:'column',flex:1, backgroundColor:'#f89680'}}>
         <TitleBarLayout
           enableOffsetTop={this.props.translucentStatusBar}
           offsetTop={this.props.statusBarHeight}
-          style={[this.props.style,{paddingTop:25,backgroundColor:'#f89680',flex:1}]}
+          style={[this.props.style,{paddingTop:0,backgroundColor:'#f89680',flex:1}]}
           title="好朋友"
           actions={[
             null,
@@ -279,13 +287,19 @@ var Friends = React.createClass({
           >
             <ScrollView style={{marginTop:6/PixelRatio.get()}}>
               {friendList.map(function(friend, index){
+                if (!friend.lastContent) {
+                  friend.lastContent = "";
+                }
+                if (friend.lastContent.length>15) {
+                  friend.lastContent = encodeURI(friend.lastContent).split('%')[encodeURI(friend.lastContent).split('%').length-1].substring(2,15)+'...'
+                }
                 return(
                   <TouchableNativeFeedback key={index} onPress={()=>this.goChat(friend.friendId,friend.messageList,friend,friend.chatroomId)} onLongPress={()=>this.longPress(friend.id)}>
                     <View style={{paddingTop:10,paddingBottom:10,height:100,backgroundColor:'white',flexDirection:'row',marginBottom:6/PixelRatio.get()}}>
                       <View style={[styles.allCenter,{flex:1}]}>
                           <Image
                             style={{width:60,height:60,borderRadius:60/2}}
-                            source={{uri: friend.image}} />
+                            source={{uri: friend.image }} />
                       </View>
                       <View style={{flex:3,paddingLeft:5}}>
                         <View style={{justifyContent:'center',flex:1}}>
@@ -295,7 +309,7 @@ var Friends = React.createClass({
                           <Image
                             style={{width:12,height:12,position:'relative',top:5,marginRight:5}}
                             source={require('../../assets/images/icon_friend_message.png')} />
-                          <Text style={{fontSize:13,color:"#F89680"}}>{friend.lastAnswer}</Text>
+                          <Text style={{fontSize:13,color:"#F89680"}}>{friend.lastAnswer || ""}</Text>
                         </View>
                         <View style={{justifyContent:'center',flex:1}}>
                           <Text style={{fontSize:16,}}>{friend.lastContent}</Text>
@@ -312,7 +326,7 @@ var Friends = React.createClass({
           </PullToRefreshViewAndroid>
         </TitleBarLayout>
         {this.state.search_show?
-          <View style={{position:'absolute',top:25,left:0,backgroundColor:'white',flexDirection:'row'}}>
+          <View style={{position:'absolute',top:0,left:0,backgroundColor:'white',flexDirection:'row'}}>
             <TextInput
               style={{height: 60, borderColor: 'gray', borderWidth: 1,width:Dimensions.get('window').width/10*8}}
               onChangeText={(text) => this.setState({search_word: text})}
@@ -425,6 +439,8 @@ var Navi = React.createClass({
       case 'home':
         return (
           <Friends
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             navigator={_navigator}
             hellos={this.state.hellos}
             strangerList={this.state.strangerList}
@@ -436,6 +452,8 @@ var Navi = React.createClass({
       case 'hello':
         return (
           <Hellos
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             uuid={this.props.uuid}
             accessToken={this.props.accessToken}
             hideAppTabBar={this.props.hideAppTabBar}
@@ -449,6 +467,8 @@ var Navi = React.createClass({
       case 'report':
         return(
           <Report
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             friendId={route.friendId}
             navigator={_navigator}
             uuid={this.props.uuid}
@@ -460,6 +480,8 @@ var Navi = React.createClass({
       case 'messenger':
         return(
           <Messenger
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             navigator={_navigator}
             uuid={this.props.uuid}
             friendImage={route.data.image}

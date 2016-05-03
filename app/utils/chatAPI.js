@@ -604,6 +604,7 @@ function check_answered_latest(accessToken,uuid,userId){
 		  })
 		})
 		.then(function(data) {
+				console.log('check_answered_latest:',data);
 	    	resolve(data);
 	  }).catch(function(error) {
 	  	ToastAndroid.show('讀寫資料時發生錯誤，請確認網路是否穩定。',ToastAndroid.SHORT);

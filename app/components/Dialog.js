@@ -7,7 +7,8 @@ import React, {
   TouchableHighlight,
   Dimensions,
   TextInput,
-  Alert
+  Alert,
+  DeviceEventEmitter
 } from 'react-native';
 
 import Color from 'color';
@@ -31,11 +32,17 @@ let Dialog = React.createClass({
       options:[{text:'取消'},{text:'確定',color:'#F89680'}]
     };
   },
+  componentDidMount(){
+    DeviceEventEmitter.addListener('keyboardDidShow', this.keyboardWillShow);
+    DeviceEventEmitter.addListener('keyboardDidHide', this.keyboardWillHide);
+  },
 
   getInitialState(){
     return{
       text:'',
       length:0,
+      keyboardHeighting:Dimensions.get('window').height,
+      onKeyBoardShow:false
     }
   },
 
@@ -50,12 +57,27 @@ let Dialog = React.createClass({
     }
   },
 
+  keyboardWillShow: function(e) {
+    // Alert.alert('keyboard event..');
+    this.setState({
+      keyboardHeighting: Dimensions.get('window').height - e.endCoordinates.height,
+      onKeyBoardShow: true
+    })
+  },
+  keyboardWillHide: function(e) {
+    // Alert.alert('keyboard event..');
+    this.setState({
+      keyboardHeighting: Dimensions.get('window').height,
+      onKeyBoardShow: false
+    })
+  },
+
   render() {
     var value = this.props.value || this.props.text;
     var color = Color(this.props.color);
     var textColor = (color.luminosity() < 0.3) ? THEME.DARK_TEXT_COLOR : THEME.LIGHT_TEXT_COLOR;
     return (
-      <View style={styles.view}>
+      <View style={[styles.view,{height:this.state.keyboardHeighting}]}>
         <TouchableNativeFeedback onPress={this.pressBlack}><View style={styles.view}></View></TouchableNativeFeedback>
         <View style={{marginBottom:20,padding:25,backgroundColor:'white',width:Dimensions.get('window').width/4*3}}>
           <Text style={{fontSize:18}}>{this.props.title}</Text>
@@ -106,8 +128,7 @@ let styles = StyleSheet.create({
     backgroundColor:'rgba(0,0,0,.5)',
     position:'absolute',
     top:0,
-    left:0,
-    height:Dimensions.get('window').height,
+    left:0,    
     width:Dimensions.get('window').width,
     justifyContent:'center',
     alignItems:'center'

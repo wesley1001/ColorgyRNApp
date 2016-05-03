@@ -2,7 +2,8 @@ import React, {
   StyleSheet,
   View,
   WebView,
-  ProgressBarAndroid
+  ProgressBarAndroid,
+  BackAndroid
 } from 'react-native';
 import { connect } from 'react-redux/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -32,6 +33,15 @@ var Board = React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.navigateBackCount !== this.props.navigateBackCount) {
+      if (!this.state.backButtonEnabled) {
+        BackAndroid.exitApp();
+      } else {
+        this.webView.goBack();
+      }
+    } else if (nextProps.tabRePressCount !== this.props.tabRePressCount) {
+      this.setState({ url: `https://mall.colorgy.io/?randID=${parseInt(Math.random()*100000000)}` });
+    }
   },
 
   _reportRouteUpdate() {

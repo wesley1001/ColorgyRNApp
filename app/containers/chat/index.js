@@ -569,6 +569,8 @@ var SelfEdit = React.createClass({
     return(
       <View style={{flex:1}}>
         <TitleBarLayout
+          enableOffsetTop={this.props.translucentStatusBar}
+          offsetTop={this.props.statusBarHeight}
           style={[this.props.style,{backgroundColor:'white',flex:1}]}
           title="全部"
           actions={[
@@ -684,7 +686,7 @@ var StrangerList = React.createClass({
   },
   render(){
     return(
-      <View style={{flex:1}}>
+      <View style={{flex:1,backgroundColor:'#f89680',paddingTop: this.props.translucentStatusBar && this.props.statusBarHeight}}>
         <View style={{height:55,backgroundColor:'#f89680',flexDirection:'row'}}>
           <TouchableNativeFeedback onPress={()=>this.changeFilter('all')}>
             <View style={this.state.filter== 'all'?[styles.topTab,styles.topTabSelected]:styles.topTab}>
@@ -1054,6 +1056,8 @@ var MainView = React.createClass({
       case 'list':
         return (
           <StrangerList
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             navigator={_navigator}
             uuid={this.props.uuid}
             accessToken={this.props.accessToken}
@@ -1069,6 +1073,8 @@ var MainView = React.createClass({
       case 'report':
         return(
           <Report
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             navigator={_navigator}
             uuid={this.props.uuid}
             accessToken={this.props.accessToken}
@@ -1084,6 +1090,8 @@ var MainView = React.createClass({
       case 'profile':
         return (
           <ProfileFirstLook
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             navigator={_navigator}
             data={route.data}
             showAppTabBar={this.props.showAppTabBar}
@@ -1097,6 +1105,8 @@ var MainView = React.createClass({
       case 'self_edit':
         return (
           <SelfEdit
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             showPaddingTop={this.props.showPaddingTop}
             hidePaddingTop={this.props.hidePaddingTop}
             navigator={_navigator}
@@ -1111,6 +1121,8 @@ var MainView = React.createClass({
       case 'cropping':
         return(
           <CroppingImage
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             navigator={_navigator}
             hideAppTabBar={route.hideAppTabBar}
             showAppTabBar={route.showAppTabBar}
@@ -1277,6 +1289,8 @@ var Chat = React.createClass({
       var ReturnView = <AnswerView postAnswer={this.postAnswer} question_today={this.state.question_today}/>;
     }else{
       var ReturnView = <MainView
+        translucentStatusBar={this.props.translucentStatusBar}
+        statusBarHeight={this.props.statusBarHeight}
         uuid={this.props.uuid}
         send_answer={this.postAnswer}
         problem_today={this.state.question_today.question}

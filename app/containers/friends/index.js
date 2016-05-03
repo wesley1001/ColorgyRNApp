@@ -439,6 +439,8 @@ var Navi = React.createClass({
       case 'home':
         return (
           <Friends
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             navigator={_navigator}
             hellos={this.state.hellos}
             strangerList={this.state.strangerList}
@@ -450,6 +452,8 @@ var Navi = React.createClass({
       case 'hello':
         return (
           <Hellos
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             uuid={this.props.uuid}
             accessToken={this.props.accessToken}
             hideAppTabBar={this.props.hideAppTabBar}
@@ -463,6 +467,8 @@ var Navi = React.createClass({
       case 'report':
         return(
           <Report
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             friendId={route.friendId}
             navigator={_navigator}
             uuid={this.props.uuid}
@@ -474,6 +480,8 @@ var Navi = React.createClass({
       case 'messenger':
         return(
           <Messenger
+            translucentStatusBar={this.props.translucentStatusBar}
+            statusBarHeight={this.props.statusBarHeight}
             navigator={_navigator}
             uuid={this.props.uuid}
             friendImage={route.data.image}
